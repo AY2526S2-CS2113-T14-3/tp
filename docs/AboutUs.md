@@ -2,4 +2,6 @@
 
 Display |        Name        |           Github Profile            | Portfolio 
 --------|:------------------:|:-----------------------------------:|:---------:
-![](https://via.placeholder.com/100.png?text=Photo) | Mark Ng Jian Xiong | [Github](https://github.com/marken9) | [Portfolio](marken9)
+![](https://via.placeholder.com/100.png?text=Photo) | Mark Ng Jian Xiong | [Github](https://github.com/marken9) | [Portfolio](docs/team/marken9.md)
+![](https://via.placeholder.com/100.png?text=Photo) |  Wen Jun Yu   | [Github](https://github.com/WenJunYu5984) | [Portfolio](docs/team/johndoe.md)
+
