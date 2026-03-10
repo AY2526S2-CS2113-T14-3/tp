@@ -1,9 +1,9 @@
-package seedu.unitasker;
+package seedu.duke;
 
 import java.util.Arrays;
 import java.util.Scanner;
 
-import seedu.unitasker.tasklist.CategoryList;
+import seedu.duke.tasklist.CategoryList;
 
 public class UniTasker {
     private static CategoryList categories;

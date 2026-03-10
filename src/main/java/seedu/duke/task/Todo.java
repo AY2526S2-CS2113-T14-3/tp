@@ -1,4 +1,4 @@
-package seedu.unitasker.task;
+package seedu.duke.task;
 
 public class Todo extends Task{
     protected int priority;

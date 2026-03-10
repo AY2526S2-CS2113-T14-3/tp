@@ -1,7 +1,7 @@
-package seedu.unitasker.tasklist;
+package seedu.duke.tasklist;
 import java.util.ArrayList;
 
-import seedu.unitasker.task.Task;
+import seedu.duke.task.Task;
 
 public abstract class TaskList<T extends Task> {
     protected ArrayList<T> tasks;
