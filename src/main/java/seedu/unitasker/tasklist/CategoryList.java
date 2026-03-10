@@ -44,6 +44,10 @@ public class CategoryList {
         categories.get(categoryIndex).reorderTodo(todoIndex1, todoIndex2);
     }
 
+    public void setTodoPriority(int categoryIndex, int todoIndex, int priority) {
+        categories.get(categoryIndex).setTodoPriority(todoIndex, priority);
+    }
+
     public String toString() {
         String result = "";
         for (int i = 0; i < categories.size(); i += 1) {

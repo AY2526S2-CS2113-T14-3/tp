@@ -82,6 +82,20 @@ public class UniTasker {
         }
     }
 
+    public static void handlePriority(String[] sentence) {
+        String secondCommand = sentence[1];
+        switch (secondCommand) {
+        case "todo":
+            int categoryIndex = Integer.parseInt(sentence[2]) - 1;
+            int todoIndex = Integer.parseInt(sentence[3]) - 1;
+            int priority = Integer.parseInt(sentence[4]);
+            categories.setTodoPriority(categoryIndex, todoIndex, priority);
+            break;
+        default:
+            break;
+        }
+    }
+
     public static void handleList(String[] sentence) {
         String secondCommand = sentence[1];
         switch (secondCommand) {
@@ -123,6 +137,9 @@ public class UniTasker {
                 break;
             case "reorder":
                 handleReorder(sentence);
+                break;
+            case "priority":
+                handlePriority(sentence);
                 break;
             default:
                 System.out.println("default echo: " + line);

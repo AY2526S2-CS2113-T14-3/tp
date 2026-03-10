@@ -22,7 +22,7 @@ public class Todo extends Task{
 
     private String drawPriority(int priority) {
         String result = "";
-        for (int i = 0; i < priority; priority += 1) {
+        for (int i = 0; i < priority; i += 1) {
             result += "*";
         }
         return result;
