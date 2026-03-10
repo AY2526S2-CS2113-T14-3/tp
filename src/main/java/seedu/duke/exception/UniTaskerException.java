@@ -1,6 +1,4 @@
-package seedu.unitasker.exception;
-
-import seedu.unitasker.UniTasker;
+package seedu.duke.exception;
 
 public class UniTaskerException extends Exception{
     public UniTaskerException(String description) {

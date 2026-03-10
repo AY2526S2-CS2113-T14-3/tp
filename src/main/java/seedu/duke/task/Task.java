@@ -1,4 +1,4 @@
-package seedu.unitasker.task;
+package seedu.duke.task;
 
 public abstract class Task {
     protected String description;

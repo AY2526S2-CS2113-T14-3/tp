@@ -1,8 +1,8 @@
-package seedu.unitasker.tasklist;
+package seedu.duke.tasklist;
 
 import java.util.ArrayList;
 
-import seedu.unitasker.task.Todo;
+import seedu.duke.task.Todo;
 
 public class CategoryList {
     private ArrayList<Category> categories;

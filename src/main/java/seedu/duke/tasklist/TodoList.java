@@ -1,8 +1,8 @@
-package seedu.unitasker.tasklist;
+package seedu.duke.tasklist;
 
 import java.util.Comparator;
 
-import seedu.unitasker.task.Todo;
+import seedu.duke.task.Todo;
 
 public class TodoList extends TaskList<Todo> {
 

@@ -1,6 +1,6 @@
-package seedu.unitasker.tasklist;
+package seedu.duke.tasklist;
 
-import seedu.unitasker.task.Todo;
+import seedu.duke.task.Todo;
 
 public class Category {
     private String name;

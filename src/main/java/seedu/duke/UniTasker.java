@@ -1,9 +1,9 @@
-package seedu.unitasker;
+package seedu.duke;
 
 import java.util.Arrays;
 import java.util.Scanner;
 
-import seedu.unitasker.tasklist.CategoryList;
+import seedu.duke.tasklist.CategoryList;
 
 public class UniTasker {
     private static CategoryList categories;
@@ -40,6 +40,7 @@ public class UniTasker {
             int categoryIndex = Integer.parseInt(sentence[2]) - 1;
             int todoIndex = Integer.parseInt(sentence[3]) - 1;
             categories.deleteTodo(categoryIndex, todoIndex);
+            break;
         default:
             break;
         }
@@ -58,6 +59,7 @@ public class UniTasker {
             String[] descriptionArr = Arrays.copyOfRange(sentence, 3, sentence.length);
             String description = String.join(" ", descriptionArr);
             categories.addTodo(categoryIndex, description);
+            break;
         default:
             break;
         }
@@ -112,6 +114,9 @@ public class UniTasker {
         System.out.println("Welcome to UniTasker");
         Scanner in = new Scanner(System.in);
         while (true) {
+            if (!in.hasNextLine()) {  // Check if input is available
+                break;
+            }
             String line;
             line = in.nextLine();
             String[] sentence = line.split(" ");
@@ -146,6 +151,7 @@ public class UniTasker {
                 break;
             }
         }
+        in.close();
     }
 
     public static void main(String[] args) {
