@@ -62,8 +62,9 @@ public class Storage {
 
                     int catIdx = getCategoryIndex(categoryList, catName);
                     categoryList.addTodo(catIdx, desc);
-                    if (isDone)
+                    if (isDone) {
                         categoryList.markTodo(catIdx, categoryList.getCategory(catIdx).getTodoList().getSize() - 1);
+                    }
                 }
             } catch (java.io.FileNotFoundException e) {
                 System.out.println("No existing Todo file found.");
