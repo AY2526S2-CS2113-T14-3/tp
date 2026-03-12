@@ -50,10 +50,11 @@ public class Storage {
             try (java.util.Scanner s = new java.util.Scanner(todoFile)) {
                 while (s.hasNext()) {
                     String[] parts = s.nextLine().split(" \\| ");
-                    // Format: Category | T | Status | Description
+                    // Format: Category | T | Status | Priority | Description
                     String catName = parts[0];
                     boolean isDone = parts[2].equals("1");
-                    String desc = parts[3];
+                    String priority = parts[3];
+                    String desc = parts[4];
 
                     // Ensure category exists
                     if (!categoryExists(categoryList, catName)) {
@@ -65,6 +66,9 @@ public class Storage {
                     if (isDone) {
                         categoryList.markTodo(catIdx, categoryList.getCategory(catIdx).getTodoList().getSize() - 1);
                     }
+                    int priorityInt = Integer.parseInt(priority);
+                    categoryList.setTodoPriority(catIdx, categoryList.getCategory(catIdx).getTodoList().getSize() - 1, priorityInt);
+
                 }
             } catch (java.io.FileNotFoundException e) {
                 System.out.println("No existing Todo file found.");
