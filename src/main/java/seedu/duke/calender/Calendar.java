@@ -67,4 +67,11 @@ public class Calendar {
             System.out.println("No " + taskType.getSimpleName() + "s found in this range.");
         }
     }
+
+    public int getTaskCountOnDate(LocalDate date) {
+        if (!schedule.containsKey(date)) {
+            return 0;
+        }
+        return schedule.get(date).size();
+    }
 }
