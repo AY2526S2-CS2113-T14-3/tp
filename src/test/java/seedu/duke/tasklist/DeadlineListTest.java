@@ -1,8 +1,11 @@
 package seedu.duke.tasklist;
 
 import org.junit.jupiter.api.Test;
+
 import seedu.duke.task.Deadline;
+
 import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DeadlineListTest {

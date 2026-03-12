@@ -20,7 +20,6 @@ public class CalendarTest {
 
         calendar.registerTask(deadline);
 
-        // Verify that exactly 1 task exists on that specific date
         assertEquals(1, calendar.getTaskCountOnDate(targetDate));
     }
 
@@ -34,7 +33,6 @@ public class CalendarTest {
 
         calendar.clear();
 
-        // Verify that after clearing, the count returns to 0
         assertEquals(0, calendar.getTaskCountOnDate(targetDate));
     }
 }

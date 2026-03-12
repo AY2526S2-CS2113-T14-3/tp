@@ -22,7 +22,6 @@ public class DeadlineTest {
         categoryList.addDeadline(0, "submit project", time);
 
         assertEquals(1, categoryList.getCategory(0).getDeadlineList().getSize());
-        // Verify time parsing (no colon)
         assertEquals("submit project", categoryList.getCategory(0).getDeadlineList().get(0).getDescription());
     }
 
@@ -34,13 +33,11 @@ public class DeadlineTest {
         LocalDateTime early = LocalDateTime.parse("2026-03-10 1000", formatter);
         LocalDateTime late = LocalDateTime.parse("2026-03-20 1000", formatter);
 
-        // Add out of order
         categoryList.addDeadline(0, "Late Task", late);
         categoryList.addDeadline(0, "Early Task", early);
 
         categoryList.sortDeadlines(0);
 
-        // Early task should be at the top
         assertEquals("Early Task", categoryList.getCategory(0).getDeadlineList().get(0).getDescription());
     }
 

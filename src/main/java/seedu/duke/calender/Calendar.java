@@ -50,7 +50,6 @@ public class Calendar {
             boolean foundInDay = false;
 
             for (Task t : entry.getValue()) {
-                // Check if the task is an instance of the class we passed in
                 if (taskType.isInstance(t)) {
                     if (!foundInDay) {
                         dayOutput.append("--- ").append(entry.getKey()).append(" ---\n");

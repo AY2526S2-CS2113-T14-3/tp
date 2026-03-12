@@ -2,8 +2,6 @@ package seedu.duke.storage;
 
 import seedu.duke.tasklist.Category;
 import seedu.duke.tasklist.CategoryList;
-// import seedu.duke.task.Todo;
-// import seedu.duke.task.Deadline;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,13 +24,11 @@ public class Storage {
         for (int i = 0; i < categoryList.getAmount(); i++) {
             Category cat = categoryList.getCategory(i);
 
-            // Save Todos from this category
             for (int j = 0; j < cat.getTodoList().getSize(); j++) {
                 todoWriter.write(cat.getName() + " | "
                         + cat.getTodoList().get(j).toFileFormat() + System.lineSeparator());
             }
 
-            // Save Deadlines from this category
             for (int j = 0; j < cat.getDeadlineList().getSize(); j++) {
                 deadlineWriter.write(cat.getName() + " | "
                         + cat.getDeadlineList().get(j).toFileFormat() + System.lineSeparator());
@@ -50,13 +46,11 @@ public class Storage {
             try (java.util.Scanner s = new java.util.Scanner(todoFile)) {
                 while (s.hasNext()) {
                     String[] parts = s.nextLine().split(" \\| ");
-                    // Format: Category | T | Status | Priority | Description
                     String catName = parts[0];
                     boolean isDone = parts[2].equals("1");
                     String priority = parts[3];
                     String desc = parts[4];
 
-                    // Ensure category exists
                     if (!categoryExists(categoryList, catName)) {
                         categoryList.addCategory(catName);
                     }
@@ -81,7 +75,6 @@ public class Storage {
             try (java.util.Scanner s = new java.util.Scanner(deadlineFile)) {
                 while (s.hasNext()) {
                     String[] parts = s.nextLine().split(" \\| ");
-                    // Format: Category | D | Status | Description | ISO-Date
                     String catName = parts[0];
                     boolean isDone = parts[2].equals("1");
                     String desc = parts[3];

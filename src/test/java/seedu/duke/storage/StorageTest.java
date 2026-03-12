@@ -1,9 +1,12 @@
 package seedu.duke.storage;
 
 import org.junit.jupiter.api.Test;
+
 import seedu.duke.tasklist.CategoryList;
+
 import java.io.File;
 import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StorageTest {
