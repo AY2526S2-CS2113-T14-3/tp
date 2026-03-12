@@ -164,11 +164,26 @@ public class UniTasker {
         saveData();
     }
 
+    public static void handleListCategory(String[] sentence) {
+        int sentenceLength = sentence.length;
+        switch (sentenceLength) {
+        case 2:
+            System.out.println(categories);
+            break;
+        case 3:
+            int catIndex = Integer.parseInt(sentence[2]);
+            System.out.println(categories.getCategory(catIndex - 1));
+            break;
+        default:
+            break;
+        }
+    }
+
     public static void handleList(String[] sentence) {
         String secondCommand = sentence[1];
         switch (secondCommand) {
         case "category":
-            System.out.println(categories);
+            handleListCategory(sentence);
             break;
         case "todo":
             System.out.println(categories.getAllTodos());
