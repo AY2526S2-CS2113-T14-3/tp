@@ -1,7 +1,8 @@
-package seedu.duke.calender;
+package seedu.duke;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.duke.calender.Calendar;
 import seedu.duke.task.Deadline;
 
 import java.time.LocalDate;

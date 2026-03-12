@@ -2,6 +2,8 @@ package seedu.duke.storage;
 
 import seedu.duke.tasklist.Category;
 import seedu.duke.tasklist.CategoryList;
+// import seedu.duke.task.Todo;
+// import seedu.duke.task.Deadline;
 
 import java.io.FileWriter;
 import java.io.IOException;
