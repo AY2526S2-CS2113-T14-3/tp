@@ -17,9 +17,13 @@ public class UniTasker {
     private static Calendar calendar = new Calendar();
     private static Storage storage = new Storage("todos.txt", "deadlines.txt");
 
-    UniTasker() {
-        storage.load(categories);
-        refreshCalendar(categories, calendar);
+    public UniTasker() {
+        try {
+            storage.load(categories);
+            refreshCalendar(categories, calendar);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void handleMark(String[] sentence, boolean isMark) {

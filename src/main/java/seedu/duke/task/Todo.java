@@ -31,7 +31,7 @@ public class Todo extends Task {
 
     public String toString() {
         if (priority > 0) {
-            return "[" + getStatusIcon() + "] " + getDescription() + " [" + drawPriority(getPriority()) + "]";
+            return "[" + getStatusIcon() + "]" + "[" + drawPriority(getPriority()) + "] "+ getDescription();
         }
         return "[" + getStatusIcon() + "] " + getDescription();
     }
