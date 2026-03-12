@@ -81,7 +81,7 @@ public class Storage {
                     String desc = parts[3];
                     String dateString = parts[4];
 
-                    DateTimeFormatter storageFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    DateTimeFormatter storageFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
                     java.time.LocalDateTime by = java.time.LocalDateTime.parse(dateString, storageFormatter);
 
                     if (!categoryExists(categoryList, catName)) {
