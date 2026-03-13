@@ -33,20 +33,7 @@ public class CourseManager {
     }
 
     public String listCourses() {
-        if (courseList.isEmpty()) {
-            return "No courses found.";
-        }
-
-        StringBuilder sb = new StringBuilder("Courses:\n");
-        int index = 1;
-        for (Course course : courseList.getAll()) {
-            sb.append(index)
-                    .append(". ")
-                    .append(course.toString())
-                    .append(System.lineSeparator());
-            index++;
-        }
-        return sb.toString().trim();
+        return CourseUi.formatCourseList(courseList);
     }
 
     public String deleteCourse(String courseCode) throws CourseException {
@@ -176,38 +163,7 @@ public class CourseManager {
             throw new CourseException("Course not found: " + normalizedCode);
         }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("Course: ").append(course.getCourseCode()).append(System.lineSeparator());
-        sb.append("Assessments:").append(System.lineSeparator());
-
-        if (course.getAssessments().isEmpty()) {
-            sb.append("None").append(System.lineSeparator());
-        } else {
-            int index = 1;
-            for (Assessment assessment : course.getAssessments()) {
-                sb.append(index)
-                        .append(". ")
-                        .append(assessment.toString())
-                        .append(System.lineSeparator());
-                index++;
-            }
-        }
-
-        sb.append("Current weighted score: ")
-                .append(String.format("%.1f", course.getTotalWeightedScore()))
-                .append("%")
-                .append(System.lineSeparator());
-
-        sb.append("Graded weightage: ")
-                .append(String.format("%.1f", course.getGradedWeightage()))
-                .append("%")
-                .append(System.lineSeparator());
-
-        sb.append("Total planned weightage: ")
-                .append(String.format("%.1f", course.getTotalWeightage()))
-                .append("%");
-
-        return sb.toString();
+        return CourseUi.formatCourse(course);
     }
 
     private void save() throws CourseException {
