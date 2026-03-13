@@ -70,3 +70,4 @@ public class CourseList {
     }//Replaces all current courses with loaded data from storage.
 
 }
+

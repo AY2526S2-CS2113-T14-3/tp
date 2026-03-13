@@ -45,3 +45,4 @@ public class CourseTest {
         assertFalse(course.removeAssessment("Finals"));
     }
 }
+

@@ -9,3 +9,4 @@ public class CourseException extends Exception {
         super(message);
     }
 }
+

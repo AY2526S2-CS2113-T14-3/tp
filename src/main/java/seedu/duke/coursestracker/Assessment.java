@@ -112,3 +112,4 @@ public class Assessment {
         return String.format("%s (weight: %.1f%%, score: %s)", name, weightage, scoreText);
     }
 }
+

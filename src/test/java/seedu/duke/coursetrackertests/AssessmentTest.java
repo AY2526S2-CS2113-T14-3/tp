@@ -69,3 +69,4 @@ public class AssessmentTest {
         assertNull(Assessment.decode("Finals|abc|85|100"));
     }
 }
+
