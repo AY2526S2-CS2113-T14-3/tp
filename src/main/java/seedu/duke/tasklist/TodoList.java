@@ -19,16 +19,6 @@ public class TodoList extends TaskList<Todo> {
         tasks.sort(Comparator.comparingInt(Todo::getPriority).reversed());
     }
 
-//    public TodoList returnPriorityList() {
-//        TodoList priorityList = new TodoList();
-//        int numTodos = this.getSize();
-//        for (int i = 0; i < numTodos; i += 1) {
-//            priorityList.add(this.get(i));
-//        }
-//        priorityList.sortByPriority();
-//        return priorityList;
-//    }
-
     public String toString() {
         String result = "";
         for (int i = 0; i < tasks.size(); i += 1) {
