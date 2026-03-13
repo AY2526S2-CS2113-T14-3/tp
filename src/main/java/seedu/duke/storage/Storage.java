@@ -55,8 +55,13 @@ public class Storage {
 
         if (todoFile.exists()) {
             try (java.util.Scanner s = new java.util.Scanner(todoFile)) {
-                while (s.hasNext()) {
+                while (s.hasNextLine()) {
                     String[] parts = s.nextLine().split(" \\| ");
+
+                    if (parts.length < 5) {
+                        continue;
+                    }
+
                     String catName = parts[0];
                     boolean isDone = parts[2].equals("1");
                     String priority = parts[3];
@@ -84,8 +89,13 @@ public class Storage {
 
         if (deadlineFile.exists()) {
             try (java.util.Scanner s = new java.util.Scanner(deadlineFile)) {
-                while (s.hasNext()) {
+                while (s.hasNextLine()) {
                     String[] parts = s.nextLine().split(" \\| ");
+
+                    if (parts.length < 5) {
+                        continue;
+                    }
+
                     String catName = parts[0];
                     boolean isDone = parts[2].equals("1");
                     String desc = parts[3];
@@ -112,8 +122,13 @@ public class Storage {
         }
         if (eventFile.exists()) {
             try (java.util.Scanner s = new java.util.Scanner(eventFile)) {
-                while (s.hasNext()) {
+                while (s.hasNextLine()) {
                     String[] parts = s.nextLine().split(" \\| ");
+
+                    if (parts.length < 6) {
+                        continue;
+                    }
+
                     // Format: Category | E | Status | Description | Date (from) | Date (to)
                     String catName = parts[0];
                     boolean isDone = parts[2].equals("1");
