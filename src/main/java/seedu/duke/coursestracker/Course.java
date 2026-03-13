@@ -112,7 +112,8 @@ public class Course {
     }
     //Returns the sum of weightages for only graded assessments.
 
-    /** Useful if Michael wants to show:
+    /**
+     * Useful if Michael wants to show:
      * "You have completed 60% of the course grading components."
      */
 
