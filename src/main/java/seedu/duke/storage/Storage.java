@@ -8,6 +8,11 @@ import java.io.IOException;
 import java.io.File;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Handles the loading and saving of task data to local text files.
+ * This class ensures that user data persists across different sessions by
+ * serializing {@code CategoryList} objects into a readable pipe-delimited format.
+ */
 public class Storage {
     private String todoFilePath;
     private String deadlineFilePath;
@@ -19,6 +24,13 @@ public class Storage {
         this.eventFilePath = eventPath;
     }
 
+    /**
+     * Serializes and writes the current state of the {@code CategoryList} to the disk.
+     * Overwrites existing files with the updated task information.
+     *
+     * @param categoryList The list of categories and tasks to save.
+     * @throws IOException If there is an error writing to any of the files.
+     */
     public void save(CategoryList categoryList) throws IOException {
         FileWriter todoWriter = new FileWriter(todoFilePath);
         FileWriter deadlineWriter = new FileWriter(deadlineFilePath);
@@ -48,6 +60,12 @@ public class Storage {
         eventWriter.close();
     }
 
+    /**
+     * Reads task data from the local storage files and populates the provided {@code CategoryList}.
+     * If a file does not exist, it skips that specific loading process.
+     *
+     * @param categoryList The list to be populated with data from the files.
+     */
     public void load(CategoryList categoryList) {
         File todoFile = new File(todoFilePath);
         File deadlineFile = new File(deadlineFilePath);
@@ -67,9 +85,7 @@ public class Storage {
                     String priority = parts[3];
                     String desc = parts[4];
 
-                    if (!categoryExists(categoryList, catName)) {
-                        categoryList.addCategory(catName);
-                    }
+                    ensureCategoryExists(categoryList, catName);
 
                     int catIdx = getCategoryIndex(categoryList, catName);
                     categoryList.addTodo(catIdx, desc);
@@ -88,6 +104,7 @@ public class Storage {
         }
 
         if (deadlineFile.exists()) {
+
             try (java.util.Scanner s = new java.util.Scanner(deadlineFile)) {
                 while (s.hasNextLine()) {
                     String[] parts = s.nextLine().split(" \\| ");
@@ -101,12 +118,18 @@ public class Storage {
                     String desc = parts[3];
                     String dateString = parts[4];
 
-                    DateTimeFormatter storageFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
-                    java.time.LocalDateTime by = java.time.LocalDateTime.parse(dateString, storageFormatter);
+                    java.time.LocalDateTime by;
 
-                    if (!categoryExists(categoryList, catName)) {
-                        categoryList.addCategory(catName);
+                    try {
+                        by = seedu.duke.task.Deadline.parseDateTime(dateString);
+                    } catch (java.time.format.DateTimeParseException e) {
+                        // Log the error and skip this specific task if parsing fails completely
+                        System.out.println("Skipping malformed deadline: " + desc);
+                        continue;
                     }
+
+                    // Ensure category exists
+                    ensureCategoryExists(categoryList, catName);
 
                     int catIdx = getCategoryIndex(categoryList, catName);
                     categoryList.addDeadline(catIdx, desc, by);
@@ -137,9 +160,7 @@ public class Storage {
                     String stringTo = parts[5];
 
                     // Ensure category exists
-                    if (!categoryExists(categoryList, catName)) {
-                        categoryList.addCategory(catName);
-                    }
+                    ensureCategoryExists(categoryList, catName);
                     // Convert the string dateTime to dateTime objects
                     DateTimeFormatter storageFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
                     java.time.LocalDateTime from = java.time.LocalDateTime.parse(stringFrom, storageFormatter);
@@ -155,6 +176,12 @@ public class Storage {
             } catch (java.io.FileNotFoundException e) {
                 System.out.println("No existing Event file found.");
             }
+        }
+    }
+
+    private void ensureCategoryExists(CategoryList categoryList, String catName) {
+        if (!categoryExists(categoryList, catName)) {
+            categoryList.addCategory(catName);
         }
     }
 

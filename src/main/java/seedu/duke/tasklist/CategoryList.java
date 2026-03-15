@@ -69,7 +69,7 @@ public class CategoryList {
     }
 
     public void addEvent(int categoryIndex, String description, LocalDateTime from, LocalDateTime to) {
-        categories.get(categoryIndex).addEvent(new seedu.duke.task.Event(description,from,to));
+        categories.get(categoryIndex).addEvent(new seedu.duke.task.Event(description, from, to));
     }
 
     public void deleteEvent(int categoryIndex, int eventIndex) {
@@ -94,7 +94,15 @@ public class CategoryList {
         return sb.toString();
     }
 
-    public void addDeadline(int categoryIndex, String description, java.time.LocalDateTime by) {
+    /**
+     * Adds a deadline to a category and prints a success message.
+     * The task is only added if the date parsing and year validation (2026+) passed.
+     *
+     * @param categoryIndex The index of the category to add to.
+     * @param description   The task description.
+     * @param by            The LocalDateTime of the deadline.
+     */
+    public void addDeadline(int categoryIndex, String description, LocalDateTime by) {
         categories.get(categoryIndex).addDeadline(new seedu.duke.task.Deadline(description, by));
     }
 
@@ -124,6 +132,12 @@ public class CategoryList {
         return sb.toString();
     }
 
+    /**
+     * Rebuilds the Calendar entries based on the current state of the CategoryList.
+     * This ensures the Calendar view stays consistent with the task list.
+     * @param categories The source CategoryList.
+     * @param calendar   The Calendar instance to be refreshed.
+     */
     public static void refreshCalendar(CategoryList categories, Calendar calendar) {
         calendar.clear();
         for (int i = 0; i < categories.getAmount(); i++) {

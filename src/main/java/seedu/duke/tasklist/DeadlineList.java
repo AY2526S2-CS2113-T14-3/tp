@@ -4,6 +4,11 @@ import java.util.Comparator;
 
 import seedu.duke.task.Deadline;
 
+/**
+ * Manages a list of {@link Deadline} tasks.
+ * Provides specialized functionality for sorting deadlines by their due dates
+ * and retrieving the most distant deadline.
+ */
 public class DeadlineList extends TaskList<Deadline> {
     //@Override
     public DeadlineList() {
