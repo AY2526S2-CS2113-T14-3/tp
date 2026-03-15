@@ -1,8 +1,7 @@
 package seedu.duke.storage;
 
 
-import static seedu.duke.UniTasker.LOGGER;
-
+import java.time.LocalDateTime;
 import java.util.logging.Level;
 
 import seedu.duke.util.DateUtils;
@@ -15,6 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.File;
 import java.time.format.DateTimeFormatter;
+import java.util.logging.Logger;
 
 /**
  * Handles the loading and saving of task data to local text files.
@@ -22,6 +22,8 @@ import java.time.format.DateTimeFormatter;
  * serializing {@code CategoryList} objects into a readable pipe-delimited format.
  */
 public class Storage {
+
+    private static final Logger logger = Logger.getLogger(Storage.class.getName());
 
     private String todoFilePath;
     private String deadlineFilePath;
@@ -42,7 +44,7 @@ public class Storage {
      */
     public void save(CategoryList categoryList) throws IOException {
         assert categoryList != null : "CategoryList should not be null when saving";
-        LOGGER.info("Starting save process...");
+        logger.info("Starting save process...");
         try (FileWriter todoWriter = new FileWriter(todoFilePath);
              FileWriter deadlineWriter = new FileWriter(deadlineFilePath);
              FileWriter eventWriter = new FileWriter(eventFilePath)) {
@@ -66,9 +68,9 @@ public class Storage {
                             + cat.getEventList().get(j).toFileFormat() + System.lineSeparator());
                 }
             }
-            LOGGER.info("Data successfully saved to files.");
+            logger.info("Data successfully saved to files.");
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Failed to write to storage files.", e);
+            logger.log(Level.SEVERE, "Failed to write to storage files.", e);
             throw e;
         }
     }
@@ -81,7 +83,7 @@ public class Storage {
      */
     public void load(CategoryList categoryList) {
         assert categoryList != null : "CategoryList should not be null when loading";
-        LOGGER.info("Starting data load...");
+        logger.info("Loading data from disk...");
 
         File todoFile = new File(todoFilePath);
         File deadlineFile = new File(deadlineFilePath);
@@ -120,7 +122,7 @@ public class Storage {
         }
 
         if (deadlineFile.exists()) {
-            LOGGER.info("Attempting to load deadlines from: " + deadlineFilePath);
+            logger.info("Attempting to load deadlines from: " + deadlineFilePath);
 
             try (java.util.Scanner s = new java.util.Scanner(deadlineFile)) {
                 int lineCount = 0;
@@ -130,21 +132,21 @@ public class Storage {
                     String[] parts = line.split(" \\| ");
 
                     if (parts.length < 5) {
-                        LOGGER.log(Level.WARNING, "Skipping malformed line " + lineCount + " in deadlines.txt");
+                        logger.log(Level.WARNING, "Skipping malformed line " + lineCount + " in deadlines.txt");
                         continue;
                     }
 
-                    String catName = parts[0];
-                    boolean isDone = parts[2].equals("1");
-                    String desc = parts[3];
-                    String dateString = parts[4];
+                    String catName = parts[0].trim();
+                    boolean isDone = parts[2].trim().equals("1");
+                    String desc = parts[3].trim();
+                    String dateString = parts[4].trim();
 
-                    java.time.LocalDateTime by;
+                    LocalDateTime by;
 
                     try {
                         by = DateUtils.parseDateTime(dateString);
                     } catch (IllegalDateException e) {
-                        LOGGER.log(Level.WARNING, "Line " + lineCount + ": " + e.getMessage() + ". Skipping.");
+                        logger.warning( "Skipping line " + lineCount + " - Reason:" + e.getMessage());
                         continue;
                     }
 
@@ -162,12 +164,12 @@ public class Storage {
                                 true);
                     }
                 }
-                LOGGER.info("Successfully loaded deadlines from file.");
+                logger.info("Successfully loaded deadlines from file.");
             } catch (java.io.FileNotFoundException e) {
-                LOGGER.log(Level.SEVERE, "Deadline file vanished during read process", e);
+                logger.log(Level.SEVERE, "Deadline file vanished during read process", e);
             }
         } else {
-            LOGGER.info("No deadline file found at " + deadlineFilePath + ". Skipping load.");
+            logger.info("No deadline file found at " + deadlineFilePath + ". Skipping load.");
         }
         if (eventFile.exists()) {
             try (java.util.Scanner s = new java.util.Scanner(eventFile)) {
