@@ -1,7 +1,13 @@
 package seedu.duke.storage;
 
-import java.util.logging.Logger;
+
+import static seedu.duke.UniTasker.logger;
+
+import java.time.format.DateTimeParseException;
 import java.util.logging.Level;
+
+import seedu.duke.util.DateUtils;
+import seedu.duke.exception.IllegalDateException;
 
 import seedu.duke.tasklist.Category;
 import seedu.duke.tasklist.CategoryList;
@@ -17,7 +23,7 @@ import java.time.format.DateTimeFormatter;
  * serializing {@code CategoryList} objects into a readable pipe-delimited format.
  */
 public class Storage {
-    private static final Logger logger = Logger.getLogger(Storage.class.getName());
+
     private String todoFilePath;
     private String deadlineFilePath;
     private String eventFilePath;
@@ -38,10 +44,9 @@ public class Storage {
     public void save(CategoryList categoryList) throws IOException {
         assert categoryList != null : "CategoryList should not be null when saving";
         logger.info("Starting save process...");
-        try {
-            FileWriter todoWriter = new FileWriter(todoFilePath);
-            FileWriter deadlineWriter = new FileWriter(deadlineFilePath);
-            FileWriter eventWriter = new FileWriter(eventFilePath);
+        try (FileWriter todoWriter = new FileWriter(todoFilePath);
+             FileWriter deadlineWriter = new FileWriter(deadlineFilePath);
+             FileWriter eventWriter = new FileWriter(eventFilePath)) {
 
             for (int i = 0; i < categoryList.getAmount(); i++) {
                 Category cat = categoryList.getCategory(i);
@@ -62,10 +67,6 @@ public class Storage {
                             + cat.getEventList().get(j).toFileFormat() + System.lineSeparator());
                 }
             }
-            todoWriter.close();
-            deadlineWriter.close();
-            eventWriter.close();
-
             logger.info("Data successfully saved to files.");
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Failed to write to storage files.", e);
@@ -142,10 +143,9 @@ public class Storage {
                     java.time.LocalDateTime by;
 
                     try {
-                        by = seedu.duke.task.Deadline.parseDateTime(dateString);
-                    } catch (java.time.format.DateTimeParseException e) {
-                        logger.log(Level.WARNING, "Line " + lineCount + ": Failed to parse date for '"
-                                + desc + "'. skipping.");
+                        by = DateUtils.parseDateTime(dateString);
+                    } catch (IllegalDateException e) {
+                        logger.log(Level.WARNING, "Line " + lineCount + ": " + e.getMessage() + ". Skipping.");
                         continue;
                     }
 
