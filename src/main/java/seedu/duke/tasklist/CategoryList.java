@@ -150,7 +150,7 @@ public class CategoryList {
         StringBuilder sb = new StringBuilder();
         sb.append("=== ALL DEADLINES ===").append(System.lineSeparator());
         for (Category cat : categories) {
-            sb.append(cat.getName()).append(":").append(System.lineSeparator());
+            sb.append(cat.getName().trim()).append(":").append(System.lineSeparator());
             sb.append(cat.getDeadlineList().toString());
         }
         return sb.toString();
@@ -180,7 +180,7 @@ public class CategoryList {
     public String toString() {
         String result = "";
         for (int i = 0; i < categories.size(); i += 1) {
-            result += "[" + (i + 1) + "]" + categories.get(i).toString();
+            result += "[" + (i + 1) + "]" + categories.get(i).toString() + System.lineSeparator();
         }
         return result;
     }

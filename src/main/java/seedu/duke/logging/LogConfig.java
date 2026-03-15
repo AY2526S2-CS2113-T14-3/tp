@@ -1,6 +1,7 @@
 package seedu.duke.logging;
 
 import java.io.IOException;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -19,6 +20,10 @@ public class LogConfig {
             fileHandler.setFormatter(new SimpleFormatter());
             fileHandler.setLevel(Level.ALL);
             rootLogger.addHandler(fileHandler);
+
+            ConsoleHandler consoleHandler = new ConsoleHandler();
+            consoleHandler.setLevel(Level.WARNING);
+            rootLogger.addHandler(consoleHandler);
 
         } catch (IOException e) {
             System.err.println("Logging system failed to initialize: " + e.getMessage());

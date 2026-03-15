@@ -122,9 +122,9 @@ public class Category {
     public String toString() {
         String result = "";
         result += "---" + getName() + "---" + System.lineSeparator();
-        result += "Todos:" + System.lineSeparator() + todoList.toString();
-        result += "Deadlines:" + System.lineSeparator() + deadlineList.toString();
-        result += "Events:" + System.lineSeparator() + eventList.toString();
+        result += "Todos:" + System.lineSeparator() + todoList.toString() + System.lineSeparator();
+        result += "Deadlines:" + System.lineSeparator() + deadlineList.toString() + System.lineSeparator();
+        result += "Events:" + System.lineSeparator() + eventList.toString() + System.lineSeparator();
 
         return result;
     }
