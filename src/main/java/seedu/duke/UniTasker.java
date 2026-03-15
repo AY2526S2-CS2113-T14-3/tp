@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import seedu.duke.calender.Calendar;
 import seedu.duke.exception.IllegalDateException;
+import seedu.duke.exception.UniTaskerException;
 import seedu.duke.storage.Storage;
 import seedu.duke.task.Deadline;
 import seedu.duke.task.Event;
@@ -134,19 +135,42 @@ public class UniTasker {
     }
 
     public static void handleAdd(String[] sentence) {
+        if (sentence.length <= 1) {
+            System.out.println("Unknown add command: Try category, todo, deadline or event");
+            return;
+        }
         String secondCommand = sentence[1];
         switch (secondCommand) {
         case "category":
-            String[] nameArr = Arrays.copyOfRange(sentence, 2, sentence.length);
-            String name = String.join(" ", nameArr);
-            categories.addCategory(name);
-            System.out.println("Added category: " + name);
+            try {
+                if (sentence.length <= 2) {
+                    throw new UniTaskerException("Empty description.");
+                }
+                String[] nameArr = Arrays.copyOfRange(sentence, 2, sentence.length);
+                String name = String.join(" ", nameArr);
+                categories.addCategory(name);
+                System.out.println("Added category: " + name);
+            } catch (Exception e) {
+                System.out.println("add category command failed: " + e.getMessage());
+                System.out.println("Correct format: add category [description]");
+
+            }
             break;
         case "todo":
-            int todoCatIdx = getCategoryIndex(sentence);
-            String[] descriptionArr = Arrays.copyOfRange(sentence, 3, sentence.length);
-            String description = String.join(" ", descriptionArr);
-            categories.addTodo(todoCatIdx, description);
+            try {
+                int todoCatIdx = getCategoryIndex(sentence);
+                if (sentence.length <= 3) {
+                    throw new UniTaskerException("Empty description.");
+                }
+                String[] descriptionArr = Arrays.copyOfRange(sentence, 3, sentence.length);
+                String description = String.join(" ", descriptionArr);
+                categories.addTodo(todoCatIdx, description);
+                System.out.println("Added todo: " + description);
+
+            } catch (Exception e) {
+                System.out.println("add todo command failed: " + e.getMessage());
+                System.out.println("Correct format: add todo [categoryIndex] [description]");
+            }
             break;
         case "deadline":
             try {
@@ -203,6 +227,7 @@ public class UniTasker {
             }
             break;
         default:
+            System.out.println("Unknown add command: Try category, todo, deadline or event");
             break;
         }
 
@@ -363,6 +388,7 @@ public class UniTasker {
                 String commandWord = sentence[0];
                 switch (commandWord) {
                 case "exit":
+                case "bye":
                     System.out.println("Exiting UniTasker.");
                     return;
                 case "add":
