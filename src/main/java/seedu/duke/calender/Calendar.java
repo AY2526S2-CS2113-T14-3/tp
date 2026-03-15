@@ -27,7 +27,7 @@ public class Calendar {
     /**
      * Registers a task into the calendar if it contains date information.*
      * @param task The task to be added to the schedule.
-     * Task must implement the {@link Timed} interface to be added to Calendar
+     *     Task must implement the {@link Timed} interface to be added to Calendar
      */
     public void registerTask(Task task) {
         if (task instanceof Timed) {
