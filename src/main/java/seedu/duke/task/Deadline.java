@@ -28,7 +28,10 @@ public class Deadline extends Task implements Timed {
      * @throws DateTimeParseException If the input does not match expected formats or year is before 2026.
      */
     public static LocalDateTime parseDateTime(String input) throws DateTimeParseException {
+        assert input != null : "Date input string should not be null";
         String trimmedInput = input.trim();
+        assert !trimmedInput.isEmpty() : "Date input string should not be empty";
+
         LocalDateTime parsedDate;
 
         try {
@@ -39,7 +42,7 @@ public class Deadline extends Task implements Timed {
             LocalDate date = LocalDate.parse(trimmedInput, dateOnlyFormatter);
             parsedDate = date.atTime(23, 59);
         }
-        // --- Year Validation Limit ---
+
         if (parsedDate.getYear() < 2026) {
             throw new DateTimeParseException("Date must be in the year 2026 or later.",
                     trimmedInput, 0);
