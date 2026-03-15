@@ -85,9 +85,7 @@ public class Storage {
                     String priority = parts[3];
                     String desc = parts[4];
 
-                    if (!categoryExists(categoryList, catName)) {
-                        categoryList.addCategory(catName);
-                    }
+                    ensureCategoryExists(categoryList, catName);
 
                     int catIdx = getCategoryIndex(categoryList, catName);
                     categoryList.addTodo(catIdx, desc);
@@ -106,6 +104,7 @@ public class Storage {
         }
 
         if (deadlineFile.exists()) {
+
             try (java.util.Scanner s = new java.util.Scanner(deadlineFile)) {
                 while (s.hasNextLine()) {
                     String[] parts = s.nextLine().split(" \\| ");
@@ -155,9 +154,7 @@ public class Storage {
                     String stringTo = parts[5];
 
                     // Ensure category exists
-                    if (!categoryExists(categoryList, catName)) {
-                        categoryList.addCategory(catName);
-                    }
+                    ensureCategoryExists(categoryList, catName);
                     // Convert the string dateTime to dateTime objects
                     DateTimeFormatter storageFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
                     java.time.LocalDateTime from = java.time.LocalDateTime.parse(stringFrom, storageFormatter);
@@ -173,6 +170,12 @@ public class Storage {
             } catch (java.io.FileNotFoundException e) {
                 System.out.println("No existing Event file found.");
             }
+        }
+    }
+
+    private void ensureCategoryExists(CategoryList categoryList, String catName) {
+        if (!categoryExists(categoryList, catName)) {
+            categoryList.addCategory(catName);
         }
     }
 
