@@ -135,7 +135,7 @@ public class CategoryList {
     /**
      * Rebuilds the Calendar entries based on the current state of the CategoryList.
      * This ensures the Calendar view stays consistent with the task list.
-     * * @param categories The source CategoryList.
+     * @param categories The source CategoryList.
      * @param calendar   The Calendar instance to be refreshed.
      */
     public static void refreshCalendar(CategoryList categories, Calendar calendar) {
