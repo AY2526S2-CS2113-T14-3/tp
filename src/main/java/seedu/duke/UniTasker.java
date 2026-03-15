@@ -7,24 +7,28 @@ import java.time.format.DateTimeFormatter;
 
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 import seedu.duke.calender.Calendar;
 import seedu.duke.storage.Storage;
 import seedu.duke.task.Deadline;
 import seedu.duke.task.Event;
 import seedu.duke.tasklist.CategoryList;
+
 import static seedu.duke.tasklist.CategoryList.refreshCalendar;
 
 import seedu.duke.coursestracker.CourseException;
 import seedu.duke.coursestracker.CourseManager;
 import seedu.duke.coursestracker.CourseParser;
 
+
 public class UniTasker {
     private static CategoryList categories = new CategoryList();
     private static Calendar calendar = new Calendar();
-    private static Storage storage = new Storage("todos.txt", "deadlines.txt","events.txt");
+    private static Storage storage = new Storage("todos.txt", "deadlines.txt", "events.txt");
     private static CourseManager courseManager;
     private static CourseParser courseParser;
+    private static final Logger logger = Logger.getLogger(UniTasker.class.getName());
 
     public UniTasker() {
         try {
@@ -59,7 +63,7 @@ public class UniTasker {
             } else {
                 System.out.println("This task is marked as not done:");
             }
-            System.out.println(categories.getEvent(categoryIndex,taskIndex));
+            System.out.println(categories.getEvent(categoryIndex, taskIndex));
             break;
         default:
             break;
@@ -138,7 +142,9 @@ public class UniTasker {
             try {
                 int deadlineCatIdx = getCategoryIndex(sentence);
                 String raw = String.join(" ", Arrays.copyOfRange(sentence, 3, sentence.length));
+                assert raw.contains("/by") : "Parser failed to ensure /by presence before calling handleAdd";
                 String[] parts = raw.split(" /by ");
+                assert parts.length == 2 : "Deadline command split into unexpected number of parts";
 
                 // Parse and validate (Handles 2026 limit and date-only fallback)
                 LocalDateTime by = Deadline.parseDateTime(parts[1]);
@@ -173,7 +179,7 @@ public class UniTasker {
                 java.time.LocalDateTime from = java.time.LocalDateTime.parse(eventTimeDetails[0], inputFormatter);
                 java.time.LocalDateTime to = java.time.LocalDateTime.parse(eventTimeDetails[1], inputFormatter);
 
-                categories.addEvent(eventCategoryIndex, eventDetails[0], from,to);
+                categories.addEvent(eventCategoryIndex, eventDetails[0], from, to);
 
                 Event newEvent = categories.getCategory(eventCategoryIndex).getLatestEvent();
                 calendar.registerTask(newEvent);
@@ -267,7 +273,7 @@ public class UniTasker {
 
                 if (sentence.length > 4 && sentence[4].equalsIgnoreCase("/deadline")) {
                     calendar.displaySpecificTypeInRange(start, end, Deadline.class);
-                } else if (sentence.length > 4 && sentence[4].equalsIgnoreCase("/event")){
+                } else if (sentence.length > 4 && sentence[4].equalsIgnoreCase("/event")) {
                     calendar.displaySpecificTypeInRange(start, end, Event.class);
                 } else {
                     calendar.displayRange(start, end);
@@ -321,7 +327,7 @@ public class UniTasker {
     }
 
     public void run() {
-        System.out.println("Welcome to UniTasker");
+        logger.info("UniTasker session started.");
         Scanner in = new Scanner(System.in);
         while (true) {
             if (!in.hasNextLine()) {  // Check if input is available
