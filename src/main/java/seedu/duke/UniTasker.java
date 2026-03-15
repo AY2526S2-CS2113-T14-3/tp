@@ -76,22 +76,24 @@ public class UniTasker {
                     int categoryIndex = getCategoryIndex(sentence);
                     int taskIndex = Integer.parseInt(sentence[3]) - 1;
                     categories.setDeadlineStatus(categoryIndex, taskIndex, isMark);
-                } catch (IndexOutOfBoundsException e) {
-                    //temp
-                } catch (NumberFormatException e) {
+                } catch (Exception e) {
                     //temp
                 }
                 break;
             case "event":
-                int categoryIndex = getCategoryIndex(sentence);
-                int taskIndex = Integer.parseInt(sentence[3]) - 1;
-                categories.setEventStatus(categoryIndex, taskIndex, isMark);
-                if (isMark) {
-                    System.out.println("This task is marked as done:");
-                } else {
-                    System.out.println("This task is marked as not done:");
+                try {
+                    int categoryIndex = getCategoryIndex(sentence);
+                    int taskIndex = Integer.parseInt(sentence[3]) - 1;
+                    categories.setEventStatus(categoryIndex, taskIndex, isMark);
+                    if (isMark) {
+                        System.out.println("This task is marked as done:");
+                    } else {
+                        System.out.println("This task is marked as not done:");
+                    }
+                    System.out.println(categories.getEvent(categoryIndex, taskIndex));
+                } catch (Exception e) {
+                    //temp
                 }
-                System.out.println(categories.getEvent(categoryIndex, taskIndex));
                 break;
             default:
                 System.out.println("Unknown mark/unmark command: Try todo, deadline or event");
