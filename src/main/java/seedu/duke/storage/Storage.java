@@ -17,10 +17,10 @@ import java.time.format.DateTimeFormatter;
  * serializing {@code CategoryList} objects into a readable pipe-delimited format.
  */
 public class Storage {
+    private static final Logger logger = Logger.getLogger(Storage.class.getName());
     private String todoFilePath;
     private String deadlineFilePath;
     private String eventFilePath;
-    private static final Logger logger = Logger.getLogger(Storage.class.getName());
 
     public Storage(String todoPath, String deadlinePath, String eventPath) {
         this.todoFilePath = todoPath;
@@ -127,7 +127,7 @@ public class Storage {
                 while (s.hasNextLine()) {
                     lineCount++;
                     String line = s.nextLine();
-                    String[] parts =line.split(" \\| ");
+                    String[] parts = line.split(" \\| ");
 
                     if (parts.length < 5) {
                         logger.log(Level.WARNING, "Skipping malformed line " + lineCount + " in deadlines.txt");
@@ -144,7 +144,8 @@ public class Storage {
                     try {
                         by = seedu.duke.task.Deadline.parseDateTime(dateString);
                     } catch (java.time.format.DateTimeParseException e) {
-                        logger.log(Level.WARNING, "Line " + lineCount + ": Failed to parse date for '" + desc + "'. skipping.");
+                        logger.log(Level.WARNING, "Line " + lineCount + ": Failed to parse date for '"
+                                + desc + "'. skipping.");
                         continue;
                     }
 

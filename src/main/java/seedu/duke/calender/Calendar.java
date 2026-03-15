@@ -43,7 +43,8 @@ public class Calendar {
             schedule.computeIfAbsent(date, k -> new ArrayList<>()).add(task);
             logger.log(Level.INFO, "Task registered on date: " + date);
         } else {
-            logger.log(Level.WARNING, "Attempted to register non-Timed task to Calendar: " + task.getClass().getSimpleName());
+            logger.log(Level.WARNING, "Attempted to register non-Timed task to Calendar: "
+                    + task.getClass().getSimpleName());
         }
     }
 
