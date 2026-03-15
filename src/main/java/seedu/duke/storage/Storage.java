@@ -1,5 +1,8 @@
 package seedu.duke.storage;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
+
 import seedu.duke.tasklist.Category;
 import seedu.duke.tasklist.CategoryList;
 
@@ -17,8 +20,9 @@ public class Storage {
     private String todoFilePath;
     private String deadlineFilePath;
     private String eventFilePath;
+    private static final Logger logger = Logger.getLogger(Storage.class.getName());
 
-    public Storage(String todoPath, String deadlinePath,String eventPath) {
+    public Storage(String todoPath, String deadlinePath, String eventPath) {
         this.todoFilePath = todoPath;
         this.deadlineFilePath = deadlinePath;
         this.eventFilePath = eventPath;
@@ -32,32 +36,41 @@ public class Storage {
      * @throws IOException If there is an error writing to any of the files.
      */
     public void save(CategoryList categoryList) throws IOException {
-        FileWriter todoWriter = new FileWriter(todoFilePath);
-        FileWriter deadlineWriter = new FileWriter(deadlineFilePath);
-        FileWriter eventWriter = new FileWriter(eventFilePath);
+        assert categoryList != null : "CategoryList should not be null when saving";
+        logger.info("Starting save process...");
+        try {
+            FileWriter todoWriter = new FileWriter(todoFilePath);
+            FileWriter deadlineWriter = new FileWriter(deadlineFilePath);
+            FileWriter eventWriter = new FileWriter(eventFilePath);
 
-        for (int i = 0; i < categoryList.getAmount(); i++) {
-            Category cat = categoryList.getCategory(i);
+            for (int i = 0; i < categoryList.getAmount(); i++) {
+                Category cat = categoryList.getCategory(i);
 
-            for (int j = 0; j < cat.getTodoList().getSize(); j++) {
-                todoWriter.write(cat.getName() + " | "
-                        + cat.getTodoList().get(j).toFileFormat() + System.lineSeparator());
+                for (int j = 0; j < cat.getTodoList().getSize(); j++) {
+                    todoWriter.write(cat.getName() + " | "
+                            + cat.getTodoList().get(j).toFileFormat() + System.lineSeparator());
+                }
+
+                for (int j = 0; j < cat.getDeadlineList().getSize(); j++) {
+                    deadlineWriter.write(cat.getName() + " | "
+                            + cat.getDeadlineList().get(j).toFileFormat() + System.lineSeparator());
+                }
+
+                // Save Events from this category
+                for (int j = 0; j < cat.getEventList().getSize(); j++) {
+                    eventWriter.write(cat.getName() + " | "
+                            + cat.getEventList().get(j).toFileFormat() + System.lineSeparator());
+                }
             }
+            todoWriter.close();
+            deadlineWriter.close();
+            eventWriter.close();
 
-            for (int j = 0; j < cat.getDeadlineList().getSize(); j++) {
-                deadlineWriter.write(cat.getName() + " | "
-                        + cat.getDeadlineList().get(j).toFileFormat() + System.lineSeparator());
-            }
-
-            // Save Events from this category
-            for (int j = 0; j < cat.getEventList().getSize(); j++) {
-                eventWriter.write(cat.getName() + " | "
-                        + cat.getEventList().get(j).toFileFormat() + System.lineSeparator());
-            }
+            logger.info("Data successfully saved to files.");
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Failed to write to storage files.", e);
+            throw e;
         }
-        todoWriter.close();
-        deadlineWriter.close();
-        eventWriter.close();
     }
 
     /**
@@ -67,6 +80,9 @@ public class Storage {
      * @param categoryList The list to be populated with data from the files.
      */
     public void load(CategoryList categoryList) {
+        assert categoryList != null : "CategoryList should not be null when loading";
+        logger.info("Starting data load...");
+
         File todoFile = new File(todoFilePath);
         File deadlineFile = new File(deadlineFilePath);
         File eventFile = new File(eventFilePath);
@@ -104,12 +120,17 @@ public class Storage {
         }
 
         if (deadlineFile.exists()) {
+            logger.info("Attempting to load deadlines from: " + deadlineFilePath);
 
             try (java.util.Scanner s = new java.util.Scanner(deadlineFile)) {
+                int lineCount = 0;
                 while (s.hasNextLine()) {
-                    String[] parts = s.nextLine().split(" \\| ");
+                    lineCount++;
+                    String line = s.nextLine();
+                    String[] parts =line.split(" \\| ");
 
                     if (parts.length < 5) {
+                        logger.log(Level.WARNING, "Skipping malformed line " + lineCount + " in deadlines.txt");
                         continue;
                     }
 
@@ -123,8 +144,7 @@ public class Storage {
                     try {
                         by = seedu.duke.task.Deadline.parseDateTime(dateString);
                     } catch (java.time.format.DateTimeParseException e) {
-                        // Log the error and skip this specific task if parsing fails completely
-                        System.out.println("Skipping malformed deadline: " + desc);
+                        logger.log(Level.WARNING, "Line " + lineCount + ": Failed to parse date for '" + desc + "'. skipping.");
                         continue;
                     }
 
@@ -132,6 +152,9 @@ public class Storage {
                     ensureCategoryExists(categoryList, catName);
 
                     int catIdx = getCategoryIndex(categoryList, catName);
+                    // ASSERTION: The index should be valid if ensureCategoryExists worked correctly
+                    assert catIdx >= 0 : "Category index should be valid for " + catName;
+
                     categoryList.addDeadline(catIdx, desc, by);
                     if (isDone) {
                         categoryList.setDeadlineStatus(catIdx,
@@ -139,9 +162,12 @@ public class Storage {
                                 true);
                     }
                 }
+                logger.info("Successfully loaded deadlines from file.");
             } catch (java.io.FileNotFoundException e) {
-                System.out.println("No existing Deadline file found.");
+                logger.log(Level.SEVERE, "Deadline file vanished during read process", e);
             }
+        } else {
+            logger.info("No deadline file found at " + deadlineFilePath + ". Skipping load.");
         }
         if (eventFile.exists()) {
             try (java.util.Scanner s = new java.util.Scanner(eventFile)) {
@@ -167,7 +193,7 @@ public class Storage {
                     java.time.LocalDateTime to = java.time.LocalDateTime.parse(stringTo, storageFormatter);
 
                     int catIdx = getCategoryIndex(categoryList, catName);
-                    categoryList.addEvent(catIdx,desc,from,to);
+                    categoryList.addEvent(catIdx, desc, from, to);
                     if (isDone) {
                         categoryList.setEventStatus(catIdx,
                                 categoryList.getCategory(catIdx).getEventList().getSize() - 1, true);
