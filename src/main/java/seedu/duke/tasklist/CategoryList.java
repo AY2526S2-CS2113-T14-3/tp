@@ -134,7 +134,9 @@ public class CategoryList {
      * @param by            The LocalDateTime of the deadline.
      */
     public void addDeadline(int categoryIndex, String description, LocalDateTime by) {
-        categories.get(categoryIndex).addDeadline(new seedu.duke.task.Deadline(description, by));
+        DeadlineList deadlineList = categories.get(categoryIndex).getDeadlineList();
+        deadlineList.add(new seedu.duke.task.Deadline(description, by));
+        deadlineList.sortByDate();
     }
 
     public void deleteDeadline(int categoryIndex, int deadlineIndex) {
@@ -158,7 +160,9 @@ public class CategoryList {
         sb.append("=== ALL DEADLINES ===").append(System.lineSeparator());
         for (Category cat : categories) {
             sb.append(cat.getName().trim()).append(":").append(System.lineSeparator());
-            sb.append(cat.getDeadlineList().toString());
+            DeadlineList deadlineList = cat.getDeadlineList();
+            deadlineList.sortByDate();
+            sb.append(deadlineList);
         }
         return sb.toString();
     }
