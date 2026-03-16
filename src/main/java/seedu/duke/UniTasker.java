@@ -405,38 +405,6 @@ public class UniTasker {
 
     }
 
-    public static void handleSort(String[] sentence) {
-        if (sentence.length <= 1) {
-            System.out.println("Unknown sort command: try todo or deadline");
-            return;
-        }
-        String secondCommand = sentence[1];
-        switch (secondCommand) {
-        case "deadline":
-            int categoryIndex = getCategoryIndex(sentence);
-            categories.sortDeadlines(categoryIndex);
-            System.out.println("Deadlines in category " + (categoryIndex + 1) + " have been sorted.");
-            break;
-        case "todo":
-            try {
-                if (sentence.length <= 2) {
-                    throw new UniTaskerException("Insufficient arguments");
-                }
-                int categoryIndex1 = getCategoryIndex(sentence);
-                categories.getCategory(categoryIndex1).getTodoList().sortByPriority();
-                System.out.println("Todos in category " + (categoryIndex1 + 1) + " have been sorted by priority.");
-            } catch (Exception e) {
-                System.out.println("sort todo failed: " + e.getMessage());
-                System.out.println("Correct format: sort todo [catIndex]");
-
-            }
-            break;
-        default:
-            System.out.println("Unknown sort command: try todo or deadline");
-            break;
-        }
-        saveData();
-    }
 
     public static void handleCourse(String line) {
         try {
@@ -491,9 +459,6 @@ public class UniTasker {
                     break;
                 case "priority":
                     handlePriority(sentence);
-                    break;
-                case "sort":
-                    handleSort(sentence);
                     break;
                 case "course":
                     handleCourse(line);
