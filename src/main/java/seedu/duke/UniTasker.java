@@ -193,9 +193,12 @@ public class UniTasker {
                 java.time.LocalDateTime from = java.time.LocalDateTime.parse(eventTimeDetails[0], inputFormatter);
                 java.time.LocalDateTime to = java.time.LocalDateTime.parse(eventTimeDetails[1], inputFormatter);
 
-                if (from.isAfter(to)){
+                if (!from.isBefore(to)){
                     throw new UniTaskerException("Error: Start date and time must be earlier than End date and time " +
                             "(e.g., add event 1 consultation /from 2026-03-01 1800 2026-03-07 1900)");
+                }
+                if (eventDetails[0].isEmpty()){
+                    throw new UniTaskerException("Error: Description of event is empty");
                 }
                 categories.addEvent(eventCategoryIndex, eventDetails[0], from,to);
 
@@ -241,9 +244,15 @@ public class UniTasker {
                 LocalDateTime to = LocalDateTime.of(dateTo, LocalTime.parse(
                         toTime, DateTimeFormatter.ofPattern("HHmm")));
 
-                if (from.isAfter(to)) {
+                if (!from.isBefore(to)) {
                     throw new UniTaskerException("Error: Start date and time must be earlier than End date and time " +
                             "(e.g., add recurring 1 weekly event CS2113 lecture /from Friday 1600 /to Friday 1800)");
+                }
+                if (!(sentence[3].equals("weekly") && sentence[4].equals("event"))){
+                    throw new UniTaskerException("");
+                }
+                if (eventDetails[0].isEmpty()){
+                    throw new UniTaskerException("Error: Description of event is empty");
                 }
                 categories.addRecurringWeeklyEvent(eventCategoryIndex, eventDetails[0], from, to, calendar);
 

@@ -82,7 +82,9 @@ public class CategoryList {
                                             LocalDateTime from, LocalDateTime to,int recurringGroupIndex) {
         categories.get(categoryIndex).addEvent(new Event(description,
                 from, to,true,recurringGroupIndex));
-        recurringGroupId = recurringGroupIndex;
+        if (recurringGroupIndex > recurringGroupId) {
+            recurringGroupId = recurringGroupIndex;
+        }
     }
 
     public void addRecurringWeeklyEvent(int categoryIndex, String description,
@@ -197,6 +199,7 @@ public class CategoryList {
         for (Category cat : categories) {
             sb.append(cat.getName()).append(":").append(System.lineSeparator());
             EventList eventList = cat.getEventList();
+            eventList.sortByDay();
             for (int i=0;i<eventList.getSize();i++){
                 if(eventList.get(i).getIsRecurring()){
                     if (! existingGroups.contains(eventList.get(i).getRecurringGroupId())) {

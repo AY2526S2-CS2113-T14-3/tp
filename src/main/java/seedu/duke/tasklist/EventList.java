@@ -54,4 +54,10 @@ public class EventList extends TaskList<Event>{
 
         }
     }
+
+    public void sortByDay() {
+        Comparator<Event> dayOfWeek = (d1,d2)
+                -> Integer.compare(d1.getFrom().getDayOfWeek().getValue(),d2.getFrom().getDayOfWeek().getValue());
+        tasks.sort(dayOfWeek);
+    }
 }
