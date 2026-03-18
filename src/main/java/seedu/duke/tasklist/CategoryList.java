@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import seedu.duke.calender.Calendar;
-import seedu.duke.task.Deadline;
 import seedu.duke.task.Event;
 import seedu.duke.exception.UniTaskerException;
 import seedu.duke.task.Todo;
