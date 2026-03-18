@@ -1,11 +1,16 @@
 package seedu.duke.task;
 
+import java.util.logging.Logger;
+
 public class Todo extends Task {
+    private static final Logger logger = Logger.getLogger(Todo.class.getName());
     protected int priority;
+
 
     public Todo(String description) {
         super(description);
         this.priority = 0;
+        logger.info("Created Todo: " + description);
     }
 
     public Todo(String description, int priority) {
@@ -19,6 +24,7 @@ public class Todo extends Task {
 
     public void setPriority(int priority) {
         this.priority = priority;
+        logger.info("Updated priority to " + priority + " for Todo: " + description);
     }
 
     private String drawPriority(int priority) {

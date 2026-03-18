@@ -127,12 +127,17 @@ public class UniTasker {
             int categoryIndex = getCategoryIndex(sentence);
             switch (secondCommand) {
             case "category":
-                int deleteIndex = Integer.parseInt(sentence[2]);
-                categories.deleteCategory(deleteIndex - 1);
+                int deleteIndex = Integer.parseInt(sentence[2]) - 1;
+                String catName = categories.getCategory(deleteIndex).getName();
+                categories.deleteCategory(deleteIndex);
+                System.out.println("Deleted category: " + catName);
                 break;
             case "todo":
                 int todoIndex = Integer.parseInt(sentence[3]) - 1;
+                String todoName = categories.getCategory(categoryIndex).
+                        getTodo(todoIndex).getDescription();
                 categories.deleteTodo(categoryIndex, todoIndex);
+                System.out.println("Deleted todo: " + todoName);
                 break;
             case "deadline":
                 if (sentence[3].equalsIgnoreCase("all")) {

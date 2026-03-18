@@ -122,5 +122,66 @@ class DukeTest {
         assertEquals("task 1", categoryList.getCategory(0).getTodo(1).getDescription());
     }
 
+    @Test
+    public void setTodoPriority_success() {
+        CategoryList categoryList = new CategoryList();
+        categoryList.addCategory("School");
+        categoryList.addTodo(0, "finish tutorial");
+
+        try {
+            categoryList.setTodoPriority(0, 0, 3);
+        } catch (UniTaskerException e) {
+            // ignore
+        }
+
+        assertEquals(3, categoryList.getCategory(0).getTodo(0).getPriority());
+    }
+
+    @Test
+    public void sortTodoByPriority_success() {
+        CategoryList categoryList = new CategoryList();
+        categoryList.addCategory("School");
+        categoryList.addTodo(0, "low priority task");
+        categoryList.addTodo(0, "high priority task");
+        categoryList.addTodo(0, "medium priority task");
+
+        try {
+            categoryList.setTodoPriority(0, 0, 1); // low
+            categoryList.setTodoPriority(0, 1, 5); // high
+            categoryList.setTodoPriority(0, 2, 3); // medium
+        } catch (UniTaskerException e) {
+            // ignore
+        }
+
+        categoryList.getCategory(0).getTodoList().sortByPriority();
+
+        assertEquals("high priority task", categoryList.getCategory(0).getTodo(0).getDescription());
+        assertEquals("medium priority task", categoryList.getCategory(0).getTodo(1).getDescription());
+        assertEquals("low priority task", categoryList.getCategory(0).getTodo(2).getDescription());
+    }
+
+    @Test
+    public void listCategory_success() {
+        CategoryList categoryList = new CategoryList();
+        categoryList.addCategory("School");
+        categoryList.addCategory("Work");
+
+        String output = categoryList.toString();
+
+        assertTrue(output.contains("School"));
+        assertTrue(output.contains("Work"));
+    }
+
+    @Test
+    public void listSingleCategory_success() {
+        CategoryList categoryList = new CategoryList();
+        categoryList.addCategory("School");
+        categoryList.addTodo(0, "finish tutorial");
+
+        String output = categoryList.getCategory(0).toString();
+
+        assertTrue(output.contains("School"));
+        assertTrue(output.contains("finish tutorial"));
+    }
 }
 
