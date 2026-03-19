@@ -356,4 +356,22 @@ public class CategoryList {
         }
         return currentGroupNumbers;
     }
+
+    public void deleteMarkedTasks() {
+        for (int i = 0; i < categories.size(); i += 1) {
+            categories.get(i).deleteMarkedTasks();
+        }
+    }
+
+    public CategoryList returnFoundTasks(String input) {
+        CategoryList foundTasks = new CategoryList();
+        for (int i = 0; i < this.getAmount(); i += 1) {
+            Category foundCategory = this.getCategory(i).findMatches(input);
+            if (!foundCategory.hasNoTasks()) {
+                foundTasks.categories.add(foundCategory);
+            }
+        }
+        return foundTasks;
+    }
+
 }
