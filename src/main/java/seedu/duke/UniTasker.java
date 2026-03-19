@@ -753,34 +753,42 @@ public class UniTasker {
     public static void main(String[] args) {
         seedu.duke.logging.LogConfig.setup();
         logger.info("UniTasker is launching...");
-        Scanner setupScanner = new Scanner(System.in);
-
-        System.out.println("--- UniTasker Initial Configuration ---");
 
         startYear = LocalDate.now().getYear();
 
-        System.out.print("Enter the maximum year for planning (e.g., 2030): ");
-        while (!setupScanner.hasNextInt()) {
-            System.out.println("Please enter a valid year.");
-            setupScanner.next();
-        }
-        endYear = setupScanner.nextInt();
+        if (args.length >= 2) {
+            try {
+                endYear = Integer.parseInt(args[0]);
+                dailyTaskLimit = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid arguments. Usage: java UniTasker <endYear> <dailyLimit>");
+                return;
+            }
+        } else {
+            Scanner setupScanner = new Scanner(System.in);
 
-        System.out.print("Enter the maximum tasks allowed per day: ");
-        while (!setupScanner.hasNextInt()) {
-            System.out.println("Please enter a valid number.");
-            setupScanner.next();
-        }
-        dailyTaskLimit = setupScanner.nextInt();
-        setupScanner.nextLine();
+            System.out.println("--- UniTasker Initial Configuration ---");
 
-        System.out.println("Configuration complete! Range: " + startYear + "-" + endYear);
-        System.out.println(DOTTED_LINE);
+            System.out.print("Enter the maximum year for planning (e.g., 2030): ");
+            while (!setupScanner.hasNextInt()) {
+                System.out.println("Please enter a valid year.");
+                setupScanner.next();
+            }
+            endYear = setupScanner.nextInt();
+
+            System.out.print("Enter the maximum tasks allowed per day: ");
+            while (!setupScanner.hasNextInt()) {
+                System.out.println("Please enter a valid number.");
+                setupScanner.next();
+            }
+            dailyTaskLimit = setupScanner.nextInt();
+            setupScanner.nextLine();
+
+            System.out.println("Configuration complete! Range: " + startYear + "-" + endYear);
+            System.out.println(DOTTED_LINE);
+        }
+
         new UniTasker().run();
-    }
-
-    public static int getStartYear() {
-        return startYear;
     }
 
     public static int getEndYear() {
