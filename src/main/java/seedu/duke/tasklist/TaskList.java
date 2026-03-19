@@ -34,5 +34,14 @@ public abstract class TaskList<T extends Task> {
     public int getSize() {
         return tasks.size();
     }
+
+    public boolean contains(String description) {
+        for (T task : tasks) {
+            if (task.getDescription().equalsIgnoreCase(description.trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
