@@ -4,7 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static seedu.duke.UniTasker.*;
+import static seedu.duke.UniTasker.handleAdd;
+import static seedu.duke.UniTasker.handleDelete;
+import static seedu.duke.UniTasker.handleList;
+
 
 import seedu.duke.calender.Calendar;
 import seedu.duke.tasklist.CategoryList;
