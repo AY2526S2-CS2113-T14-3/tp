@@ -118,14 +118,25 @@ public class UniTasker {
     }
 
     public static void handleDelete(String[] sentence) {
-        if (sentence.length < 3) {
+        if (sentence.length < 2) {
             System.out.println("Error: Missing arguments. Use: delete [type] [index]");
             return;
         }
+
+
         try {
             String secondCommand = sentence[1];
-            int categoryIndex = getCategoryIndex(sentence);
+
+            // Don't use getCategory if doing delete marked
+            int categoryIndex = -1;
+            if (!secondCommand.equals("marked") && !secondCommand.equals("category")) {
+                categoryIndex = getCategoryIndex(sentence);
+            }
             switch (secondCommand) {
+            case "marked":
+                categories.deleteMarkedTasks();
+                System.out.println("All marked tasks deleted.");
+                break;
             case "category":
                 int deleteIndex = Integer.parseInt(sentence[2]) - 1;
                 String catName = categories.getCategory(deleteIndex).getName();
@@ -593,6 +604,17 @@ public class UniTasker {
         saveData();
     }
 
+    public static void handleFind(String[] sentence) {
+        if (sentence.length <= 1) {
+            System.out.println("Find command failed: missing string input.");
+            return;
+        }
+        String[] split = Arrays.copyOfRange(sentence, 1, sentence.length);
+        String input = String.join(" ", split);
+        System.out.println("Matching tasks found: " + System.lineSeparator());
+        System.out.println(categories.returnFoundTasks(input));
+    }
+
     public static void handleCourse(String line) {
         try {
             String courseCommand = line.substring("course".length()).trim();
@@ -644,6 +666,9 @@ public class UniTasker {
                 break;
             case "sort":
                 handleSort(sentence);
+                break;
+            case "find":
+                handleFind(sentence);
                 break;
             case "course":
                 handleCourse(line);
