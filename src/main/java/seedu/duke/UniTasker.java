@@ -30,13 +30,18 @@ import static seedu.duke.tasklist.CategoryList.refreshCalendar;
 import seedu.duke.coursestracker.CourseException;
 import seedu.duke.coursestracker.CourseManager;
 import seedu.duke.coursestracker.CourseParser;
+import seedu.duke.ui.CategoryUi;
+import seedu.duke.ui.DeadlineUi;
+import seedu.duke.ui.ErrorUi;
+import seedu.duke.ui.EventUi;
+import seedu.duke.ui.GeneralUi;
+import seedu.duke.ui.LimitUi;
+import seedu.duke.ui.TaskUi;
 import seedu.duke.util.DateUtils;
 import seedu.duke.util.TaskValidator;
 
 
 public class UniTasker {
-
-    public static final String DOTTED_LINE = "____________________________________________________________";
 
     private static final Logger logger = Logger.getLogger(UniTasker.class.getName());
 
@@ -61,13 +66,13 @@ public class UniTasker {
             courseManager = new CourseManager("courses.txt");
             courseParser = new CourseParser(courseManager);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            ErrorUi.printError(e.getMessage());
         }
     }
 
     public static void handleMark(String[] sentence, boolean isMark) {
         if (sentence.length < 4) {
-            System.out.println("Unknown mark/unmark command: try todo, deadline or event");
+            ErrorUi.printUnknownCommand("mark/unmark", "todo, deadline or event");
             return;
         }
         try {
@@ -79,17 +84,12 @@ public class UniTasker {
                     int taskIndex = Integer.parseInt(sentence[3]) - 1;
                     if (isMark) {
                         categories.markTodo(categoryIndex, taskIndex);
-                        System.out.println("mark todo successful");
                     } else {
                         categories.unmarkTodo(categoryIndex, taskIndex);
-                        System.out.println("unmark todo successful");
                     }
+                    TaskUi.printMarkTodoResult(isMark, null);
                 } catch (Exception e) {
-                    if (isMark) {
-                        System.out.println("mark todo failed: " + e.getMessage());
-                    } else {
-                        System.out.println("unmark todo failed: " + e.getMessage());
-                    }
+                    TaskUi.printMarkTodoResult(isMark, e.getMessage());
                 }
                 break;
             case "deadline":
@@ -97,8 +97,9 @@ public class UniTasker {
                     int categoryIndex = getCategoryIndex(sentence);
                     int taskIndex = Integer.parseInt(sentence[3]) - 1;
                     categories.setDeadlineStatus(categoryIndex, taskIndex, isMark);
+                    TaskUi.printStatusChanged(categories.getDeadline(categoryIndex, taskIndex), isMark);
                 } catch (Exception e) {
-                    //temp
+                    ErrorUi.printError(e.getMessage());
                 }
                 break;
             case "event":
@@ -106,32 +107,24 @@ public class UniTasker {
                     int categoryIndex = getCategoryIndex(sentence);
                     int taskIndex = Integer.parseInt(sentence[3]) - 1;
                     categories.setEventStatus(categoryIndex, taskIndex, isMark);
-                    System.out.println(DOTTED_LINE);
-                    if (isMark) {
-                        System.out.println("This task is marked as done:");
-                    } else {
-                        System.out.println("This task is marked as not done:");
-                    }
-                    System.out.println(categories.getEvent(categoryIndex, taskIndex));
-                    System.out.println(DOTTED_LINE);
+                    TaskUi.printStatusChanged(categories.getEvent(categoryIndex, taskIndex), isMark);
                 } catch (Exception e) {
-                    //temp
+                    ErrorUi.printError(e.getMessage());
                 }
                 break;
             default:
-                System.out.println("Unknown mark/unmark command: Try todo, deadline or event");
+                ErrorUi.printUnknownCommand("mark/unmark", "todo, deadline or event");
                 break;
             }
             saveData();
         } catch (Exception e) {
-            System.out.println("Error: Could not mark task. Format: mark deadline [cat] [index]");
-
+            ErrorUi.printMarkTaskError();
         }
     }
 
     public static void handleDelete(String[] sentence) {
         if (sentence.length < 2) {
-            System.out.println("Error: Missing arguments. Use: delete [type] [index]");
+            ErrorUi.printMissingArgs("Use: delete [type] [index]");
             return;
         }
 
@@ -147,41 +140,39 @@ public class UniTasker {
             switch (secondCommand) {
             case "marked":
                 categories.deleteMarkedTasks();
-                System.out.println("All marked tasks deleted.");
+                CategoryUi.printAllMarkedDeleted();
                 break;
             case "category":
                 int deleteIndex = Integer.parseInt(sentence[2]) - 1;
                 String catName = categories.getCategory(deleteIndex).getName();
                 categories.deleteCategory(deleteIndex);
-                System.out.println("Deleted category: " + catName);
+                CategoryUi.printCategoryDeleted(catName);
                 break;
             case "todo":
                 int todoIndex = Integer.parseInt(sentence[3]) - 1;
                 String todoName = categories.getCategory(categoryIndex).
                         getTodo(todoIndex).getDescription();
                 categories.deleteTodo(categoryIndex, todoIndex);
-                System.out.println("Deleted todo: " + todoName);
+                TaskUi.printTaskAction("Deleted", "todo", todoName);
                 break;
             case "deadline":
                 if (sentence[3].equalsIgnoreCase("all")) {
                     categories.deleteAllDeadlines(categoryIndex);
-                    System.out.println("All deadlines in this category have been deleted.");
+                    DeadlineUi.printItemDeleted("deadline", null, categoryIndex);
                 } else {
                     int deadlineIndex = Integer.parseInt(sentence[3]) - 1;
                     categories.deleteDeadline(categoryIndex, deadlineIndex);
-                    System.out.println("Deleted deadline " + (deadlineIndex + 1)
-                            + " from category " + (categoryIndex + 1));
+                    DeadlineUi.printItemDeleted("deadline", deadlineIndex, categoryIndex);
                 }
                 break;
             case "event":
                 if (sentence[3].equalsIgnoreCase("all")) {
                     categories.deleteAllEvents(categoryIndex);
-                    System.out.println("All events in this category have been deleted.");
+                    DeadlineUi.printItemDeleted("event", null, categoryIndex);
                 } else {
                     int eventIndex = Integer.parseInt(sentence[3]) - 1;
                     categories.deleteEvent(categoryIndex, eventIndex);
-                    System.out.println("Deleted event " + (eventIndex + 1)
-                            + " from category " + (categoryIndex + 1));
+                    DeadlineUi.printItemDeleted("event", eventIndex, categoryIndex);
                 }
                 break;
             case "recurring":
@@ -192,32 +183,31 @@ public class UniTasker {
                             "that represents the group number that belongs to the category");
                 }
                 categories.deleteRecurringEvent(categoryIndex, groupIndex);
-                System.out.println(DOTTED_LINE);
-                System.out.println("This recurring event has been deleted:");
-                System.out.println(eventToDelete.toStringRecurringList());
-                System.out.println(DOTTED_LINE);
+                EventUi.printRecurringEventDeleted(eventToDelete);
+
                 break;
             default:
-                System.out.println("Unknown delete command. Use: delete category/todo/deadline/event [index] or " +
-                        "delete recurring [category index] [group number]");
+                ErrorUi.printUnknownCommand("delete",
+                        "category/todo/deadline/event [index] or " +
+                                "delete recurring [category index] [group number]");
                 break;
             }
             saveData();
             refreshCalendar(categories, calendar);
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Error: Missing arguments. Example: delete todo 1 1");
+            ErrorUi.printMissingArgs("Example: delete todo 1 1");
         } catch (NumberFormatException e) {
-            System.out.println("Error: Please provide a valid index number.");
+            ErrorUi.printInvalidNumber();
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("Error: That index does not exist in the list.");
+            ErrorUi.printIndexNotFound();
         } catch (Exception e) {
-            System.out.println("An unexpected error occurred: " + e.getMessage());
+            ErrorUi.printError("An unexpected error occurred", e.getMessage());
         }
     }
 
     public static void handleAdd(String[] sentence) {
         if (sentence.length <= 1) {
-            System.out.println("Unknown add command: Try category, todo, deadline or event");
+            ErrorUi.printUnknownCommand("add", "category, todo, deadline or event");
             return;
         }
         String secondCommand = sentence[1];
@@ -231,11 +221,10 @@ public class UniTasker {
                 String name = String.join(" ", nameArr).trim();
                 TaskValidator.validateUniqueCategory(categories, name);
                 categories.addCategory(name);
-                System.out.println("Added category: " + name);
+                CategoryUi.printCategoryAdded(name);
             } catch (Exception e) {
-                System.out.println("add category failed: " + e.getMessage());
-                System.out.println("Correct format: add category [description]");
-
+                ErrorUi.printCommandFailed("add category", e.getMessage(),
+                        "add category [description]");
             }
             break;
         case "todo":
@@ -248,11 +237,10 @@ public class UniTasker {
                 String description = String.join(" ", descriptionArr).trim();
                 TaskValidator.validateUniqueTask(categories, todoCatIdx, description);
                 categories.addTodo(todoCatIdx, description);
-                System.out.println("Added todo: " + description);
-
+                TaskUi.printTaskAction("Added", "todo", description);
             } catch (Exception e) {
-                System.out.println("add todo failed: " + e.getMessage());
-                System.out.println("Correct format: add todo [categoryIndex] [description]");
+                ErrorUi.printCommandFailed("add todo", e.getMessage(),
+                        "add todo [categoryIndex] [description]");
             }
             break;
         case "deadline":
@@ -260,38 +248,43 @@ public class UniTasker {
                 int deadlineCatIdx = getCategoryIndex(sentence);
                 String raw = String.join(" ", Arrays.copyOfRange(sentence, 3, sentence.length));
                 if (!raw.contains(" /by ")) {
-                    System.out.println("Error: Missing '/by' keyword. Example: add deadline 1 Homework /by 2026-01-01");
+                    ErrorUi.printMissingByKeyword();
                     break;
                 }
                 String[] parts = raw.split(" /by ");
                 String description = parts[0].trim();
+                String dateString = parts[1].trim();
 
                 // Parse and validate (Handles 2026 limit and date-only fallback)
-                LocalDateTime by = Deadline.parseDateTime(parts[1]);
+                LocalDateTime by = Deadline.parseDateTime(dateString);
                 TaskValidator.validateWorkload(categories, by, dailyTaskLimit);
                 TaskValidator.validateUniqueTask(categories, deadlineCatIdx, description);
                 Deadline newDeadline = categories.addDeadline(deadlineCatIdx, description, by);
                 refreshCalendar(categories, calendar);
                 if (newDeadline != null) {
-                    System.out.println(DOTTED_LINE);
-                    System.out.println(" Got it. I've added this deadline to category: "
-                            + categories.getCategory(deadlineCatIdx).getName());
-                    System.out.println("   " + newDeadline);
-                    int count = categories.getCategory(deadlineCatIdx).getDeadlineList().getSize();
-                    System.out.println(" Now you have " + count + " deadlines in this category.");
-                    System.out.println(DOTTED_LINE);
+                    DeadlineUi.printDeadlineAdded(categories.getCategory(deadlineCatIdx).getName(), newDeadline,
+                            categories.getCategory(deadlineCatIdx).getDeadlineList().getSize());
                 }
-            } catch (IllegalDateException | DuplicateTaskException | DuplicateCategoryException |
-                     HighWorkloadException e) {
-                System.out.println("[WARNING] " + e.getMessage());
+            } catch (IllegalDateException e) {
+                ErrorUi.printError(e.getMessage());
+            } catch (DuplicateTaskException | DuplicateCategoryException | HighWorkloadException e) {
+                GeneralUi.printWarning(e.getMessage());
             } catch (Exception e) {
-                System.out.println("System Error: " + e.getMessage());
+                ErrorUi.printError("System Error", e.getMessage());
             }
             break;
         case "event":
             try {
 
                 String raw = String.join(" ", Arrays.copyOfRange(sentence, 3, sentence.length));
+
+                if (!raw.contains(" /from ")) {
+                    throw new UniTaskerException("Missing '/from' keyword! Use: /from dd-MM-yyyy HHmm");
+                }
+                if (!raw.contains(" /to ")) {
+                    // This prevents the ArrayIndexOutOfBoundsException and gives a helpful message
+                    throw new UniTaskerException("Missing '/to' keyword! Format: add event [index] [desc] /from [start] /to [end]");
+                }
 
                 String[] eventDetails = raw.split(" /from ");
                 String[] eventTimeDetails = eventDetails[1].split(" /to ");
@@ -302,7 +295,7 @@ public class UniTasker {
                 int eventCategoryIndex = getCategoryIndex(sentence);
 
                 if (!from.isBefore(to)) {
-                    throw new UniTaskerException("Error: Start date and time must be earlier than End date and time " +
+                    throw new UniTaskerException("Start date and time must be earlier than End date and time " +
                             "(e.g., add event 1 consultation /from 01-03-2026 1800 07-03-2026 1900)");
                 }
 
@@ -315,40 +308,37 @@ public class UniTasker {
                 if (newEvent != null) {
                     calendar.registerTask(newEvent);
                 }
-
-                System.out.println(DOTTED_LINE);
-                System.out.println("This event has been added:");
-                System.out.println(categories.getLatestEvent(eventCategoryIndex).toString());
-                System.out.println(DOTTED_LINE);
-
+                EventUi.printEventAdded(
+                        categories.getLatestEvent(eventCategoryIndex),
+                        categories.getCategory(eventCategoryIndex).getName(),
+                        categories.getCategory(eventCategoryIndex).getEventList().getSize()
+                );
             } catch (HighWorkloadException | DuplicateTaskException e) {
-                System.out.println("[WARNING] " + e.getMessage());
-            } catch (DateTimeParseException | ArrayIndexOutOfBoundsException | IllegalDateException e) {
-                System.out.println("Error: Use format dd-MM-yyyy HHmm (e.g., 11-12-2026 1830) " +
-                        "and follow this format: add event <categoryIndex> <description> " +
-                        "/from <startDateTime> /to <endDateTime>");
+                GeneralUi.printWarning(e.getMessage());
+            } catch (DateTimeParseException | ArrayIndexOutOfBoundsException e) {
+                ErrorUi.printAddEventFormatError();
             } catch (Exception e) {
-                System.out.println("Error: " + e.getMessage());
+                ErrorUi.printError(e.getMessage());
             }
             break;
         case "recurring":
             try {
                 int eventCategoryIndex = getCategoryIndex(sentence);
                 if (sentence.length < 5 || !sentence[3].equals("weekly") || !sentence[4].equals("event")) {
-                    throw new UniTaskerException("Error: Missing or invalid info. " +
+                    throw new UniTaskerException("Missing or invalid info. " +
                             "Expected format: add recurring <categoryIndex> weekly event <description> " +
                             "/from <day> <time> /to <day> <time>");
                 }
                 String raw = String.join(" ", Arrays.copyOfRange(sentence, 5, sentence.length));
                 if (!raw.contains(" /from ") && !raw.startsWith("/from ")) {
-                    throw new UniTaskerException("Error: Missing '/from'. " +
+                    throw new UniTaskerException("Missing '/from'. " +
                             "Expected format: add recurring 1 weekly event CS2113 lecture " +
                             "/from Friday 1600 /to Friday 1800");
                 }
 
                 String[] eventDetails = raw.split(" /from ");
                 if (!eventDetails[1].contains(" /to ")) {
-                    throw new UniTaskerException("Error: Missing '/to'. " +
+                    throw new UniTaskerException("Missing '/to'. " +
                             "Expected format: add recurring 1 weekly event CS2113 lecture " +
                             "/from Friday 1600 /to Friday 1800");
                 }
@@ -356,7 +346,7 @@ public class UniTasker {
 
                 String[] fromComponents = eventTimeDetails[0].split(" ");
                 if (fromComponents.length < 2) {
-                    throw new UniTaskerException("Error: Missing start day or time after '/from'." +
+                    throw new UniTaskerException("Missing start day or time after '/from'." +
                             " Expected: /from <day> <time> e.g. /from Friday 1600\n" +
                             "Ensure that the date format is EEEE HHmm"
                             + "where EEEE is 'Monday','Tuesday', 'Wednesday', 'Thursday','Friday','Saturday','Sunday'");
@@ -366,7 +356,7 @@ public class UniTasker {
 
                 String[] toComponents = eventTimeDetails[1].split(" ");
                 if (toComponents.length < 2) {
-                    throw new UniTaskerException("Error: Missing start day or time after '/from'." +
+                    throw new UniTaskerException("Missing start day or time after '/from'." +
                             " Expected: /to <day> <time> e.g. /tp Friday 1800\n" +
                             "Ensure that the date format is EEEE HHmm"
                             + "where EEEE is 'Monday','Tuesday', 'Wednesday', 'Thursday','Friday','Saturday','Sunday'");
@@ -377,14 +367,14 @@ public class UniTasker {
                 try {
                     DayOfWeek.valueOf(fromDayOfWeek.toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    throw new UniTaskerException("Error: Invalid start day '" + fromDayOfWeek + "'. " +
+                    throw new UniTaskerException("Invalid start day '" + fromDayOfWeek + "'. " +
                             "Ensure that the date format is EEEE HHmm"
                             + "where EEEE is 'Monday','Tuesday', 'Wednesday', 'Thursday','Friday','Saturday','Sunday'");
                 }
                 try {
                     DayOfWeek.valueOf(toDayOfWeek.toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    throw new UniTaskerException("Error: Invalid end day '" + toDayOfWeek + "'. " +
+                    throw new UniTaskerException("Invalid end day '" + toDayOfWeek + "'. " +
                             "Ensure that the date format is EEEE HHmm"
                             + "where EEEE is 'Monday','Tuesday', 'Wednesday', 'Thursday','Friday','Saturday','Sunday'");
                 }
@@ -402,7 +392,7 @@ public class UniTasker {
                     from = LocalDateTime.of(dateFrom,
                             LocalTime.parse(fromTime, DateTimeFormatter.ofPattern("HHmm")));
                 } catch (DateTimeParseException e) {
-                    throw new UniTaskerException("Error: Invalid start time '" + fromTime + "'. " +
+                    throw new UniTaskerException("Invalid start time '" + fromTime + "'. " +
                             "Use 4-digit format e.g. 1600");
                 }
                 try {
@@ -411,29 +401,25 @@ public class UniTasker {
                     to = LocalDateTime.of(dateTo, LocalTime.parse(
                             toTime, DateTimeFormatter.ofPattern("HHmm")));
                 } catch (DateTimeParseException e) {
-                    throw new UniTaskerException("Error: Invalid end time '" + toTime + "'. " +
+                    throw new UniTaskerException("Invalid end time '" + toTime + "'. " +
                             "Use 4-digit format e.g. 1800");
                 }
                 if (!from.isBefore(to)) {
-                    throw new UniTaskerException("Error: Start date and time must be earlier than End date and time " +
+                    throw new UniTaskerException("Start date and time must be earlier than End date and time " +
                             "(e.g., add recurring 1 weekly event CS2113 lecture /from Friday 1600 /to Friday 1800)");
                 }
 
                 categories.addRecurringWeeklyEvent(eventCategoryIndex, eventDetails[0], from, to, calendar);
-                System.out.println(DOTTED_LINE);
-                System.out.println("This recurring event has been added:");
-                System.out.println(categories.getLatestEvent(eventCategoryIndex).toStringRecurring());
-                System.out.println(DOTTED_LINE);
+                EventUi.printRecurringEventAdded(categories.getLatestEvent(eventCategoryIndex));
 
             } catch (UniTaskerException e) {
-                System.out.println(e.getMessage());
+                ErrorUi.printError(e.getMessage());
             } catch (Exception e) {
-                System.out.println("Error: Could not add event. Check your input format. " +
-                        "(e.g., add recurring 1 weekly event CS2113 lecture /from Friday 1600 /to Friday 1800)");
+                ErrorUi.printAddRecurringEventFormatError();
             }
             break;
         default:
-            System.out.println("Unknown add command: Try category, todo, deadline or event");
+            ErrorUi.printUnknownCommand("add", "category, todo, deadline or event");
             break;
         }
 
@@ -442,7 +428,8 @@ public class UniTasker {
 
     public static void handleReorder(String[] sentence) {
         if (sentence.length <= 1) {
-            System.out.println("Unknown reorder command: try category or todo");
+            ErrorUi.printUnknownCommand("reorder", "category or todo");
+            return;
         }
         String secondCommand = sentence[1];
         switch (secondCommand) {
@@ -454,11 +441,11 @@ public class UniTasker {
                 int categoryIndex1 = Integer.parseInt(sentence[2]) - 1;
                 int categoryIndex2 = Integer.parseInt(sentence[3]) - 1;
                 categories.reorderCategory(categoryIndex1, categoryIndex2);
-                System.out.println("Category: " + categories.getCategory(categoryIndex2).getName() +
-                        " moved to index " + (categoryIndex2 + 1));
+                TaskUi.printReordered("Category",
+                        categories.getCategory(categoryIndex2).getName(), -1, categoryIndex2 + 1);
             } catch (UniTaskerException | NumberFormatException e) {
-                System.out.println("reorder category failed: " + e.getMessage());
-                System.out.println("Correct format: reorder category [index1] [index2]");
+                ErrorUi.printCommandFailed("reorder category", e.getMessage(),
+                        "reorder category [index1] [index2]");
             }
             break;
         case "todo":
@@ -470,12 +457,12 @@ public class UniTasker {
                 int todoIndex1 = Integer.parseInt(sentence[3]) - 1;
                 int todoIndex2 = Integer.parseInt(sentence[4]) - 1;
                 categories.reorderTodo(categoryIndex, todoIndex1, todoIndex2);
-                System.out.println("Todo: " +
-                        categories.getCategory(categoryIndex).getTodo(todoIndex2).getDescription() +
-                        " inside category " + (categoryIndex + 1) + " moved to index " + (todoIndex2 + 1));
+                TaskUi.printReordered("Todo",
+                        categories.getCategory(categoryIndex).getTodo(todoIndex2).getDescription(),
+                        categoryIndex + 1, todoIndex2 + 1);
             } catch (UniTaskerException | NumberFormatException e) {
-                System.out.println("reorder todo failed: " + e.getMessage());
-                System.out.println("Correct format: reorder todo [catIndex] [todoIndex1] [todoIndex2]");
+                ErrorUi.printCommandFailed("reorder todo", e.getMessage(),
+                        "reorder todo [catIndex] [todoIndex1] [todoIndex2]");
             }
             break;
         default:
@@ -486,7 +473,7 @@ public class UniTasker {
 
     public static void handlePriority(String[] sentence) {
         if (sentence.length <= 4) {
-            System.out.println("Insufficient arguments for priority command");
+            ErrorUi.printMissingArgs("Insufficient arguments for priority command");
             return;
         }
         String secondCommand = sentence[1];
@@ -500,15 +487,14 @@ public class UniTasker {
                     throw new UniTaskerException("Out of priority range allowed (0-5)");
                 }
                 categories.setTodoPriority(categoryIndex, todoIndex, priority);
-                System.out.println("Priority of [" +
-                        categories.getCategory(categoryIndex).getTodo(todoIndex).getDescription() +
-                        "] set to " + priority);
+                TaskUi.printPrioritySet(
+                        categories.getCategory(categoryIndex).getTodo(todoIndex).getDescription(), priority);
             } catch (Exception e) {
-                System.out.println("priority todo failed: " + e.getMessage());
+                ErrorUi.printCommandFailed("priority todo", e.getMessage(), null);
             }
             break;
         default:
-            System.out.println("Unknown priority command: try todo");
+            ErrorUi.printUnknownCommand("priority", "todo");
             break;
         }
         saveData();
@@ -516,22 +502,21 @@ public class UniTasker {
 
     public static void handleListCategory(String[] sentence) {
         int sentenceLength = sentence.length;
-        int catIndex;
         switch (sentenceLength) {
         case 2:
-            System.out.println(categories);
+            CategoryUi.printList(categories.toString());
             break;
         case 3:
             try {
-                catIndex = getCategoryIndex(sentence);
-                System.out.println(categories.getCategory(catIndex));
+                int catIndex = getCategoryIndex(sentence);
+                CategoryUi.printList(categories.getCategory(catIndex).toString());
                 break;
             } catch (Exception e) {
-                System.out.println("list category [index] failed: " + e.getMessage());
+                ErrorUi.printCommandFailed("list category [index]", e.getMessage(), null);
             }
             break;
         default:
-            System.out.println("List command too many arguments");
+            ErrorUi.printMissingArgs("List command has too many arguments");
             break;
         }
     }
@@ -543,15 +528,13 @@ public class UniTasker {
             handleListCategory(sentence);
             break;
         case "todo":
-            System.out.println(categories.getAllTodos());
+            CategoryUi.printList(categories.getAllTodos());
             break;
         case "deadline":
-            System.out.println(categories.getAllDeadlines());
+            CategoryUi.printList(categories.getAllDeadlines());
             break;
         case "event":
-            System.out.println(DOTTED_LINE);
-            System.out.println(categories.getAllEvents());
-            System.out.println(DOTTED_LINE);
+            GeneralUi.printWithBorder(null, categories.getAllEvents());
             break;
         case "range":
             try {
@@ -559,7 +542,7 @@ public class UniTasker {
                 LocalDate end = DateUtils.parseLocalDate(sentence[3]);
 
                 if (start.getYear() < startYear || end.getYear() > endYear) {
-                    System.out.println("Error: Range search must be within " + startYear + "-" + endYear);
+                    ErrorUi.printRangeOutOfBounds(startYear, endYear);
                     break;
                 }
                 if (start.isAfter(end)) {
@@ -573,32 +556,23 @@ public class UniTasker {
                     calendar.displayRange(start, end);
                 }
             } catch (DateTimeParseException e) {
-                System.out.println("Error: Use date format dd-mm-yyyy (e.g., list range 01-03-2026 07-03-2026)");
+                ErrorUi.printRangeDateFormatError();
             } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println("Error: Include start date and end date using the date format dd-mm-yyyy " +
-                        "(e.g., list range 01-03-2026 07-03-2026)");
+                ErrorUi.printRangeMissingDates();
             } catch (IllegalArgumentException e) {
-                System.out.println("Error: Start date must be earlier than End date " +
-                        "(e.g., list range 01-11-2026 07-11-2026)");
+                ErrorUi.printRangeStartAfterEnd();
             } catch (IllegalDateException e) {
-                System.out.println("Error: " + e.getMessage());
+                ErrorUi.printError(e.getMessage());
             }
             break;
         case "recurring":
-            System.out.println(DOTTED_LINE);
-            System.out.println(categories.getAllRecurringEvents());
-            System.out.println(DOTTED_LINE);
-
+            GeneralUi.printWithBorder(null, categories.getAllRecurringEvents());
             break;
-
         case "limit":
-            System.out.println(DOTTED_LINE);
-            System.out.println("Current Year Range: " + startYear + " to " + endYear);
-            System.out.println("Current daily task limit: " + dailyTaskLimit);
-            System.out.println(DOTTED_LINE);
+            LimitUi.printCurrentLimits(startYear, endYear, dailyTaskLimit);
             break;
         default:
-            System.out.println("Unknown list command.");
+            ErrorUi.printUnknownCommand("list", "category, todo, deadline, event, range, recurring or limit");
             break;
         }
 
@@ -606,7 +580,7 @@ public class UniTasker {
 
     public static void handleSort(String[] sentence) {
         if (sentence.length <= 1) {
-            System.out.println("Unknown sort command: try todo");
+            ErrorUi.printUnknownCommand("sort", "todo");
             return;
         }
         String secondCommand = sentence[1];
@@ -618,15 +592,13 @@ public class UniTasker {
                 }
                 int categoryIndex1 = getCategoryIndex(sentence);
                 categories.getCategory(categoryIndex1).getTodoList().sortByPriority();
-                System.out.println("Todos in category " + (categoryIndex1 + 1) + " have been sorted by priority.");
+                TaskUi.printSortedByPriority(categoryIndex1);
             } catch (Exception e) {
-                System.out.println("sort todo failed: " + e.getMessage());
-                System.out.println("Correct format: sort todo [catIndex]");
-
+                ErrorUi.printCommandFailed("sort todo", e.getMessage(), "sort todo [catIndex]");
             }
             break;
         default:
-            System.out.println("Unknown sort command: try todo or deadline");
+            ErrorUi.printUnknownCommand("sort", "todo");
             break;
         }
         saveData();
@@ -634,32 +606,30 @@ public class UniTasker {
 
     public static void handleFind(String[] sentence) {
         if (sentence.length <= 1) {
-            System.out.println("Find command failed: missing string input.");
+            ErrorUi.printError("Find command failed: missing string input.");
             return;
         }
         String[] split = Arrays.copyOfRange(sentence, 1, sentence.length);
         String input = String.join(" ", split);
-        System.out.println("Matching tasks found: " + System.lineSeparator());
-        System.out.println(categories.returnFoundTasks(input));
+        TaskUi.printFindResults(categories.returnFoundTasks(input));
     }
 
     public static void handleCourse(String line) {
         try {
             String courseCommand = line.substring("course".length()).trim();
             String result = courseParser.parse(courseCommand);
-            System.out.println(result);
+            LimitUi.printCourseResult(result);
         } catch (CourseException e) {
-            System.out.println("Error: " + e.getMessage());
+            ErrorUi.printError(e.getMessage());
         } catch (Exception e) {
-            System.out.println("Error: Could not process course command.");
+            ErrorUi.printError("Could not process course command.");
         }
     }
 
     public static void handleLimit(String[] sentence) {
         try {
             if (sentence.length < 3) {
-                System.out.println("Error: Use format 'limit task [number]' " +
-                        "or 'limit year [number] to change the daily limit");
+                ErrorUi.printLimitFormatError();
                 return;
             }
 
@@ -669,41 +639,32 @@ public class UniTasker {
             switch (type) {
             case "task":
                 if (newValue < 1) {
-                    System.out.println("Error: Limit must be at least 1 task per day.");
+                    ErrorUi.printLimitMinError();
                     return;
                 }
                 setDailyTaskLimit(newValue);
                 break;
             case "year":
                 if (newValue < startYear) {
-                    System.out.println("Error: End year cannot be before the start year (" + startYear + ").");
+                    ErrorUi.printLimitYearBeforeStart(startYear);
                     return;
                 }
                 setEndYear(newValue);
-                System.out.println("Calendar end year updated to: " + newValue);
+                LimitUi.printEndYearUpdated(newValue);
                 break;
             default:
-                System.out.println("Error: Unknown limit type. Use 'task' or 'year'.");
+                ErrorUi.printUnknownLimitType();
                 break;
             }
         } catch (NumberFormatException e) {
-            System.out.println("Error: Please provide a valid integer.");
+            ErrorUi.printInvalidNumber();
         }
     }
 
     public void run(boolean isTestMode) {
         logger.info("UniTasker session started.");
 
-        System.out.println("Welcome to UniTasker");
-
-
-        if (!isTestMode) {
-            System.out.println("Current Year Range: " + startYear + " to " + endYear);
-            System.out.println("Current Daily Task Limit: " + dailyTaskLimit);
-            System.out.println("\nTo change these settings:");
-            System.out.println("- Use 'limit task [number]' to update daily workload.");
-            System.out.println("- Use 'limit year [number]' to extend the calendar range.");
-        }
+        GeneralUi.printWelcome(startYear, endYear, dailyTaskLimit, isTestMode);
 
         Scanner in = new Scanner(System.in);
         while (true) {
@@ -716,7 +677,7 @@ public class UniTasker {
             String commandWord = sentence[0];
             switch (commandWord) {
             case "exit":
-                System.out.println("Exiting UniTasker.");
+                GeneralUi.printMessage("Exiting UniTasker.");
                 return;
             case "add":
                 handleAdd(sentence);
@@ -752,7 +713,7 @@ public class UniTasker {
                 handleLimit(sentence);
                 break;
             default:
-                System.out.println("default echo: " + line);
+                GeneralUi.printMessage("default echo: " + line);
                 break;
             }
         }
@@ -765,7 +726,7 @@ public class UniTasker {
                 storage.save(categories);
             }
         } catch (java.io.IOException e) {
-            System.out.println("Error: File write failed.");
+            ErrorUi.printFileSaveError();
         } catch (Exception e) {
             // This catches the NullPointerExceptions that are currently killing your JAR
             logger.log(Level.SEVERE, "Internal error during save", e);
@@ -783,7 +744,7 @@ public class UniTasker {
 
     public static void setDailyTaskLimit(int newLimit) {
         dailyTaskLimit = newLimit;
-        System.out.println("Daily task limit updated to: " + dailyTaskLimit);
+        LimitUi.printDailyTaskLimitUpdated(dailyTaskLimit);
     }
 
     public static void main(String[] args) {
