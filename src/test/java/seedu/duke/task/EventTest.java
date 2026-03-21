@@ -25,6 +25,7 @@ import java.time.temporal.TemporalAdjusters;
 public class EventTest {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm");
     private final DateTimeFormatter formatList = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private static final String SEP = "____________________________________________________________";
 
     @Test
     public void addEvent_success() {
@@ -47,12 +48,12 @@ public class EventTest {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
         handleAdd("add event 1 interview /from 02/12/2026 1800 /to 02/12/2026 1900".split(" "));
-        assertEquals(
-                "Error: Use format dd-MM-yyyy HHmm (e.g., 11-12-2026 1830) " +
+        assertEquals(SEP + System.lineSeparator() +
+                        "Error: Use format dd-MM-yyyy HHmm (e.g., 11-12-2026 1830) " +
                         "and follow this format: add event <categoryIndex> <description> " +
-                        "/from <startDateTime> /to <endDateTime>",
-                outContent.toString().trim()
-        );
+                        "/from <startDateTime> /to <endDateTime>" + System.lineSeparator() +
+                        SEP,
+                outContent.toString().trim());
     }
 
     @Test
@@ -80,10 +81,10 @@ public class EventTest {
         LocalDateTime to = LocalDateTime.parse("02-02-2026 1830", formatter);
         categoryList.addEvent(0, "consultation", from, to);
         handleDelete("delete event 1 0".split(" "));
-        assertEquals(
-                "Error: That index does not exist in the list.",
-                outContent.toString().trim()
-        );
+        assertEquals(SEP + System.lineSeparator() +
+                        "Error: That index does not exist in the list." + System.lineSeparator() +
+                        SEP,
+                outContent.toString().trim());
     }
 
     @Test
@@ -116,9 +117,9 @@ public class EventTest {
                 LocalDate.parse("25-12-2026", formatList), Event.class);
 
         String expected = "--- 01-11-2026 ---\n" +
-                "[E][ ] consultation (from: 2026-11-01 1830 to: 2026-12-02 1830)\n" +
+                "[E][ ] consultation (from: 01-11-2026 1830 to: 02-12-2026 1830)\n" +
                 "--- 03-12-2026 ---\n" +
-                "[E][ ] meeting (from: 2026-12-03 1830 to: 2026-12-03 1930)\n";
+                "[E][ ] meeting (from: 03-12-2026 1830 to: 03-12-2026 1930)\n";
 
         String actual = outContent.toString().replace("\r\n", "\n").replace("\r", "\n");
 
@@ -148,14 +149,16 @@ public class EventTest {
 
         handleList("list range 03-12-2026 25-11-2026 /event".split(" "));
 
-        assertEquals("Error: Start date must be earlier than End date "
-                        + "(e.g., list range 01-11-2026 07-11-2026)",
-                outContent.toString().trim()
-        );
+        assertEquals(SEP + System.lineSeparator() +
+                        "Error: Start date must be earlier than End date " +
+                        "(e.g., list range 01-11-2026 07-11-2026)" + System.lineSeparator() +
+                        SEP,
+                outContent.toString().trim());
 
     }
+
     @Test
-    public void addRecurringEvent_success(){
+    public void addRecurringEvent_success() {
         CategoryList categoryList = new CategoryList();
         categoryList.addCategory("School");
 
@@ -176,12 +179,12 @@ public class EventTest {
         LocalDateTime to = LocalDateTime.of(dateTo, LocalTime.parse(
                 toTime, DateTimeFormatter.ofPattern("HHmm")));
 
-        categoryList.addRecurringWeeklyEvent(0, "CS2113 lecture",from,to,new Calendar());
-        assertEquals(true,categoryList.getLatestEvent(0).getIsRecurring());
+        categoryList.addRecurringWeeklyEvent(0, "CS2113 lecture", from, to, new Calendar());
+        assertEquals(true, categoryList.getLatestEvent(0).getIsRecurring());
     }
 
     @Test
-    public void deleteRecurringEvent_success(){
+    public void deleteRecurringEvent_success() {
         CategoryList categoryList = new CategoryList();
         categoryList.addCategory("School");
 
@@ -205,7 +208,7 @@ public class EventTest {
         LocalDateTime to = LocalDateTime.of(dateTo, LocalTime.parse(
                 toTime, DateTimeFormatter.ofPattern("HHmm")));
 
-        categoryList.addRecurringWeeklyEvent(0, "CS2113 lecture",from,to,new Calendar());
+        categoryList.addRecurringWeeklyEvent(0, "CS2113 lecture", from, to, new Calendar());
         int groupIndex = 1;
         Event eventToDelete = categoryList.findRecurringEventToDelete(0, groupIndex);
         categoryList.deleteRecurringEvent(0, groupIndex);
