@@ -164,7 +164,6 @@ public class Storage {
                         continue;
                     }
 
-                    // Ensure category exists
                     ensureCategoryExists(categoryList, catName);
 
                     int catIdx = getCategoryIndex(categoryList, catName);

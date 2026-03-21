@@ -50,6 +50,10 @@ public class UniTasker {
     private static int startYear;
     private static int endYear;
 
+    private static final int DEFAULT_END_YEAR = 2030;
+    private static final int DEFAULT_DAILY_TASK_LIMIT = 8;
+
+
     public UniTasker() {
         try {
             storage.load(categories);
@@ -589,6 +593,7 @@ public class UniTasker {
 
         case "limit":
             System.out.println(DOTTED_LINE);
+            System.out.println("Current Year Range: " + startYear + " to " + endYear);
             System.out.println("Current daily task limit: " + dailyTaskLimit);
             System.out.println(DOTTED_LINE);
             break;
@@ -652,28 +657,54 @@ public class UniTasker {
 
     public static void handleLimit(String[] sentence) {
         try {
-            if (sentence.length < 3 || !sentence[1].equalsIgnoreCase("task")) {
-                System.out.println("Error: Use format 'limit task [number]'");
+            if (sentence.length < 3) {
+                System.out.println("Error: Use format 'limit task [number]' " +
+                        "or 'limit year [number] to change the daily limit");
                 return;
             }
 
-            int newLimit = Integer.parseInt(sentence[2]);
+            String type = sentence[1].toLowerCase();
+            int newValue = Integer.parseInt(sentence[2]);
 
-            if (newLimit < 1) {
-                System.out.println("Error: Limit must be at least 1 task per day.");
-                return;
+            switch (type) {
+            case "task":
+                if (newValue < 1) {
+                    System.out.println("Error: Limit must be at least 1 task per day.");
+                    return;
+                }
+                setDailyTaskLimit(newValue);
+                break;
+            case "year":
+                if (newValue < startYear) {
+                    System.out.println("Error: End year cannot be before the start year (" + startYear + ").");
+                    return;
+                }
+                setEndYear(newValue);
+                System.out.println("Calendar end year updated to: " + newValue);
+                break;
+            default:
+                System.out.println("Error: Unknown limit type. Use 'task' or 'year'.");
+                break;
             }
-
-            setDailyTaskLimit(newLimit);
-
         } catch (NumberFormatException e) {
-            System.out.println("Error: Please provide a valid integer for the limit.");
+            System.out.println("Error: Please provide a valid integer.");
         }
     }
 
-    public void run() {
+    public void run(boolean isTestMode) {
         logger.info("UniTasker session started.");
+
         System.out.println("Welcome to UniTasker");
+
+
+        if (!isTestMode) {
+            System.out.println("Current Year Range: " + startYear + " to " + endYear);
+            System.out.println("Current Daily Task Limit: " + dailyTaskLimit);
+            System.out.println("\nTo change these settings:");
+            System.out.println("- Use 'limit task [number]' to update daily workload.");
+            System.out.println("- Use 'limit year [number]' to extend the calendar range.");
+        }
+
         Scanner in = new Scanner(System.in);
         while (true) {
             if (!in.hasNextLine()) {  // Check if input is available
@@ -760,10 +791,11 @@ public class UniTasker {
         logger.info("UniTasker is launching...");
 
         startYear = LocalDate.now().getYear();
-        endYear = 2030;
-        dailyTaskLimit = 8;
+        endYear = DEFAULT_END_YEAR;
+        dailyTaskLimit = DEFAULT_DAILY_TASK_LIMIT;
 
-        new UniTasker().run();
+        boolean isTestMode = args.length > 0 && args[0].equalsIgnoreCase("-test");
+        new UniTasker().run(isTestMode);
     }
 
     public static int getEndYear() {

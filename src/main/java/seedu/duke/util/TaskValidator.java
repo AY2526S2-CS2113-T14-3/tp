@@ -55,7 +55,7 @@ public class TaskValidator {
                 }
             }
         }
-        if (totalTimedTasks >= maxTasks ) {
+        if (totalTimedTasks >= maxTasks) {
             throw new HighWorkloadException("High Workload: You already have " + totalTimedTasks +
                     " scheduled tasks on " + dateTime.toLocalDate() + ". Take a break!");
         }

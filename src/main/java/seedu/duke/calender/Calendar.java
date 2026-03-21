@@ -2,6 +2,7 @@ package seedu.duke.calender;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
@@ -72,7 +73,7 @@ public class Calendar {
         }
 
         for (var entry : view.entrySet()) {
-            System.out.println("--- " + entry.getKey().format(UI_DATE_FORMATTER) + " ---");
+            printDate(entry);
             for (Task t : entry.getValue()) {
                 System.out.println(t);
             }
@@ -99,7 +100,7 @@ public class Calendar {
             for (Task t : entry.getValue()) {
                 if (taskType.isInstance(t)) {
                     if (!foundInDay) {
-                        System.out.println("--- " + entry.getKey().format(UI_DATE_FORMATTER) + " ---");
+                        printDate(entry);
                         foundInDay = true;
                     }
                     dayOutput.append(t).append("\n");
@@ -112,6 +113,10 @@ public class Calendar {
         if (!foundAny) {
             System.out.println("No " + taskType.getSimpleName() + "s found in this range.");
         }
+    }
+
+    private static void printDate(Map.Entry<LocalDate, List<Task>> entry) {
+        System.out.println("--- " + entry.getKey().format(UI_DATE_FORMATTER) + " ---");
     }
 
     /**
