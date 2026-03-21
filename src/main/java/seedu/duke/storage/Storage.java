@@ -18,6 +18,8 @@ import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Logger;
 
+import seedu.duke.ui.ErrorUi;
+
 /**
  * Handles the loading and saving of task data to local text files.
  * This class ensures that user data persists across different sessions by
@@ -67,7 +69,6 @@ public class Storage {
                             + cat.getDeadlineList().get(j).toFileFormat() + System.lineSeparator());
                 }
 
-                // Save Events from this category
                 for (int j = 0; j < cat.getEventList().getSize(); j++) {
                     eventWriter.write(cat.getName() + " | "
                             + cat.getEventList().get(j).toFileFormat() + System.lineSeparator());
@@ -95,155 +96,157 @@ public class Storage {
         File eventFile = new File(eventFilePath);
 
         if (todoFile.exists()) {
-            try (java.util.Scanner s = new java.util.Scanner(todoFile)) {
-                while (s.hasNextLine()) {
-                    String[] parts = s.nextLine().split(" \\| ");
-
-                    if (parts.length == 2) {
-                        if (parts[1].equals("C")) {
-                            categoryList.addCategory(parts[0].trim());
-                            continue;
-                        }
-                    }
-
-                    if (parts.length < 5) {
-                        continue;
-                    }
-
-                    String catName = parts[0];
-                    boolean isDone = parts[2].equals("1");
-                    String priority = parts[3];
-                    String desc = parts[4];
-
-                    ensureCategoryExists(categoryList, catName);
-
-                    int catIdx = getCategoryIndex(categoryList, catName);
-                    categoryList.addTodo(catIdx, desc);
-                    if (isDone) {
-                        categoryList.markTodo(catIdx, categoryList.getCategory(catIdx).getTodoList().getSize() - 1);
-                    }
-                    int priorityInt = Integer.parseInt(priority);
-                    categoryList.setTodoPriority(catIdx,
-                            categoryList.getCategory(catIdx).getTodoList().getSize() - 1,
-                            priorityInt);
-
-                }
-            } catch (java.io.FileNotFoundException e) {
-                System.out.println("No existing Todo file found.");
-            } catch (UniTaskerException e) {
-                System.out.println("Error during load: " + e.getMessage());
-            }
+            loadTodos(categoryList, todoFile);
         }
 
         if (deadlineFile.exists()) {
-            logger.info("Attempting to load deadlines from: " + deadlineFilePath);
-
-            try (java.util.Scanner s = new java.util.Scanner(deadlineFile)) {
-                int lineCount = 0;
-                while (s.hasNextLine()) {
-                    lineCount++;
-                    String line = s.nextLine();
-                    String[] parts = line.split(" \\| ");
-
-                    if (parts.length < 5) {
-                        logger.log(Level.WARNING, "Skipping malformed line " + lineCount + " in deadlines.txt");
-                        continue;
-                    }
-
-                    String catName = parts[0].trim();
-                    boolean isDone = parts[2].trim().equals("1");
-                    String desc = parts[3].trim();
-                    String dateString = parts[4].trim();
-
-                    LocalDateTime by;
-
-                    try {
-                        by = DateUtils.parseDateTimeFromFile(dateString);
-                    } catch (IllegalDateException e) {
-                        logger.warning("Skipping line " + lineCount + " - Reason:" + e.getMessage());
-                        continue;
-                    }
-
-                    ensureCategoryExists(categoryList, catName);
-
-                    int catIdx = getCategoryIndex(categoryList, catName);
-                    // ASSERTION: The index should be valid if ensureCategoryExists worked correctly
-                    assert catIdx >= 0 : "Category index should be valid for " + catName;
-
-                    categoryList.addDeadline(catIdx, desc, by);
-                    if (isDone) {
-                        categoryList.setDeadlineStatus(catIdx,
-                                categoryList.getCategory(catIdx).getDeadlineList().getSize() - 1,
-                                true);
-                    }
-                }
-                logger.info("Successfully loaded deadlines from file.");
-            } catch (java.io.FileNotFoundException e) {
-                logger.log(Level.SEVERE, "Deadline file vanished during read process", e);
-            }
+            loadDeadlines(categoryList, deadlineFile);
         } else {
             logger.info("No deadline file found at " + deadlineFilePath + ". Skipping load.");
         }
+
         if (eventFile.exists()) {
-            logger.info("Attempting to load events from: " + eventFilePath);
-            int lineNumber = 0;
-            try (java.util.Scanner s = new java.util.Scanner(eventFile)) {
-                DateTimeFormatter storageFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm");
-                while (s.hasNextLine()) {
-                    lineNumber++;
-                    String[] parts = s.nextLine().split(" \\| ");
+            loadEvents(categoryList, eventFile);
+        }
+    }
 
-                    if (parts.length < 6) {
-                        logger.log(Level.WARNING, "Skipping malformed line " + lineNumber + " in events.txt");
-                        continue;
-                    }
+    private void loadTodos(CategoryList categoryList, File todoFile) {
+        try (java.util.Scanner s = new java.util.Scanner(todoFile)) {
+            while (s.hasNextLine()) {
+                String[] parts = s.nextLine().split(" \\| ");
 
-                    // Format: Category | E | Status | Description | Date (from) | Date (to)
-                    String catName = parts[0];
-                    boolean isDone = parts[2].equals("1");
-                    String desc = parts[3];
-                    String stringFrom = parts[4];
-                    String stringTo = parts[5];
-                    String recurringId = (parts.length > 6) ? parts[6] : "";
-                    // Ensure category exists
-                    ensureCategoryExists(categoryList, catName);
-                    // Convert the string dateTime to dateTime objects
-                    java.time.LocalDateTime from = null;
-                    java.time.LocalDateTime to = null;
+                if (parts.length == 2 && parts[1].equals("C")) {
+                    categoryList.addCategory(parts[0].trim());
+                    continue;
+                }
+
+                if (parts.length < 5) {
+                    continue;
+                }
+
+                String catName = parts[0];
+                boolean isDone = parts[2].equals("1");
+                String priority = parts[3];
+                String desc = parts[4];
+
+                ensureCategoryExists(categoryList, catName);
+                int catIdx = getCategoryIndex(categoryList, catName);
+                categoryList.addTodo(catIdx, desc);
+                if (isDone) {
+                    categoryList.markTodo(catIdx,
+                            categoryList.getCategory(catIdx).getTodoList().getSize() - 1);
+                }
+                categoryList.setTodoPriority(catIdx,
+                        categoryList.getCategory(catIdx).getTodoList().getSize() - 1,
+                        Integer.parseInt(priority));
+            }
+        } catch (java.io.FileNotFoundException e) {
+            logger.warning("Todo file not found during load.");
+        } catch (UniTaskerException e) {
+            ErrorUi.printError("Load error", e.getMessage());
+        }
+    }
+
+    private void loadDeadlines(CategoryList categoryList, File deadlineFile) {
+        logger.info("Attempting to load deadlines from: " + deadlineFilePath);
+        try (java.util.Scanner s = new java.util.Scanner(deadlineFile)) {
+            int lineCount = 0;
+            while (s.hasNextLine()) {
+                lineCount++;
+                String line = s.nextLine();
+                String[] parts = line.split(" \\| ");
+
+                if (parts.length < 5) {
+                    logger.log(Level.WARNING, "Skipping malformed line " + lineCount + " in deadlines.txt");
+                    continue;
+                }
+
+                String catName = parts[0].trim();
+                boolean isDone = parts[2].trim().equals("1");
+                String desc = parts[3].trim();
+                String dateString = parts[4].trim();
+
+                LocalDateTime by;
+
+                try {
+                    by = DateUtils.parseDateTimeFromFile(dateString);
+                } catch (IllegalDateException e) {
+                    logger.warning("Skipping line " + lineCount + " - Reason:" + e.getMessage());
+                    continue;
+                }
+
+                ensureCategoryExists(categoryList, catName);
+                int catIdx = getCategoryIndex(categoryList, catName);
+                assert catIdx >= 0 : "Category index should be valid for " + catName;
+
+                categoryList.addDeadline(catIdx, desc, by);
+                if (isDone) {
+                    categoryList.setDeadlineStatus(catIdx,
+                            categoryList.getCategory(catIdx).getDeadlineList().getSize() - 1,
+                            true);
+                }
+            }
+            logger.info("Successfully loaded deadlines from file.");
+        } catch (java.io.FileNotFoundException e) {
+            logger.log(Level.SEVERE, "Deadline file cannot be found", e);
+        }
+    }
+
+    private void loadEvents(CategoryList categoryList, File eventFile) {
+        logger.info("Attempting to load events from: " + eventFilePath);
+        DateTimeFormatter storageFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm");
+        int lineNumber = 0;
+        try (java.util.Scanner s = new java.util.Scanner(eventFile)) {
+            while (s.hasNextLine()) {
+                lineNumber++;
+                String[] parts = s.nextLine().split(" \\| ");
+
+                if (parts.length < 6) {
+                    logger.log(Level.WARNING, "Skipping malformed line " + lineNumber + " in events.txt");
+                    continue;
+                }
+
+                // Format: Category | E | Status | Description | Date (from) | Date (to) [| recurringId]
+                String catName = parts[0];
+                boolean isDone = parts[2].equals("1");
+                String desc = parts[3];
+                String stringFrom = parts[4];
+                String stringTo = parts[5];
+                String recurringId = (parts.length > 6) ? parts[6] : "";
+
+                LocalDateTime from;
+                LocalDateTime to;
+                try {
+                    from = LocalDateTime.parse(stringFrom, storageFormatter);
+                    to = LocalDateTime.parse(stringTo, storageFormatter);
+                } catch (DateTimeParseException e) {
+                    logger.warning("Could not parse date time in events.txt from line: "
+                            + lineNumber + " " + e.getMessage());
+                    continue;
+                }
+
+                ensureCategoryExists(categoryList, catName);
+                int catIdx = getCategoryIndex(categoryList, catName);
+                if (!recurringId.isEmpty() && parts[1].equals("RE")) {
                     try {
-                        from = java.time.LocalDateTime.parse(stringFrom, storageFormatter);
-                        to = java.time.LocalDateTime.parse(stringTo, storageFormatter);
-                    } catch (DateTimeParseException e) {
-                        logger.warning("Could not parse date time in events.txt from line: "
+                        int recurringGroupId = Integer.parseInt(recurringId);
+                        categoryList.addRecurringWeeklyEventFile(catIdx, desc, from, to, recurringGroupId);
+                    } catch (NumberFormatException e) {
+                        logger.warning("Could not parse recurring group ID from line: "
                                 + lineNumber + " " + e.getMessage());
                         continue;
                     }
-
-                    int catIdx = getCategoryIndex(categoryList, catName);
-                    if (!recurringId.isEmpty() && parts[1].equals("RE")) {
-                        try {
-                            int recurringGroupId = Integer.parseInt(recurringId);
-                            categoryList.addRecurringWeeklyEventFile(catIdx, desc, from, to, recurringGroupId);
-                        } catch (NumberFormatException e) {
-                            logger.warning("Could not parse recurring group ID from line: "
-                                    + lineNumber + " " + e.getMessage());
-                            continue;
-                        }
-                    } else {
-                        categoryList.addEvent(catIdx, desc, from, to);
-                    }
-                    if (isDone) {
-                        categoryList.setEventStatus(catIdx,
-                                categoryList.getCategory(catIdx).getEventList().getSize() - 1, true);
-                    }
+                } else {
+                    categoryList.addEvent(catIdx, desc, from, to);
                 }
-                logger.info("Successfully loaded events from file.");
-
-            } catch (java.io.FileNotFoundException e) {
-                System.out.println("No existing Event file found.");
-                logger.log(Level.SEVERE, "Event file cannot be found", e);
-
+                if (isDone) {
+                    categoryList.setEventStatus(catIdx,
+                            categoryList.getCategory(catIdx).getEventList().getSize() - 1, true);
+                }
             }
+            logger.info("Successfully loaded events from file.");
+        } catch (java.io.FileNotFoundException e) {
+            logger.log(Level.SEVERE, "Event file cannot be found", e);
         }
     }
 

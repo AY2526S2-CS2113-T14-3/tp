@@ -62,14 +62,14 @@ public class Category {
     }
 
     public void addEvent(Event event) {
-        assert (event != null): "Event must not be null";
+        assert (event != null) : "Event must not be null";
         eventList.add(event);
     }
 
-    public void addRecurringWeeklyEvent(Event event, Calendar calendar){
-        assert (event != null): "Event must not be null";
+    public void addRecurringWeeklyEvent(Event event, Calendar calendar) {
+        assert (event != null) : "Event must not be null";
         assert (calendar != null) : "Calendar must not be null";
-        eventList.addRecurringWeeklyEvent(event,calendar);
+        eventList.addRecurringWeeklyEvent(event, calendar);
     }
 
     public void deleteEvent(int index) {
@@ -173,4 +173,9 @@ public class Category {
 
         return result;
     }
+
+    public Deadline getDeadline(int index) {
+        return deadlineList.get(index);
+    }
+
 }

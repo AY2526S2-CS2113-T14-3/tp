@@ -7,6 +7,9 @@ import java.util.logging.Logger;
 public class Event extends Task implements Timed {
     private static final Logger logger = Logger.getLogger(Event.class.getName());
 
+    private static final DateTimeFormatter STORAGE_FORMATTER =
+            DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm");
+
     protected LocalDateTime from;
     protected LocalDateTime to;
     protected boolean isRecurring;
@@ -54,7 +57,7 @@ public class Event extends Task implements Timed {
         assert (from != null && to!=null): "There must be a start date time and end date time";
         assert (description != null && !description.isEmpty()): "There must be a description for the events";
 
-        DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
+        DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm");
         String fromFormatted = from.format(displayFormatter);
         String toFormatted = to.format(displayFormatter);
         return (isRecurring ? "[RE]" + "[Group " + recurringGroupId + "]" : "[E]") + super.toString()
@@ -92,9 +95,8 @@ public class Event extends Task implements Timed {
         assert (from != null && to!=null): "There must be a start date time and end date time";
         assert (description != null && !description.isEmpty()): "There must be a description for the events";
 
-        DateTimeFormatter storageFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
-        String fromFormatted = from.format(storageFormatter);
-        String toFormatted = to.format(storageFormatter);
+        String fromFormatted = from.format(STORAGE_FORMATTER);
+        String toFormatted = to.format(STORAGE_FORMATTER);
         if (isRecurring) {
             return String.format("RE | %d | %s | %s | %s | %d", (isDone ? 1 : 0), description,
                     fromFormatted, toFormatted,recurringGroupId);
