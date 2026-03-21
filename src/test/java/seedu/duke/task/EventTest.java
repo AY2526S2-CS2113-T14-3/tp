@@ -23,9 +23,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 
 public class EventTest {
+
+    private static final String SEP = "____________________________________________________________";
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm");
     private final DateTimeFormatter formatList = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-    private static final String SEP = "____________________________________________________________";
 
     @Test
     public void addEvent_success() {
@@ -49,11 +50,8 @@ public class EventTest {
         System.setOut(new PrintStream(outContent));
         handleAdd("add event 1 interview /from 02/12/2026 1800 /to 02/12/2026 1900".split(" "));
         assertEquals(SEP + System.lineSeparator() +
-                        "Error: Use format dd-MM-yyyy HHmm (e.g., 11-12-2026 1830) " +
-                        "and follow this format: add event <categoryIndex> <description> " +
-                        "/from <startDateTime> /to <endDateTime>" + System.lineSeparator() +
-                        SEP,
-                outContent.toString().trim());
+                        "Error: Invalid format! Use dd-MM-yyyy HHmm or dd-MM-yyyy" +
+                        System.lineSeparator() + SEP, outContent.toString().trim());
     }
 
     @Test

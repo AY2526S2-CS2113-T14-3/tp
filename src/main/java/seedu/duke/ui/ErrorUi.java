@@ -6,13 +6,6 @@ public class ErrorUi {
         GeneralUi.printBordered("Error: " + message);
     }
 
-//    private static String stripErrorPrefix(String message) {
-//        if (message.startsWith("Error: ")) {
-//            return message.substring("Error: ".length());
-//        }
-//        return message;
-//    }
-
     public static void printError(String prefix, String message) {
         GeneralUi.printBordered(prefix + ": " + message);
     }

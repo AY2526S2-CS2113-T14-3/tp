@@ -283,7 +283,8 @@ public class UniTasker {
                 }
                 if (!raw.contains(" /to ")) {
                     // This prevents the ArrayIndexOutOfBoundsException and gives a helpful message
-                    throw new UniTaskerException("Missing '/to' keyword! Format: add event [index] [desc] /from [start] /to [end]");
+                    throw new UniTaskerException("Missing '/to' keyword! " +
+                            "Format: add event [index] [desc] /from [start] /to [end]");
                 }
 
                 String[] eventDetails = raw.split(" /from ");
