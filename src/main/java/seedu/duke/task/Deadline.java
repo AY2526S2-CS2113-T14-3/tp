@@ -54,6 +54,6 @@ public class Deadline extends Task implements Timed {
      */
     @Override
     public LocalDateTime getDate() {
-        return by; // This satisfies the Timed interface
+        return by;
     }
 }
