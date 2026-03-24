@@ -134,8 +134,8 @@ public class CategoryList {
 
     }
 
-    public void addRecurringWeeklyEvent(int categoryIndex, String description,
-            LocalDateTime from, LocalDateTime to, Calendar calendar) {
+    public void addRecurringWeeklyEvent(int categoryIndex, String description, LocalDateTime from,
+            LocalDateTime to, Calendar calendar, LocalDateTime date, int months) {
         assert (description != null && !description.isEmpty()) : "Event description should not be empty";
         assert (from != null && to != null) : "Start date and time and end date and time should not be null";
         assert from.isBefore(to) || from.isEqual(to) : "The start date time must be before the end date time";
@@ -143,7 +143,7 @@ public class CategoryList {
 
         recurringGroupId += 1;
         categories.get(categoryIndex).addRecurringWeeklyEvent(new Event(description,
-                from, to, true, recurringGroupId), calendar);
+                from, to, true, recurringGroupId), calendar, date, months);
         logger.info("Add recurring event : " + description + " from " + from + " to " + to +
                 " recurringGroupId " + recurringGroupId);
     }

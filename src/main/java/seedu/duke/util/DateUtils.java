@@ -83,8 +83,10 @@ public class DateUtils {
         LocalDate date = today.with(TemporalAdjusters.nextOrSame(
                 DayOfWeek.valueOf(dayOfWeek.toUpperCase())));
 
-        if (!isStart && (time == null || time.trim().isEmpty())) {
-            return LocalDateTime.of(date, LocalTime.of(23, 59));
+        if (!isStart && (time == null || time.isBlank())) {
+            LocalDateTime addEndTime = LocalDateTime.of(date, LocalTime.of(23, 59));
+            validateYearRange(addEndTime, addEndTime.format(FULL_FORMATTER));
+            return addEndTime;
         }
         try {
             dateTime = LocalDateTime.of(date, LocalTime.parse(time, TIME_ONLY_FORMATTER));
@@ -92,6 +94,7 @@ public class DateUtils {
             throw new IllegalDateException("Invalid" + (isStart ? " start " : " end ") + "time '" + time + "'. " +
                     "Use 4-digit format e.g. 1600");
         }
+        validateYearRange(dateTime, dateTime.format(FULL_FORMATTER));
         return dateTime;
     }
 
