@@ -1,42 +1,24 @@
 package seedu.duke;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
-
-import java.util.Arrays;
 import java.util.Scanner;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import seedu.duke.calender.Calendar;
-import seedu.duke.exception.DuplicateCategoryException;
-import seedu.duke.exception.DuplicateTaskException;
-import seedu.duke.exception.HighWorkloadException;
-import seedu.duke.exception.IllegalDateException;
-import seedu.duke.exception.UniTaskerException;
 import seedu.duke.storage.Storage;
-import seedu.duke.task.Deadline;
-import seedu.duke.task.Event;
 import seedu.duke.tasklist.CategoryList;
 
 import static seedu.duke.tasklist.CategoryList.refreshCalendar;
 
-import seedu.duke.coursestracker.CourseException;
 import seedu.duke.coursestracker.CourseManager;
 import seedu.duke.coursestracker.CourseParser;
-import seedu.duke.ui.CategoryUi;
-import seedu.duke.ui.CommandHelp;
-import seedu.duke.ui.DeadlineUi;
+
 import seedu.duke.ui.ErrorUi;
-import seedu.duke.ui.EventUi;
 import seedu.duke.ui.GeneralUi;
 import seedu.duke.ui.LimitUi;
-import seedu.duke.ui.TaskUi;
-import seedu.duke.util.DateUtils;
-import seedu.duke.util.TaskValidator;
+
 
 import seedu.duke.appcontainer.AppContainer;
 import seedu.duke.command.*;
@@ -70,7 +52,6 @@ public class UniTasker {
             ErrorUi.printError(e.getMessage());
         }
     }
-
 
 
     public void run(boolean isTestMode) {
