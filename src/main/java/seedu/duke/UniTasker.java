@@ -28,6 +28,7 @@ import seedu.duke.coursestracker.CourseException;
 import seedu.duke.coursestracker.CourseManager;
 import seedu.duke.coursestracker.CourseParser;
 import seedu.duke.ui.CategoryUi;
+import seedu.duke.ui.CommandHelp;
 import seedu.duke.ui.DeadlineUi;
 import seedu.duke.ui.ErrorUi;
 import seedu.duke.ui.EventUi;
@@ -45,7 +46,6 @@ public class UniTasker {
     private static CategoryList categories = new CategoryList();
     private static Calendar calendar = new Calendar();
     private static Storage storage = new Storage("todos.txt", "deadlines.txt", "events.txt");
-    private static CourseManager courseManager;
     private static CourseParser courseParser;
 
     private static int dailyTaskLimit;
@@ -61,7 +61,7 @@ public class UniTasker {
         try {
             storage.load(categories);
             refreshCalendar(categories, calendar);
-            courseManager = new CourseManager("courses.txt");
+            CourseManager courseManager = new CourseManager("courses.txt");
             courseParser = new CourseParser(courseManager);
         } catch (Exception e) {
             ErrorUi.printError(e.getMessage());
@@ -688,6 +688,17 @@ public class UniTasker {
         }
     }
 
+    public static void handleHelp(String[] sentence) {
+        if (sentence.length == 1) {
+            // No arguments: show general help
+            System.out.println(CommandHelp.getHelp(null));
+        } else {
+            // Parse help topic
+            String topic = sentence[1];
+            System.out.println(CommandHelp.getHelp(topic));
+        }
+    }
+
     public void run(boolean isTestMode) {
         logger.info("UniTasker session started.");
 
@@ -739,8 +750,11 @@ public class UniTasker {
             case "limit":
                 handleLimit(sentence);
                 break;
+            case "help":
+                handleHelp(sentence);
+                break;
             default:
-                GeneralUi.printMessage("default echo: " + line);
+                ErrorUi.printUnknownCommandHint(sentence[0]);
                 break;
             }
         }

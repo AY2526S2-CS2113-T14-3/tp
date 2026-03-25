@@ -17,13 +17,23 @@ public class GeneralUi {
     }
 
     public static void printWelcome(int startYear, int endYear, int dailyLimit, boolean isTestMode) {
-        System.out.println("Welcome to UniTasker");
+        System.out.println("Welcome to UniTasker - All-in-One Task & Course Management");
+        System.out.println("\n4 FEATURE MODES:");
+        System.out.println("  1. Task Management    - Manage todos with priority & organization");
+        System.out.println("  2. Deadline Manager   - Track assignments with auto-sorted dates");
+        System.out.println("  3. Event Manager      - Schedule events and recurring meetings");
+        System.out.println("  4. Course Tracker     - Manage courses and assessment grades");
+        System.out.println("\n" + DOTTED_LINE);
         if (!isTestMode) {
             System.out.println("Current Year Range: " + startYear + " to " + endYear);
             System.out.println("Current Daily Task Limit: " + dailyLimit);
-            System.out.println("\nTo change these settings:");
-            System.out.println("- Use 'limit task [number]' to update daily workload.");
-            System.out.println("- Use 'limit year [number]' to extend the calendar range.");
+            System.out.println("\nGET STARTED:");
+            System.out.println("  Type 'help' to see all available commands");
+            System.out.println("  Type 'help <mode>' for specific help (e.g., 'help task')");
+            System.out.println("\nCHANGE SETTINGS:");
+            System.out.println("  - Use 'limit task [number]' to update daily workload.");
+            System.out.println("  - Use 'limit year [number]' to extend the calendar range.");
+            System.out.println(DOTTED_LINE);
         }
     }
 

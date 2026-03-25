@@ -92,4 +92,20 @@ public class ErrorUi {
     public static void printFileSaveError() {
         printError("File write failed.");
     }
+
+    /**
+     * Print a helpful message when user enters an unknown command.
+     */
+    public static void printUnknownCommandHint(String invalidCommand) {
+        GeneralUi.printDottedLine();
+        System.out.println("Unknown command: '" + invalidCommand + "'");
+        System.out.println("\nAvailable commands:");
+        System.out.println("  add, delete, list, mark, unmark, reorder, sort,");
+        System.out.println("  priority, find, course, limit, help, exit");
+        System.out.println("\nTry 'help' to see detailed command information.");
+        String tip = "Try 'help <topic>' for help on a specific mode";
+        String example = " (e.g., 'help task', 'help deadline')";
+        System.out.println(tip + example);
+        GeneralUi.printDottedLine();
+    }
 }
