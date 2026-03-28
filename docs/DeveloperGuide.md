@@ -72,24 +72,54 @@ The `AppContainer` component,
 
 **Deadline Class Diagram**
 
-The figure below explains how Deadlines are being added and subsequently retrieved from a list. 
+The figure below illustrates the relationship between Deadline class and the following classes: Task, Timed, Calendar, DateUtils, DeadlineList, TaskList. 
 
 ![Deadline Class Diagram](pictures/deadlineClassDiagram.png)
 *<div align="center"> Figure x - Deadline Class Diagram </div>*
 
 
-**Key Design Decisions**
+**Key Design Considerations**
 
+- Deadline and Events are time based tasks which differentiate them from todo tasks.
+- To be able to show Deadlines and Events within a certain range of dates, a Timed interface is used to distinguish them so that the Calendar class can store and query them polymorphically.
+- DateUtils hold 3 DateTimeFormatter constants which gives users the ability to store deadlines and events in different formats.
+- DeadlineList extends the generic TaskList<T>, inheriting add/delete/mark/contains operations.
+- Calendar uses a TreeMap<LocalDate, List<Task>> to enable efficient range queries without iterating the entire task list.
 
+### Feature: Task Validation ###
+
+There are two main types of validations for task. 
+
+- Time Validation
+- Occurrence Validation
+
+The following figures explains how tasks are validated based on Time and Occurrence.
 
 **DateUtils.parse()**
 
-The following sequence diagram illustrates how a date string entered by the user is parsed, validated, and return as a LocalDateTime. This flow is triggered whenever a timed task, a deadline or event, is added.
+DateUtils is used as a Time Validator. 
+
+The sequence diagram below illustrates how a date string entered by the user is parsed, validated, and return as a LocalDateTime. This flow is triggered whenever a timed task, a deadline or event, is added. Recurring events will be illustrated in a different diagram as it does not follow numerical convention. 
+
+Example: `Add deadline 1 Homework /by 31-12-2025 1800` or `Add event 1 Homework /from 31-12-2025 1800 /to 01-01-2026`
+
+**Note: The command in the diagram has been generalised as a date since DateUtils validates dates only**
 
 ![DateUtils Sequence Diagram](pictures/DateUtilsSequence.png)
 *<div align="center"> Figure x - DateUtils: parse() Sequence Diagram </div>*
 
-Parsing Flow Summary?
+**Parsing Flow Summary:**
+
+- A task is followed by a date string
+- CommandParser parse the line and calls AddCommand
+- AddCommand then calls for handleAddEvent/handleAddDeadline, depending on whether an event or a deadline is being added.
+- As this is a command given from User, the isLoading flag is set to false.
+- DateUtils will then check for the following conditions : is input empty or null, is the date parsed following the FULL_FORMATTER or DATE_ONLY FORMATTER
+- If only date is parsed, time is automatically set to 2359
+- If all the above checks pass and isLoading == false, check if date is in the past
+- If all checks pass, the last check would be if the task exist within the stipulated timeframe that user has set/ default timeframe
+- If all checks are parsed, the task will be added to its tasklist (DeadlineList or EventList) and registered in the Calendar
+- If any of the checks fail along the way, an error message pertaining to the error will be shown to the user
 
 **Implementation Note - isLoading Flag**
 
@@ -97,10 +127,21 @@ The IsLoading parameter is set to true when DateUtils.parse() is called from the
 
 **TaskValidator**
 
-Before any task (Todo, Deadline, Event) is added to the system, the AddCommand invokes three sequential validation passes via TaskValidator. The diagram below shows the full interaction.
+TaskValidator ensures that there is a unique occurrence of a given task with no overlaps.
+
+Before any task (Todo, Deadline, Event) is added to the system, the AddCommand invokes three sequential validation passes via TaskValidator. These checks ensure that no Task have the same name, workload per day does not exceed set limit and there is no overlap in events. The diagram below shows the full interaction.
 
 ![TaskValidator Sequence Diagram](pictures/TaskValidatorSequence.png)
 *<div align="center"> Figure x - Task Validator Sequence Diagram </div>*
+
+**Parsing Flow Summary**
+
+- add task with its description, date with or without time and category index
+- retrieve all tasks from todoList, deadlineList and eventList
+- Check for any duplicate names, if no check the number of workload for each day with registered timed task
+- If totalTimedTask is greater than or equal to maxTask, throw a HighWorkloadException error
+- Otherwise, check for any overlap in timing with existing events
+- If yes throw an OverlapEventException, otherwise all validators have been passed and task is added successfully
 
 ## Product scope
 
