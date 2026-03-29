@@ -19,7 +19,7 @@ public class CategoryList {
     private ArrayList<Category> categories;
     private int recurringGroupId = 0;
     private List<EventReference> activeDisplayMap = new ArrayList<>();
-    private String currentView = "EVENT";
+    private String currentView = "NO_VIEW";
 
     public CategoryList() {
         categories = new ArrayList<>();
@@ -177,11 +177,13 @@ public class CategoryList {
         categories.get(categoryIndex).setEventStatus(eventIndex, isDone);
     }
 
-    public String getAllEvents() {
+    public String getAllEvents(boolean isExpanded) {
         StringBuilder sb = new StringBuilder();
-        sb.append("=== ALL EVENTS ===").append(System.lineSeparator());
+        sb.append(isExpanded ? "=== ALL OCCURRENCES ===" : "=== ALL EVENTS ===").append(System.lineSeparator());
+        // sb.append("=== ALL EVENTS ===").append(System.lineSeparator());
         List<EventReference> newMap = new ArrayList<>();
         Set<Integer> printedGroups = new HashSet<>();
+
         for (int categoryIndex = 0; categoryIndex<categories.size();categoryIndex++){
             Category cat = categories.get(categoryIndex);
             sb.append(cat.getName()).append(":").append(System.lineSeparator());
@@ -192,9 +194,10 @@ public class CategoryList {
                 Event event = eventList.get(eventIndex);
                 if (event.getIsRecurring()){
                     int groupId = event.getRecurringGroupId();
-                    if (!printedGroups.contains(groupId)){
+                    if (isExpanded||!printedGroups.contains(groupId)){
                         sb.append(newMap.size()+1).append(". ")
-                                .append(event.toStringRecurring()).append(System.lineSeparator());
+                                .append(isExpanded ? event.toString() : event.toStringRecurring())
+                                .append(System.lineSeparator());
                         newMap.add(new EventReference(categoryIndex,eventIndex,event.getFrom()));
                         printedGroups.add(groupId);
                     }
@@ -206,7 +209,7 @@ public class CategoryList {
             }
         }
         this.activeDisplayMap = newMap;
-        this.currentView = "EVENT";
+        this.currentView = isExpanded ? "EVENT_EXPANDED" : "EVENT";
         return sb.toString();
 
     }
@@ -239,6 +242,34 @@ public class CategoryList {
         }
         this.activeDisplayMap = newMap;
         this.currentView = "RECURRING_OVERVIEW";
+        return sb.toString();
+    }
+
+    public String getOccurrencesOfRecurringEvent(int categoryIndex, int groupUiIndex) throws UniTaskerException {
+        EventReference ref = activeDisplayMap.get(groupUiIndex - 1);
+        Event template = categories.get(ref.categoryIndex).getEvent(ref.eventIndex);
+        if (!template.getIsRecurring()){
+            throw new UniTaskerException("This is not a recurring event, list occurrence or " +
+                    "other occurrence operations are only for recurring event");
+        }
+        int targetGroupId = template.getRecurringGroupId();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== OCCURRENCES FOR: ").append(template.getDescription()).append(" ===\n");
+
+        List<EventReference> newMap = new ArrayList<>();
+        EventList eventList = categories.get(categoryIndex).getEventList();
+
+        for (int i = 0; i < eventList.getSize(); i++) {
+            Event e = eventList.get(i);
+            if (e.getIsRecurring() && e.getRecurringGroupId() == targetGroupId) {
+                sb.append(newMap.size() + 1).append(". ").append(e.toString()).append(System.lineSeparator());
+                newMap.add(new EventReference(categoryIndex, i, e.getFrom()));
+            }
+        }
+
+        this.activeDisplayMap = newMap;
+        this.currentView = "OCCURRENCE_VIEW";
         return sb.toString();
     }
 

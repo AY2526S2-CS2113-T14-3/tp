@@ -1,6 +1,7 @@
 package seedu.duke.command;
 
 import seedu.duke.appcontainer.AppContainer;
+import seedu.duke.exception.UniTaskerException;
 import seedu.duke.task.Event;
 import seedu.duke.ui.CategoryUi;
 import seedu.duke.ui.DeadlineUi;
@@ -69,27 +70,70 @@ public class DeleteCommand implements Command {
                     container.getCategories().deleteAllEvents(categoryIndex);
                     DeadlineUi.printItemDeleted("event", null, categoryIndex);
                 } else {
-                    int eventIndex = Integer.parseInt(sentence[3]) - 1;
-                    Event eventToDelete = container.getCategories().getEvent(categoryIndex,eventIndex);
-                    if (!(eventToDelete.getIsRecurring())) {
-                        container.getCategories().deleteEvent(categoryIndex, eventIndex);
-                        EventUi.printNormalEventDeleted(eventToDelete);
+                    int uiIndex = Integer.parseInt(sentence[3]) - 1;
+                    String currentView = container.getCategories().getCurrentView();
+                    List<EventReference> map = container.getCategories().getActiveDisplayMap();
+                    for (int i = 0; i < map.size(); i++) {
+                        System.out.println("catIndex: " + map.get(i).categoryIndex
+                                + "eventIndex: " + map.get(i).eventIndex);
+                    }
+                    if (!(currentView.equals("EVENT") || currentView.equals("EVENT_EXPANDED"))) {
+                        throw new UniTaskerException("To delete a specific event please use " +
+                                "'list event' or 'list event /all' first");
+                    }
+                    if (uiIndex < 0 || uiIndex >= map.size()) {
+                        throw new IndexOutOfBoundsException();
+                    }
+
+                    EventReference ref = map.get(uiIndex);
+                    Event eventToDelete = container.getCategories().getEvent(ref.categoryIndex, ref.eventIndex);
+                    if (eventToDelete.getIsRecurring() &&
+                            (!container.getCategories().getCurrentView().equals("EVENT_EXPANDED"))) {
+                        GeneralUi.printBordered("This is a recurring group. To delete the specific occurrence, please" +
+                                "use 'list event /all' or 'list occurrence " +
+                                (categoryIndex + 1) + " " + (uiIndex + 1) + "' first");
                     } else {
-                        GeneralUi.printBordered("To delete recurring event as a whole group " +
-                                "use list recurring and delete recurring");
+                        container.getCategories().deleteEvent(ref.categoryIndex, ref.eventIndex);
+                        EventUi.printNormalEventDeleted(eventToDelete);
                     }
                 }
                 break;
             case "recurring":
+                String currentView = container.getCategories().getCurrentView();
+                if (!(currentView.equals("RECURRING_OVERVIEW"))) {
+                    throw new UniTaskerException("To delete a the recurring event group please " +
+                            "use 'list recurring' first");
+                }
                 int uiIndex = Integer.parseInt(sentence[3]);
                 List<EventReference> displayMap = container.getCategories().getActiveDisplayMap();
-                EventReference eventReference  = displayMap.get(uiIndex-1);
+                for (int i = 0; i < displayMap.size(); i++) {
+                    System.out.println("catIndex: " + displayMap.get(i).categoryIndex
+                            + "eventIndex: " + displayMap.get(i).eventIndex);
+                }
+                EventReference eventReference = displayMap.get(uiIndex - 1);
                 Event event = container.getCategories().getEvent(eventReference.categoryIndex,
                         eventReference.eventIndex);
 
                 container.getCategories().deleteRecurringEvent(categoryIndex, event.getRecurringGroupId());
-                EventUi.printRecurringEventDeleted(event);
+                EventUi.printRecurringEventDeletedGroup(event);
                 break;
+            case "occurrence":
+                int uiIdx = Integer.parseInt(sentence[3]) - 1;
+                List<EventReference> map = container.getCategories().getActiveDisplayMap();
+                for (int i = 0; i < map.size(); i++) {
+                    System.out.println("catIndex: " + map.get(i).categoryIndex
+                            + "eventIndex: " + map.get(i).eventIndex);
+                }
+                if (!container.getCategories().getCurrentView().equals("OCCURRENCE_VIEW")) {
+                    GeneralUi.printBordered("Please run 'list occurrence' first to see individual dates.");
+                    break;
+                }
+                EventReference target = map.get(uiIdx);
+                Event eventToDel = container.getCategories().getEvent(target.categoryIndex, target.eventIndex);
+                container.getCategories().deleteEvent(target.categoryIndex, target.eventIndex);
+                EventUi.printRecurringEventDeleted(eventToDel);
+                break;
+
             //@@author
             default:
                 ErrorUi.printUnknownCommand("delete",
@@ -106,6 +150,8 @@ public class DeleteCommand implements Command {
             ErrorUi.printInvalidNumber();
         } catch (IndexOutOfBoundsException e) {
             ErrorUi.printIndexNotFound();
+        } catch (UniTaskerException e) {
+            ErrorUi.printError("Error occurred: ",e.getMessage());
         } catch (Exception e) {
             ErrorUi.printError("An unexpected error occurred", e.getMessage());
         }
