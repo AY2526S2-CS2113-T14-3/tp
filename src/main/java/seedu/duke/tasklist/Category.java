@@ -103,20 +103,35 @@ public class Category {
     }
 
     //@@author WenJunYu5984
+    /**
+     * Sorts all deadlines in this category by their due date in ascending order.
+     */
     public void sortDeadlines() {
         deadlineList.sortByDate();
     }
 
+    /**
+     * Adds a deadline to this category and re-sorts the list by due date.
+     *
+     * @param deadline the {@link Deadline} to add; must not be {@code null}
+     */
     public void addDeadline(Deadline deadline) {
         assert deadline != null : "Deadline cannot be null";
         deadlineList.add(deadline);
-        deadlineList.sortByDate();
+        sortDeadlines();
     }
 
     public void deleteDeadline(int index) {
         deadlineList.delete(index);
     }
 
+    /**
+     * Sets the completion status of the deadline at the given index.
+     *
+     * @param index  the 0-based index of the deadline to update
+     * @param isDone {@code true} to mark the deadline as done,
+     *               {@code false} to mark it as not done
+     */
     public void setDeadlineStatus(int index, boolean isDone) {
         if (isDone) {
             deadlineList.mark(index);
@@ -124,6 +139,7 @@ public class Category {
             deadlineList.unmark(index);
         }
     }
+
 
     public DeadlineList getDeadlineList() {
         return deadlineList;
@@ -170,6 +186,7 @@ public class Category {
         return foundCategory;
     }
 
+    //@@author marken9
     @Override
     public String toString() {
         String result = "";

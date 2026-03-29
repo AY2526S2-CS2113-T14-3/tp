@@ -237,6 +237,14 @@ public class CategoryList {
         }
     }
 
+    public String getDeadline(int categoryIndex, int taskIndex) {
+        assert (categoryIndex >= 0 && categoryIndex < categories.size()) : "Category index out of bounds";
+        assert (taskIndex >= 0 && taskIndex < categories.get(categoryIndex).getDeadlineList().getSize())
+                : "Event index out of bounds";
+
+        return categories.get(categoryIndex).getDeadline(taskIndex).toString();
+    }
+
 
     public String toString() {
         String result = "";
@@ -349,11 +357,4 @@ public class CategoryList {
         return foundTasks;
     }
 
-    public String getDeadline(int categoryIndex, int taskIndex) {
-        assert (categoryIndex >= 0 && categoryIndex < categories.size()) : "Category index out of bounds";
-        assert (taskIndex >= 0 && taskIndex < categories.get(categoryIndex).getDeadlineList().getSize())
-                : "Event index out of bounds";
-
-        return categories.get(categoryIndex).getDeadline(taskIndex).toString();
-    }
 }
