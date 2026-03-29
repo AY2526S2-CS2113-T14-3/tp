@@ -38,5 +38,5 @@ Added JUnit tests for the following classes:
 **User Guide Contributions**
 
 - Added documentation for the following features:
-  - `add`, `delete`, `list`, `limit`
+  - `list`, `limit`
 
