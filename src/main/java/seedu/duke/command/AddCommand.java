@@ -5,6 +5,7 @@ import seedu.duke.appcontainer.AppContainer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+
 import java.util.Arrays;
 
 import seedu.duke.exception.DuplicateCategoryException;
@@ -12,8 +13,11 @@ import seedu.duke.exception.DuplicateTaskException;
 import seedu.duke.exception.HighWorkloadException;
 import seedu.duke.exception.IllegalDateException;
 import seedu.duke.exception.UniTaskerException;
+import seedu.duke.exception.OverlapEventException;
+
 import seedu.duke.task.Deadline;
 import seedu.duke.task.Event;
+
 import seedu.duke.ui.CategoryUi;
 import seedu.duke.ui.DeadlineUi;
 import seedu.duke.ui.ErrorUi;
@@ -176,13 +180,7 @@ public class AddCommand implements Command {
                         + "(e.g., add event 1 consultation /from 01-03-2026 1800 /to 07-03-2026 1900)");
             }
 
-            TaskValidator.validateWorkload(
-                    container.categories(), from, container.getDailyTaskLimit());
-            TaskValidator.validateUniqueTask(
-                    container.categories(), eventCategoryIndex, eventDetails[0]);
-            TaskValidator.validateNoOverlap(
-                    container.categories().getCategory(eventCategoryIndex).getEventList(), from, to);
-
+            TaskValidationEvents(container, from, eventCategoryIndex, eventDetails, to);
             container.categories().addEvent(eventCategoryIndex, eventDetails[0], from, to);
 
             Event newEvent = container.categories().getCategory(eventCategoryIndex).getLatestEvent();
@@ -262,53 +260,59 @@ public class AddCommand implements Command {
                         + "(e.g., add recurring 1 weekly event CS2113 lecture /from Friday 1600 /to Friday 1800)");
             }
 
+            LocalDateTime endDate = null;
+            int months = 0;
+
             if (sentence[sentence.length - 2].equals("/month")) {
                 try {
-                    int month = Integer.parseInt(sentence[sentence.length - 1]);
-                    if (month <= 0) {
+                     months = Integer.parseInt(sentence[sentence.length - 1]);
+                    if (months <= 0) {
                         throw new UniTaskerException("Invalid number use a positive integer larger than 0");
                     }
-                    LocalDateTime endDate = from.plusMonths(month);
-                    if (endDate.getYear() > container.getEndYear()) {
-                        throw new UniTaskerException("End date exceeds the allowed year limit of "
-                                + container.getEndYear());
-                    }
-                    container.categories().addRecurringWeeklyEvent(
-                            eventCategoryIndex, eventDetails[0], from, to,
-                            container.calendar(), null, month);
+                    endDate = from.plusMonths(months);
                 } catch (NumberFormatException e) {
-                    throw new UniTaskerException("Invalid number use a positive integer larger than 0");
+                        throw new UniTaskerException("Invalid month value");
                 }
             } else if (sentence[sentence.length - 2].equals("/date")) {
                 try {
-                    LocalDateTime date = DateUtils.parse(sentence[sentence.length - 1], false);
-                    container.categories().addRecurringWeeklyEvent(
-                            eventCategoryIndex, eventDetails[0], from, to,
-                            container.calendar(), date, 0);
+                    endDate = DateUtils.parse(sentence[sentence.length - 1], false);
                 } catch (IllegalDateException e) {
                     throw new UniTaskerException("Date is invalid, "
                             + "follow format /date dd-MM-yyyy and keep date within limit");
                 }
             } else {
-                LocalDateTime defaultEnd = from.plusMonths(1);
-                if (defaultEnd.getYear() > container.getEndYear()) {
-                    throw new UniTaskerException("End date exceeds the allowed year limit of "
-                            + container.getEndYear());
-                }
+                endDate = from.plusMonths(1);
+            }
+            if (endDate.getYear() > container.getEndYear()) {
+                throw new UniTaskerException("End date exceeds the allowed year limit of "
+                        + container.getEndYear());
+            }
+                TaskValidationEvents(container, from, eventCategoryIndex, eventDetails, to);
                 container.categories().addRecurringWeeklyEvent(
                         eventCategoryIndex, eventDetails[0], from, to,
-                        container.calendar(), null, 0);
-            }
+                        container.calendar(), (months == 0 ? endDate : null), months);
 
             EventUi.printRecurringEventAdded(container.categories().getLatestEvent(eventCategoryIndex));
         } catch (IllegalDateException e) {
             ErrorUi.printError(e.getMessage());
         } catch (UniTaskerException e) {
             ErrorUi.printError(e.getMessage());
+        } catch (HighWorkloadException | DuplicateTaskException e) {
+            GeneralUi.printWarning(e.getMessage());
         } catch (Exception e) {
             ErrorUi.printAddRecurringEventFormatError();
         }
     }
+
+    private static void TaskValidationEvents(AppContainer container, LocalDateTime from, int eventCategoryIndex, String[] eventDetails, LocalDateTime to) throws OverlapEventException {
+        TaskValidator.validateWorkload(
+                container.categories(), from, container.getDailyTaskLimit());
+        TaskValidator.validateUniqueTask(
+                container.categories(), eventCategoryIndex, eventDetails[0]);
+            TaskValidator.validateNoOverlap(
+                    container.categories().getCategory(eventCategoryIndex).getEventList(), from, to);
+    }
+
     //@@author sushmiithaa
     private String[] getToComponents(String[] eventTimeDetails) throws UniTaskerException {
         String[] toComponents = eventTimeDetails[1].split(" ");
