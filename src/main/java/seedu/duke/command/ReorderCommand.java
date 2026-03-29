@@ -29,9 +29,9 @@ public class ReorderCommand implements Command {
                 }
                 int fromCategoryIndex = Integer.parseInt(sentence[2]) - 1;
                 int toCategoryIndex = Integer.parseInt(sentence[3]) - 1;
-                container.getCategories().reorderCategory(fromCategoryIndex, toCategoryIndex);
+                container.categories().reorderCategory(fromCategoryIndex, toCategoryIndex);
                 TaskUi.printReordered("Category",
-                        container.getCategories().getCategory(toCategoryIndex).getName(), -1, toCategoryIndex + 1);
+                        container.categories().getCategory(toCategoryIndex).getName(), -1, toCategoryIndex + 1);
             } catch (UniTaskerException | NumberFormatException e) {
                 ErrorUi.printCommandFailed("reorder category", e.getMessage(),
                         "reorder category [index1] [index2]");
@@ -45,9 +45,9 @@ public class ReorderCommand implements Command {
                 int categoryIndex = CommandSupport.getCategoryIndex(container, sentence);
                 int todoIndex1 = Integer.parseInt(sentence[3]) - 1;
                 int todoIndex2 = Integer.parseInt(sentence[4]) - 1;
-                container.getCategories().reorderTodo(categoryIndex, todoIndex1, todoIndex2);
+                container.categories().reorderTodo(categoryIndex, todoIndex1, todoIndex2);
                 TaskUi.printReordered("Todo",
-                        container.getCategories().getCategory(categoryIndex).getTodo(todoIndex2).getDescription(),
+                        container.categories().getCategory(categoryIndex).getTodo(todoIndex2).getDescription(),
                         categoryIndex + 1, todoIndex2 + 1);
             } catch (UniTaskerException | NumberFormatException e) {
                 ErrorUi.printCommandFailed("reorder todo", e.getMessage(),

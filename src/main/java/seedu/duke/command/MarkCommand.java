@@ -46,9 +46,9 @@ public class MarkCommand implements Command {
         try {
             Result result = getResult(container);
             if (isMark) {
-                container.getCategories().markTodo(result.categoryIndex(), result.taskIndex());
+                container.categories().markTodo(result.categoryIndex(), result.taskIndex());
             } else {
-                container.getCategories().unmarkTodo(result.categoryIndex(), result.taskIndex());
+                container.categories().unmarkTodo(result.categoryIndex(), result.taskIndex());
             }
             TaskUi.printMarkTodoResult(isMark, null);
         } catch (Exception e) {
@@ -56,11 +56,11 @@ public class MarkCommand implements Command {
         }
     }
 
+    //@@author WenJunYu5984
     private Result getResult(AppContainer container) {
         int categoryIndex = CommandSupport.getCategoryIndex(container, sentence);
         int taskIndex = Integer.parseInt(sentence[3]) - 1;
-        Result result = new Result(categoryIndex, taskIndex);
-        return result;
+        return new Result(categoryIndex, taskIndex);
     }
 
     private record Result(int categoryIndex, int taskIndex) {
@@ -70,8 +70,8 @@ public class MarkCommand implements Command {
     private void handleDeadline(AppContainer container) {
         try {
             Result result = getResult(container);
-            container.getCategories().setDeadlineStatus(result.categoryIndex, result.taskIndex, isMark);
-            TaskUi.printStatusChanged(container.getCategories()
+            container.categories().setDeadlineStatus(result.categoryIndex, result.taskIndex, isMark);
+            TaskUi.printStatusChanged(container.categories()
                     .getDeadline(result.categoryIndex, result.taskIndex), isMark);
         } catch (Exception e) {
             ErrorUi.printError(e.getMessage());
@@ -82,8 +82,8 @@ public class MarkCommand implements Command {
     private void handleEvent(AppContainer container) {
         try {
             Result result = getResult(container);
-            container.getCategories().setEventStatus(result.categoryIndex, result.taskIndex, isMark);
-            TaskUi.printStatusChanged(container.getCategories()
+            container.categories().setEventStatus(result.categoryIndex, result.taskIndex, isMark);
+            TaskUi.printStatusChanged(container.categories()
                     .getEvent(result.categoryIndex, result.taskIndex), isMark);
         } catch (Exception e) {
             ErrorUi.printError(e.getMessage());
