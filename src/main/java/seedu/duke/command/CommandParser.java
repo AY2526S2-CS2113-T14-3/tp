@@ -30,6 +30,8 @@ public class CommandParser {
             return new LimitCommand(sentence);
         case "help":
             return new HelpCommand(sentence);
+        case "reminder":
+            return new ReminderCommand();
         case "exit":
             return new ExitCommand();
         default:

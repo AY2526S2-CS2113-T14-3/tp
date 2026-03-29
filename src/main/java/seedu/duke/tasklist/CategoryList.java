@@ -1,17 +1,24 @@
 package seedu.duke.tasklist;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
+
 import java.util.logging.Logger;
 
 import seedu.duke.calender.Calendar;
 import seedu.duke.task.Deadline;
 import seedu.duke.task.Event;
-import seedu.duke.exception.UniTaskerException;
+import seedu.duke.task.Task;
 import seedu.duke.task.Todo;
+
+import seedu.duke.exception.UniTaskerException;
 
 public class CategoryList {
     private static final Logger logger = Logger.getLogger(CategoryList.class.getName());
@@ -394,4 +401,30 @@ public class CategoryList {
         }
         return foundTasks;
     }
+
+    public Map<String, List<Task>> findTasksForTheDay(LocalDate today) {
+        Map<String, List<Task>> reminders = new HashMap<>();
+        for (Category category : categories) {
+            EventList eventList = category.getEventList();
+            DeadlineList deadlineList = category.getDeadlineList();
+            for (int i = 0; i < deadlineList.getSize(); i++) {
+                Deadline deadline = deadlineList.get(i);
+                LocalDate getByDate = deadline.getBy().toLocalDate();
+                if (getByDate.equals(today) && !(deadline.getIsDone())) {
+                    reminders.putIfAbsent(category.getName(), new ArrayList<>());
+                    reminders.get(category.getName()).add(deadline);
+                }
+            }
+            for (int i = 0; i < eventList.getSize(); i++) {
+                Event event = eventList.get(i);
+                LocalDate getFromDate = event.getFrom().toLocalDate();
+                if (getFromDate.equals(today) && !(event.getIsDone())) {
+                    reminders.putIfAbsent(category.getName(), new ArrayList<>());
+                    reminders.get(category.getName()).add(event);
+                }
+            }
+        }
+        return reminders;
+    }
+
 }

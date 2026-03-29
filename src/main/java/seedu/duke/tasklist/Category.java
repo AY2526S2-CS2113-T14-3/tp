@@ -1,13 +1,15 @@
 package seedu.duke.tasklist;
 
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 
 import seedu.duke.calender.Calendar;
-import seedu.duke.exception.UniTaskerException;
 import seedu.duke.task.Deadline;
 import seedu.duke.task.Event;
 import seedu.duke.task.Todo;
+
+import seedu.duke.exception.UniTaskerException;
 
 public class Category {
     private String name;
