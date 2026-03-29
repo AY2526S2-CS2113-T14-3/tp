@@ -37,9 +37,14 @@ The bulk of the app's work is done by the following components:
 
 ![ReorderCommand](/docs/pictures/ReorderTodoSequenceDiagram.png)
 
-1. User enters command in terminal
-2. xx
-3. xx
+1. User enters a command in the terminal
+2. `UniTasker` receives the raw input line
+3. `UniTasker` passes the input to the `Command` component for parsing
+4. The appropriate concrete command object is created
+5. The command executes using data stored within `AppContainer`
+6. If the command modifies data, it triggers saving via `Storage`
+7. The command calls the relevant `UI` class to display the result
+8. Control returns to `UniTasker`, which continues waiting for the next user input
 
 **AppContainer component**
 
@@ -48,8 +53,7 @@ The `AppContainer` consists of the following:
 - `CategoryList categories` – stores all categories and their associated tasks (todos, deadlines, events)
 - `Calendar calendar` – Manages the mapping of dates to tasks with date information (deadlines and events) ???
 - `Storage storage` – handles saving and loading of data from local files
-- `CourseParser courseParser` – processes course-related commands
-
+- `CourseParser courseParser` – processes and handles course-related commands
 
 The `AppContainer` component,
 - Stores all the information required for the application in a single object

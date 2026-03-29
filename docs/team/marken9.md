@@ -5,18 +5,40 @@
 UniTasker is a desktop application used to keep track of tasks and courses.
 
 ## Summary of Contributions
-Contribution: [RepoSense Link](https://nus-cs2113-ay2526-s2.github.io/tp-dashboard/?search=marken9&sort=groupTitle&sortWithin=title&timeframe=commit&mergegroup=&groupSelect=groupByRepos&breakdown=true&checkedFileTypes=docs~functional-code~test-code~other&since=2026-02-20T00%3A00%3A00&filteredFileName=&tabOpen=true&tabType=authorship&tabAuthor=marken9&tabRepo=AY2526S2-CS2113-T14-3%2Ftp%5Bmaster%5D&authorshipIsMergeGroup=false&authorshipFileTypes=docs~functional-code~test-code~other&authorshipIsBinaryFileTypeChecked=false&authorshipIsIgnoredFilesChecked=false)
 
 **New Features**
 
-- delete marked
-- find [substring]
+- Add ability to delete all marked tasks
+  - Justification: The user can quickly remove all tasks that have been marked 
+as completed without deleting them one by one
+  - Highlight: Supports deletion across todos, deadlines, and events, 
+providing consistent behavior for all task types
+- Add ability to find tasks with the same substring
+  - Justification: The user can find certain tasks quickly instead of scrolling through the list
+  - Highlight: Searches across all categories, including todos, deadlines, and events
+- Add priority level and sorting for todos
+  - Justification: The user wants to prioritize doing certain todos first over others
+  - Highlight: Improves todo organisation within categories without requiring manual reordering
 
 **Code Contributed**
 
-**Testing**
+Contribution: [RepoSense Link](https://nus-cs2113-ay2526-s2.github.io/tp-dashboard/?search=marken9&sort=groupTitle&sortWithin=title&timeframe=commit&mergegroup=&groupSelect=groupByRepos&breakdown=true&checkedFileTypes=docs~functional-code~test-code~other&since=2026-02-20T00%3A00%3A00&filteredFileName=&tabOpen=true&tabType=authorship&tabAuthor=marken9&tabRepo=AY2526S2-CS2113-T14-3%2Ftp%5Bmaster%5D&authorshipIsMergeGroup=false&authorshipFileTypes=docs~functional-code~test-code~other&authorshipIsBinaryFileTypeChecked=false&authorshipIsIgnoredFilesChecked=false)
+
+General contributions:
+- Commands related to todos and categories
+- Command class refactoring
+
+**Test Coverage Contributions**
+- Integration testing for commands related to categories and todos
+
 
 **Developer Guide Contributions**
+- AppContainer component
+- Reorder todo sequence diagram
+- Command component with class diagram
+
 
 **User Guide Contributions**
+- Todo specific commands (reorder, priority, sort)
+
 
