@@ -233,6 +233,16 @@ Example: `sort todo 1`
 
 ---
 
+### Find Command: `find`
+Find any task (todos, deadlines and events) that contains the substring entered.
+
+Format: `find [SUBSTRING]`
+
+- `SUBSTRING`: Any string. 
+- This command is case-insensitive.
+
+Example: `find assignment`
+
 ### Limit Command: `limit` 
 Sets a limit on the following: task,year,...
 Allow user to set the limit for the following: `Task`, `Year`
