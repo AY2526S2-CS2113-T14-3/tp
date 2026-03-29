@@ -1,17 +1,18 @@
 @startuml DeadlineClassDiagram
-
 skinparam classAttributeIconSize 0
+skinparam CircledCharacterFontSize 0
+skinparam CircledCharacterRadius 0
 skinparam class {
     BackgroundColor White
     BorderColor Black
     ArrowColor Black
 }
 
-interface Timed {
+interface Timed <<interface>> {
     + getDate() : LocalDateTime
 }
 
-abstract class Task {
+abstract class "{abstract}\nTask" as Task{
     # description : String
     # isDone : boolean
     + toString() : String
@@ -69,9 +70,9 @@ Task <|-- Deadline
 Timed <|.. Deadline
 TaskListT <.. TaskListDeadline
 TaskListDeadline <|-- DeadlineList
-DeadlineList "1" o-- "0..*" Deadline : adds to
+DeadlineList "1" o-- "0..*" Deadline : <<added>>
 Deadline ..> DateUtils : <<uses>>
-Calendar "1" o-- "0..*" Deadline : registers
+Calendar "1" o-- "0..*" Deadline : <<registers>>
 
 note right of Deadline
   getDate() delegates to getBy()
