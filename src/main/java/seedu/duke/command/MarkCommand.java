@@ -84,7 +84,7 @@ public class MarkCommand implements Command {
             Result result = getResult(container);
             container.categories().setEventStatus(result.categoryIndex, result.taskIndex, isMark);
             TaskUi.printStatusChanged(container.categories()
-                    .getEvent(result.categoryIndex, result.taskIndex), isMark);
+                    .getEvent(result.categoryIndex, result.taskIndex).toString(), isMark);
         } catch (Exception e) {
             ErrorUi.printError(e.getMessage());
         }
