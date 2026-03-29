@@ -1,0 +1,117 @@
+@startuml DateUtilsSequenceDiagram
+
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+skinparam sequenceParticipant underline
+
+title DateUtils: parse() Sequence Diagram
+
+actor User
+participant "CommandParser" as CP
+participant "AddCommand" as AC
+participant "DateUtils" as DU
+participant "LocalDateTime" as LDT
+participant "IllegalDateException" as IDE
+
+User -> CP : enters date string\n(e.g. "31-12-2025 1800")
+activate CP
+
+CP -> CP : parse(line)
+activate CP #lightgray
+CP -> AC : new AddCommand(sentence)
+deactivate CP
+
+activate AC
+AC -> AC : execute(container)
+activate AC #gray
+
+AC -> AC : handleAddDeadline / handleAddEvent(container)
+activate AC #lightblue
+note over AC : generalised — represents both in code
+
+AC -> DU : parseDateTime(input)
+activate DU #gray
+
+DU -> DU : parse(input, isLoading=false)
+activate DU #white
+
+alt input is null or blank
+    DU -> IDE : throw IllegalDateException\n("Date input cannot be empty.")
+    activate IDE
+    IDE --> AC : exception propagated
+    destroy IDE
+    AC --> User : error message shown
+
+else input is non-empty
+    deactivate DU
+    DU -> LDT : LocalDateTime.parse(trimmedInput, FULL_FORMATTER)
+    activate LDT
+
+    alt parse with FULL_FORMATTER succeeds
+        LDT --> DU : parsedDate
+        deactivate LDT
+
+    else DateTimeParseException
+        deactivate LDT
+        DU -> LDT : LocalDate.parse(trimmedInput, DATE_ONLY_FORMATTER)
+        activate LDT
+
+        alt parse with DATE_ONLY_FORMATTER succeeds
+            LDT --> DU : date
+            DU -> LDT : date.atTime(23, 59)
+            LDT --> DU : parsedDate (time defaulted to 23:59)
+            deactivate LDT
+
+        else DateTimeParseException again
+            deactivate LDT
+            DU -> IDE : throw IllegalDateException\n("Invalid format! Use dd-MM-yyyy HHmm or dd-MM-yyyy")
+            activate IDE
+            IDE --> AC : exception propagated
+            destroy IDE
+            AC --> User : error message shown
+        end
+    end
+
+    alt isLoading == false
+        DU -> DU : validateNotPast(parsedDate, trimmedInput)
+        activate DU #lightblue
+
+        alt parsedDate.isBefore(LocalDateTime.now())
+            DU -> IDE : throw IllegalDateException\n("Cannot schedule tasks in the past!")
+            activate IDE
+            deactivate DU
+            IDE --> AC : exception propagated
+            destroy IDE
+            AC --> User : error message shown
+        else parsedDate is not in the past
+        end
+
+    else isLoading == true
+        note over DU : skip validateNotPast()\n(loading from saved data)
+    end
+
+    DU -> DU : validateYearRange(parsedDate, trimmedInput)
+    activate DU #lightyellow
+    note over DU : startYear = LocalDate.now().getYear()\nendYear = UniTasker.getEndYear()
+
+    alt year < startYear OR year > endYear
+        DU -> IDE : throw IllegalDateException\n("Dates must be between startYear and endYear!")
+        activate IDE
+        deactivate DU
+        IDE --> AC : exception propagated
+        destroy IDE
+        AC --> User : error message shown
+
+    else year is within range
+        DU --> AC : parsedDate (LocalDateTime)
+        deactivate DU
+        deactivate AC
+        AC --> User : task scheduled and saved successfully
+        deactivate AC
+        deactivate AC
+    end
+end
+
+deactivate CP
+
+@enduml

@@ -1,27 +1,87 @@
-@startuml
-'https://plantuml.com/class-diagram
+@startuml DeadlineClassDiagram
 
-abstract class AbstractList
-abstract AbstractCollection
-interface List
-interface Collection
-
-List <|-- AbstractList
-Collection <|-- AbstractCollection
-
-Collection <|- List
-AbstractCollection <|- AbstractList
-AbstractList <|-- ArrayList
-
-class ArrayList {
-Object[] elementData
-size()
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
 }
 
-enum TimeUnit {
-DAYS
-HOURS
-MINUTES
+interface Timed {
+    + getDate() : LocalDateTime
 }
+
+abstract class Task {
+    # description : String
+    # isDone : boolean
+    + toString() : String
+    + toFileFormat() : String
+}
+
+class Deadline {
+    - logger : Logger
+    # by : LocalDateTime
+    + Deadline(description : String, by : LocalDateTime)
+    + parseDateTime(input : String) : LocalDateTime
+    + getBy() : LocalDateTime
+    + getDate() : LocalDateTime
+    + toFileFormat() : String
+    + toString() : String
+}
+
+class DeadlineList {
+    + DeadlineList()
+    + toString() : String
+    + sortByDate() : void
+    + clearAll() : void
+    + getLatest() : Deadline
+}
+
+class "TaskList<T>" as TaskListT {
+}
+
+class "TaskList<Deadline>" as TaskListDeadline {
+}
+
+
+class DateUtils {
+    - FULL_FORMATTER : DateTimeFormatter
+    - DATE_ONLY_FORMATTER : DateTimeFormatter
+    - TIME_ONLY_FORMATTER : DateTimeFormatter
+    + parse(input : String, isLoading : boolean) : LocalDateTime
+    + parseDateTime(input : String) : LocalDateTime
+    + parseDateTimeFromFile(input : String) : LocalDateTime
+    + parseLocalDate(input : String) : LocalDate
+    - validateNotPast(parsedDate : LocalDateTime, originalInput : String) : void
+    - validateYearRange(parsedDate : LocalDateTime, originalInput : String) : void
+}
+
+class Calendar {
+    - schedule : TreeMap<LocalDate, List<Task>>
+    + registerTask(task : Task) : void
+    + displayRange(start : LocalDate, end : LocalDate) : void
+    + displaySpecificTypeInRange(start : LocalDate, end : LocalDate, taskType : Class<T>) : void
+    + getTaskCountOnDate(date : LocalDate) : int
+    + clear() : void
+}
+
+Task <|-- Deadline
+Timed <|.. Deadline
+TaskListT <.. TaskListDeadline
+TaskListDeadline <|-- DeadlineList
+DeadlineList "1" o-- "0..*" Deadline : adds to
+Deadline ..> DateUtils : <<uses>>
+Calendar "1" o-- "0..*" Deadline : registers
+
+note right of Deadline
+  getDate() delegates to getBy()
+  so Calendar can store Deadline
+  without knowing its concrete type.
+end note
+
+note bottom of DeadlineList
+  sortByDate() uses
+  Comparator.comparing(Deadline::getBy)
+end note
 
 @enduml

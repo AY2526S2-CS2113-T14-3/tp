@@ -1,0 +1,101 @@
+@startuml TaskValidatorSequenceDiagram
+
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+skinparam sequenceParticipant underline
+
+title TaskValidator Sequence Diagram
+
+actor User
+participant "AddCommand" as AC
+participant "TaskValidator" as TV
+participant "CategoryList" as CL
+participant "Category" as CAT
+participant "EventList" as EL
+
+User -> AC : add task\n(description, dateTime, catIdx)
+activate AC
+
+'─── Step 1: Unique Task ───────────────────────────────────
+AC -> TV : validateUniqueTask(categories, catIdx, description)
+activate TV
+
+TV -> CL : getCategory(catIdx)
+activate CL
+CL --> TV : targetCat
+deactivate CL
+
+TV -> CAT : getTodoList().contains(description)
+activate CAT
+CAT --> TV : existsAsTodo
+
+TV -> CAT : getDeadlineList().contains(description)
+CAT --> TV : existsAsDeadline
+
+TV -> CAT : getEventList().contains(description)
+CAT --> TV : existsAsEvent
+deactivate CAT
+
+alt existsAsTodo OR existsAsDeadline OR existsAsEvent
+    TV --> AC : throw DuplicateTaskException
+    AC --> User : "Duplicate Error: Task already exists\nin this category."
+else no duplicate found
+    TV --> AC : validation passed
+    deactivate TV
+end
+
+'─── Step 2: Workload ──────────────────────────────────────
+AC -> TV : validateWorkload(categories, dateTime, maxTasks)
+activate TV
+
+note over TV : totalTimedTasks = 0\ntargetDate = dateTime.toLocalDate()
+
+loop for each Category in CategoryList
+    TV -> CAT : getDeadlineList()
+    activate CAT
+    loop for each Deadline
+        CAT --> TV : deadline.getBy().toLocalDate()
+        TV -> TV : if equals targetDate, totalTimedTasks++
+    end
+
+    TV -> CAT : getEventList()
+    loop for each Event
+        CAT --> TV : event.getFrom().toLocalDate()
+        TV -> TV : if equals targetDate, totalTimedTasks++
+    end
+    deactivate CAT
+end
+
+alt totalTimedTasks >= maxTasks
+    TV --> AC : throw HighWorkloadException
+    AC --> User : "High Workload: You already have N\nscheduled tasks on [date]. Take a break!"
+else workload is acceptable
+    TV --> AC : validation passed
+    deactivate TV
+end
+
+'─── Step 3: Overlap (Events only) ────────────────────────
+AC -> TV : validateNoOverlap(existingEvents, start, end)
+activate TV
+
+loop for each Event in existingEvents
+    TV -> EL : get(i) → existing Event
+    activate EL
+    EL --> TV : existing.getFrom(), existing.getTo()
+    deactivate EL
+
+    TV -> TV : isOverlapping =\nstart.isBefore(existing.getTo())\nAND end.isAfter(existing.getFrom())
+
+    alt isOverlapping == true
+        TV --> AC : throw OverlapEventException
+        AC --> User : "Conflict: Overlaps with '[existing]'\n[from - to]"
+    end
+end
+
+TV --> AC : all validations passed
+deactivate TV
+
+AC --> User : task added successfully
+deactivate AC
+
+@enduml
