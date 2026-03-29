@@ -21,8 +21,6 @@ This section describes the design and implementation of the key components of Un
 
 The **Architecture Diagram** given above explains the high-level design of the App
 
-Given below is a quick overview of the main components and how they interact with each other.
-
 **Main components of the architecture**
 
 UniTasker is in charge of the app launch and shut down
@@ -216,11 +214,14 @@ and focus on completing their academic responsibilities.
 
 ## Non-Functional Requirements
 
-{Give non-functional requirements}
+1. Should work on any mainstream OS as long as it has Java `17` or above installed.
+2. Should be able to hold up to 500 tasks/courses without a noticeable reduction in performance
+3. A user with above average typing speed for regular English text 
+can accomplish most of the tasks faster using commands than using the mouse.
 
 ## Glossary
 
-* *glossary item* - Definition
+* *Mainstream OS* - Windows, Linux, Unix, MacOS
 
 ## Instructions for manual testing
 

@@ -263,6 +263,16 @@ is located in the other computer.
 
 ## Command Summary
 
-{Give a 'cheat sheet' of commands here}
+| Action      | Format, Examples | 
+|-------------|------------------|
+| help        | `help`           |
+| add         | `add [keyword]`  |
+| delete      | `add [keyword]`  |
+| list        | `add [keyword]`  |
+| mark/unmark | `add [keyword]`  |
+| reorder     | `add [keyword]`  |
+| priority    | `add [keyword]`  |
+| sort        | `add [keyword]`  |
+| find        | `add [keyword]`  |
+| course      | `add [keyword]`  |
 
-* Add todo `todo n/TODO_NAME d/DEADLINE`
