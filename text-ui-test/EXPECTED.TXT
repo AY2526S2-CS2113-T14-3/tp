@@ -20,4 +20,4 @@ Available commands:
 
 Try 'help' to see detailed command information.
 Try 'help <topic>' for help on a specific mode (e.g., 'help task', 'help deadline')
-____________________________________________________________
+______________________________________________________________________
