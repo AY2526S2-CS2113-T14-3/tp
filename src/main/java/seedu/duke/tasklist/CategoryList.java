@@ -24,6 +24,8 @@ public class CategoryList {
     public static final String DOTTED_LINE = "-------------------------------------------------------------------";
     public static final String EQUALSIGN_LINE = "===============================================================" +
             "=======";
+    public static final int INDEX_LOWER_LIMIT = 0;
+    public static final int GROUP_ID_FOR_NON_RECURRING = -1;
 
     private static final Logger logger = Logger.getLogger(CategoryList.class.getName());
 
@@ -80,31 +82,31 @@ public class CategoryList {
     }
 
     public void markTodo(int categoryIndex, int todoIndex) throws UniTaskerException {
-        if (categoryIndex >= this.getAmount() || categoryIndex < 0) {
+        if (categoryIndex >= this.getAmount() || categoryIndex < INDEX_LOWER_LIMIT) {
             throw new UniTaskerException("categoryIndex does not exist.");
         }
         int validTodoIndex = categories.get(categoryIndex).getTodoList().getSize();
-        if (todoIndex >= validTodoIndex || todoIndex < 0) {
+        if (todoIndex >= validTodoIndex || todoIndex < INDEX_LOWER_LIMIT) {
             throw new UniTaskerException("todoIndex does not exist.");
         }
         categories.get(categoryIndex).markTodo(todoIndex);
     }
 
     public void unmarkTodo(int categoryIndex, int todoIndex) throws UniTaskerException {
-        if (categoryIndex >= this.getAmount() || categoryIndex < 0) {
+        if (categoryIndex >= this.getAmount() || categoryIndex < INDEX_LOWER_LIMIT) {
             throw new UniTaskerException("categoryIndex does not exist.");
         }
-        if (todoIndex >= categories.get(categoryIndex).getTodoList().getSize() || todoIndex < 0) {
+        if (todoIndex >= categories.get(categoryIndex).getTodoList().getSize() || todoIndex < INDEX_LOWER_LIMIT) {
             throw new UniTaskerException("todoIndex does not exist.");
         }
         categories.get(categoryIndex).unmarkTodo(todoIndex);
     }
 
     public void reorderCategory(int fromCategoryIndex, int toCategoryIndex) throws UniTaskerException {
-        if (fromCategoryIndex >= this.getAmount() || fromCategoryIndex < 0) {
+        if (fromCategoryIndex >= this.getAmount() || fromCategoryIndex < INDEX_LOWER_LIMIT) {
             throw new UniTaskerException("First categoryIndex does not exist.");
         }
-        if (toCategoryIndex >= this.getAmount() || toCategoryIndex < 0) {
+        if (toCategoryIndex >= this.getAmount() || toCategoryIndex < INDEX_LOWER_LIMIT) {
             throw new UniTaskerException("Second categoryIndex does not exist.");
         }
         Category category = categories.remove(fromCategoryIndex);
@@ -112,24 +114,24 @@ public class CategoryList {
     }
 
     public void reorderTodo(int categoryIndex, int fromTodoIndex, int toTodoIndex) throws UniTaskerException {
-        if (categoryIndex >= this.getAmount() || categoryIndex < 0) {
+        if (categoryIndex >= this.getAmount() || categoryIndex < INDEX_LOWER_LIMIT) {
             throw new UniTaskerException("categoryIndex does not exist.");
         }
         categories.get(categoryIndex).reorderTodo(fromTodoIndex, toTodoIndex);
     }
 
     public void setTodoPriority(int categoryIndex, int todoIndex, int priority) throws UniTaskerException {
-        if (categoryIndex >= this.getAmount() || categoryIndex < 0) {
+        if (categoryIndex >= this.getAmount() || categoryIndex < INDEX_LOWER_LIMIT) {
             throw new UniTaskerException("categoryIndex does not exist.");
         }
-        if (todoIndex >= categories.get(categoryIndex).getTodoList().getSize() || todoIndex < 0) {
+        if (todoIndex >= categories.get(categoryIndex).getTodoList().getSize() || todoIndex < INDEX_LOWER_LIMIT) {
             throw new UniTaskerException("todoIndex does not exist.");
         }
         categories.get(categoryIndex).setTodoPriority(todoIndex, priority);
     }
 
     public void addEvent(int categoryIndex, String description, LocalDateTime from, LocalDateTime to) {
-        categories.get(categoryIndex).addEvent(createEvent(description, from, to, false, -1));
+        categories.get(categoryIndex).addEvent(createEvent(description, from, to, false, GROUP_ID_FOR_NON_RECURRING));
         logger.info("Add event: " + description + " from " + from + " to " + to);
 
     }
