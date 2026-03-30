@@ -440,24 +440,29 @@ public class CategoryList {
         for (Category category : categories) {
             EventList eventList = category.getEventList();
             DeadlineList deadlineList = category.getDeadlineList();
-            for (int i = 0; i < deadlineList.getSize(); i++) {
-                Deadline deadline = deadlineList.get(i);
-                LocalDate getByDate = deadline.getBy().toLocalDate();
-                if (getByDate.equals(today) && !(deadline.getIsDone())) {
-                    reminders.putIfAbsent(category.getName(), new ArrayList<>());
-                    reminders.get(category.getName()).add(deadline);
-                }
-            }
-            for (int i = 0; i < eventList.getSize(); i++) {
-                Event event = eventList.get(i);
-                LocalDate getFromDate = event.getFrom().toLocalDate();
-                if (getFromDate.equals(today) && !(event.getIsDone())) {
-                    reminders.putIfAbsent(category.getName(), new ArrayList<>());
-                    reminders.get(category.getName()).add(event);
-                }
-            }
+            addMatchedTask(today, category, eventList, reminders);
+            addMatchedTask(today, category, deadlineList, reminders);
         }
         return reminders;
+    }
+
+    private void addMatchedTask(LocalDate today, Category category, TaskList taskList,
+            Map<String, List<Task>> reminders) {
+        for (int i = 0; i < taskList.getSize(); i++) {
+            Task task = taskList.get(i);
+            if (!task.getIsDone() && isTaskOnDate(task, today)) {
+                reminders.computeIfAbsent(category.getName(), k -> new ArrayList<>()).add(task);
+            }
+        }
+    }
+
+    private boolean isTaskOnDate(Task task, LocalDate today) {
+        if (task instanceof Event) {
+            return ((Event) task).getFrom().toLocalDate().equals(today);
+        } else if (task instanceof Deadline) {
+            return ((Deadline) task).getBy().toLocalDate().equals(today);
+        }
+        return false;
     }
 
 }
