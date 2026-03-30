@@ -62,9 +62,35 @@ The `AppContainer` component,
 
 ![StorageClassDiagram](/docs/pictures/StorageClassDiagram.png)
 
+The `Storage` consists of the following:
+- `String todoFilePath` - path to the local file storing todo tasks
+- `String deadlineFilePath` - path to the  local file storing deadline tasks
+- `String eventFilePath` - path to the local file storing event tasks
+- `String SETTINGS_FILE` - path to the file storing application settings (daily task limit, end year)
+
+The `Storage` component,
+- Serializes  and persists the current state of CategoryList to disk across three separate files (todos, deadlines, events)
+- Deserializes and reconstructs the CategoryList on startup by reading from those files, skipping malformed lines gracefully 
+- Loads and saves application-level settings (e.g. daily task limit, calendar end year) independently of task data
+
 **UI component**
 
 ![UIClassDiagram](/docs/pictures/UIClassDiagram.png)
+
+The UI package consists of the following classes:
+
+- `GeneralUi` – central utility class providing shared print helpers (bordered output, welcome screen, reminders) used by all other UI classes
+- `ErrorUi` – handles all error and warning messages shown to the user
+- `CategoryUi` – handles output for category-related actions (add, delete, list)
+- `DeadlineUi` – handles output for deadline-related actions (add, delete)
+- `EventUi` – handles output for event-related actions (add, delete, recurring events)
+- `TaskUi` – handles output for todo-related actions (mark, priority, sort, reorder, find)
+- `LimitUi` – handles output for limit and course result messages
+- `CommandHelp` – provides formatted help text for all command modes and topics
+
+The `UI` package,
+- Decouples all display logic from business logic by centralizing output into dedicated classes per task type 
+- Routes all formatted output through GeneralUi as a single shared rendering layer, ensuring consistent visual formatting across the application
 
 **Command component**
 
@@ -125,7 +151,7 @@ The sequence diagram below illustrates how a date string entered by the user is 
 
 Example: `Add deadline 1 Homework /by 31-12-2025 1800` or `Add event 1 Homework /from 31-12-2025 1800 /to 01-01-2026`
 
-**Note: The command in the diagram has been generalised as a date since DateUtils validates dates only**
+**Note: The command in the diagram has been generalized as a date since DateUtils validates dates only**
 
 ![DateUtils Sequence Diagram](/docs/pictures/DateUtilsSequence.png)
 *<div align="center"> Figure x - DateUtils: parse() Sequence Diagram </div>*
@@ -172,7 +198,7 @@ Before any task (Todo, Deadline, Event) is added to the system, the AddCommand i
 UniTasker is designed for university students who need to manage multiple courses, assignments, deadlines, and personal tasks simultaneously. These users often:
 - juggle academic responsibilities across different modules, each with varying deadlines, 
 priorities, and schedules. 
-- They require a simple and efficient system to organise their tasks,
+- They require a simple and efficient system to organize their tasks,
 keep track of coursework, and stay on top of deadlines.
 - prefer a fast, keyboard-driven interface over GUI-heavy applications
 
@@ -180,11 +206,11 @@ keep track of coursework, and stay on top of deadlines.
 
 University students often struggle to keep track of tasks and course assessments across different 
 platforms such as learning portals, calendars and notes. This fragmented approach leads
-to missed deadlines, poor prioritisation, and unnecessary stress. 
+to missed deadlines, poor prioritization, and unnecessary stress. 
 
 UniTasker provides a centralized 
 task management solution that consolidates todos, deadlines, events and course information into a 
-single platform. Through a simple command-line interface, it allows students to efficiently organise, 
+single platform. Through a simple command-line interface, it allows students to efficiently organize, 
 update, and review their tasks and assessments. This helps students to stay on top of their workload
 and focus on completing their academic responsibilities.
 
@@ -228,7 +254,7 @@ can accomplish most of the tasks faster using commands than using the mouse.
 
 ## Glossary
 
-* *Mainstream OS* - Windows, Linux, Unix, MacOS
+* *Mainstream OS* - Windows, Linux, Unix, macOS
 
 ## Instructions for Manual Testing
 
