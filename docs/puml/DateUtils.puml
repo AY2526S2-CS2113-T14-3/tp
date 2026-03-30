@@ -2,16 +2,15 @@
 
 skinparam sequenceArrowThickness 2
 skinparam roundcorner 10
-skinparam sequenceParticipant underline
 
 title DateUtils: parse() Sequence Diagram
 
 actor User
-participant "CommandParser" as CP
-participant "AddCommand" as AC
-participant "DateUtils" as DU
-participant "LocalDateTime" as LDT
-participant "IllegalDateException" as IDE
+participant ":CommandParser" as CP
+participant ":AddCommand" as AC
+participant ":DateUtils" as DU
+participant ":LocalDateTime" as LDT
+participant ":IllegalDateException" as IDE
 
 User -> CP : enters date string\n(e.g. "31-12-2025 1800")
 activate CP

@@ -2,16 +2,15 @@
 
 skinparam sequenceArrowThickness 2
 skinparam roundcorner 10
-skinparam sequenceParticipant underline
 
 title TaskValidator Sequence Diagram
 
 actor User
-participant "AddCommand" as AC
-participant "TaskValidator" as TV
-participant "CategoryList" as CL
-participant "Category" as CAT
-participant "EventList" as EL
+participant ":AddCommand" as AC
+participant ":TaskValidator" as TV
+participant ":CategoryList" as CL
+participant ":Category" as CAT
+participant ":EventList" as EL
 
 User -> AC : add task\n(description, dateTime, catIdx)
 activate AC
