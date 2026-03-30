@@ -65,7 +65,7 @@ public class GeneralUi {
 
     }
 
-        public static void printWarning(String message) {
+    public static void printWarning(String message) {
         System.out.println("[WARNING] " + message);
     }
 

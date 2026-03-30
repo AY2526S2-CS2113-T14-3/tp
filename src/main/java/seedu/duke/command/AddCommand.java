@@ -180,7 +180,7 @@ public class AddCommand implements Command {
                         + "(e.g., add event 1 consultation /from 01-03-2026 1800 /to 07-03-2026 1900)");
             }
 
-            TaskValidationEvents(container, from, eventCategoryIndex, eventDetails, to);
+            validateEvents(container, from, eventCategoryIndex, eventDetails, to);
             container.categories().addEvent(eventCategoryIndex, eventDetails[0], from, to);
 
             Event newEvent = container.categories().getCategory(eventCategoryIndex).getLatestEvent();
@@ -265,13 +265,13 @@ public class AddCommand implements Command {
 
             if (sentence[sentence.length - 2].equals("/month")) {
                 try {
-                     months = Integer.parseInt(sentence[sentence.length - 1]);
+                    months = Integer.parseInt(sentence[sentence.length - 1]);
                     if (months <= 0) {
                         throw new UniTaskerException("Invalid number use a positive integer larger than 0");
                     }
                     endDate = from.plusMonths(months);
                 } catch (NumberFormatException e) {
-                        throw new UniTaskerException("Invalid month value");
+                    throw new UniTaskerException("Invalid month value");
                 }
             } else if (sentence[sentence.length - 2].equals("/date")) {
                 try {
@@ -287,10 +287,10 @@ public class AddCommand implements Command {
                 throw new UniTaskerException("End date exceeds the allowed year limit of "
                         + container.getEndYear());
             }
-                TaskValidationEvents(container, from, eventCategoryIndex, eventDetails, to);
-                container.categories().addRecurringWeeklyEvent(
-                        eventCategoryIndex, eventDetails[0], from, to,
-                        container.calendar(), (months == 0 ? endDate : null), months);
+            validateEvents(container, from, eventCategoryIndex, eventDetails, to);
+            container.categories().addRecurringWeeklyEvent(
+                    eventCategoryIndex, eventDetails[0], from, to,
+                    container.calendar(), (months == 0 ? endDate : null), months);
 
             EventUi.printRecurringEventAdded(container.categories().getLatestEvent(eventCategoryIndex));
         } catch (IllegalDateException e) {
@@ -304,13 +304,14 @@ public class AddCommand implements Command {
         }
     }
 
-    private static void TaskValidationEvents(AppContainer container, LocalDateTime from, int eventCategoryIndex, String[] eventDetails, LocalDateTime to) throws OverlapEventException {
+    private static void validateEvents(AppContainer container, LocalDateTime from, int eventCategoryIndex,
+        String[] eventDetails, LocalDateTime to) throws OverlapEventException {
         TaskValidator.validateWorkload(
                 container.categories(), from, container.getDailyTaskLimit());
         TaskValidator.validateUniqueTask(
                 container.categories(), eventCategoryIndex, eventDetails[0]);
-            TaskValidator.validateNoOverlap(
-                    container.categories().getCategory(eventCategoryIndex).getEventList(), from, to);
+        TaskValidator.validateNoOverlap(
+                container.categories().getCategory(eventCategoryIndex).getEventList(), from, to);
     }
 
     //@@author sushmiithaa

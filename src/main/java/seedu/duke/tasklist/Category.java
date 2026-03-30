@@ -195,9 +195,12 @@ public class Category {
     public String toString() {
         String result = "";
         result += getName() + System.lineSeparator();
-        result += "Todos:" + System.lineSeparator() + DOTTED_LINE + System.lineSeparator() + todoList.toString() + System.lineSeparator();
-        result += "Deadlines:" + System.lineSeparator() + DOTTED_LINE + System.lineSeparator() + deadlineList.toString() + System.lineSeparator();
-        result += "Events:" + System.lineSeparator() + DOTTED_LINE + System.lineSeparator() + eventList.toString() + System.lineSeparator();
+        result += "Todos:" + System.lineSeparator() + DOTTED_LINE + System.lineSeparator()
+                + todoList.toString() + System.lineSeparator();
+        result += "Deadlines:" + System.lineSeparator() + DOTTED_LINE + System.lineSeparator()
+                + deadlineList.toString() + System.lineSeparator();
+        result += "Events:" + System.lineSeparator() + DOTTED_LINE + System.lineSeparator()
+                + eventList.toString() + System.lineSeparator();
 
         return result;
     }
