@@ -121,7 +121,6 @@ How the `Command` component works:
 The figure below illustrates the relationship between Deadline class and the following classes: Task, Timed, Calendar, DateUtils, DeadlineList, TaskList. 
 
 ![Deadline Class Diagram](pictures/deadlineClassDiagram.png)
-*<div align="center"> Figure x - Deadline Class Diagram </div>*
 
 
 **Key Design Considerations**
@@ -154,7 +153,6 @@ Example: `Add deadline 1 Homework /by 31-12-2025 1800` or `Add event 1 Homework 
 **Note: The command in the diagram has been generalized as a date since DateUtils validates dates only**
 
 ![DateUtils Sequence Diagram](pictures/DateUtilsSequence.png)
-*<div align="center"> Figure x - DateUtils: parse() Sequence Diagram </div>*
 
 **Parsing Flow Summary:**
 
@@ -180,7 +178,6 @@ TaskValidator ensures that there is a unique occurrence of a given task with no 
 Before any task (Todo, Deadline, Event) is added to the system, the AddCommand invokes three sequential validation passes via TaskValidator. These checks ensure that no Task have the same name, workload per day does not exceed set limit and there is no overlap in events. The diagram below shows the full interaction.
 
 ![TaskValidator Sequence Diagram](pictures/TaskValidatorSequence.png)
-*<div align="center"> Figure x - Task Validator Sequence Diagram </div>*
 
 **Parsing Flow Summary**
 
