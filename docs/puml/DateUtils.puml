@@ -6,15 +6,14 @@ skinparam roundcorner 10
 
 title DateUtils: parse() Sequence Diagram
 
-actor User
 participant ":CommandParser" as CP
 participant ":AddCommand" as AC
 participant ":DateUtils" as DU
 participant ":LocalDateTime" as LDT
 
-note over User, LDT : This sequence diagram covers the happy path only.
+note over CP, LDT : This sequence diagram covers the happy path only.
 
-User -> CP : enters date string\n(e.g. "31-12-2025 1800")
+-> CP : enters date string\n(e.g. "31-12-2025 1800")
 activate CP
 
 CP -> CP : parse(line)
