@@ -5,16 +5,15 @@ skinparam roundcorner 10
 
 title TaskValidator Sequence Diagram
 
-actor User
 participant ":AddCommand" as AC
 participant ":TaskValidator" as TV
 participant ":CategoryList" as CL
 participant ":Category" as CAT
 participant ":EventList" as EL
 
-note over User, EL : This sequence diagram covers the happy path only.
+note over AC, EL : This sequence diagram covers the happy path only.
 
-User -> AC : add task\n(description, dateTime, catIdx)
+-> AC : add task\n(description, dateTime, catIdx)
 activate AC
 
 '─── Step 1: Unique Task ───────────────────────────────────
