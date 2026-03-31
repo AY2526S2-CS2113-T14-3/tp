@@ -23,7 +23,9 @@ public abstract class TaskList<T extends Task> {
         return tasks.remove(index);
     }
 
-    public void clearAll() { tasks.clear();}
+    public void clearAll() {
+        tasks.clear();
+    }
 
     public void mark(int index) {
         tasks.get(index).mark();

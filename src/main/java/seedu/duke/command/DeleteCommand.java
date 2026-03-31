@@ -99,8 +99,8 @@ public class DeleteCommand implements Command {
                     Event eventToDelete = container.categories().getEvent(ref.categoryIndex, ref.eventIndex);
                     if (eventToDelete.getIsRecurring() &&
                             (!container.categories().getCurrentView().equals("EVENT_EXPANDED"))) {
-                        GeneralUi.printBordered("This is a recurring group. To delete the specific occurrence, please" +
-                                "use 'list event /all' or 'list occurrence " +
+                        GeneralUi.printBordered("This is a recurring group. To delete the specific occurrence, please "
+                                + "use 'list event /all' or 'list occurrence " +
                                 (categoryIndex + 1) + " " + (uiIndex + 1) + "' first");
                     } else {
                         container.categories().deleteEvent(ref.categoryIndex, ref.eventIndex);
@@ -111,7 +111,7 @@ public class DeleteCommand implements Command {
             case "recurring":
                 String currentView = container.categories().getCurrentView();
                 if (!(currentView.equals("RECURRING_OVERVIEW"))) {
-                    throw new UniTaskerException("To delete a the recurring event group please " +
+                    throw new UniTaskerException("To delete the recurring event group please " +
                             "use 'list recurring' first");
                 }
                 int uiIndex = Integer.parseInt(sentence[INDEX_OF_TASK_TO_DELETE]) - 1;

@@ -52,7 +52,9 @@ public class Category {
         todoList.delete(index);
     }
 
-    public void deleteAllTodos() { todoList.clearAll(); }
+    public void deleteAllTodos() {
+        todoList.clearAll();
+    }
 
     public void markTodo(int index) {
         todoList.mark(index);
