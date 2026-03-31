@@ -132,17 +132,21 @@ add recurring 1 weekly event CS2113 lecture /from Friday 1600 /to Friday 1800
 ### Delete Command: `delete`
 Delete an existing item on the list. `delete` can be used to delete the following: `category`, `todo`, `deadline`, `event`, `recurring`
 
-Format:
+#### Delete Category: `delete category`
 
-delete `category` index or,
+Format: `delete category [CATEGORYINDEX]`
 
-delete [TASKTYPE] [CATEGORYINDEX] [TASKINDEX]
+Example: `delete category 1`
+
+#### Delete Task: `delete [TASKTYPE]`
+
+Format: `delete [TASKTYPE] [CATEGORYINDEX] [TASKINDEX]`
 
 - TASKTYPE : `todo`, `deadline`, `event`, `recurring`
 - CATEGORYINDEX: Integer value up to number of categories added
-- TASKINDEX: What the task is about
+- TASKINDEX: Integer value up to number of tasks in the category
 
-*Note*: Use `delete deadline/event categoryIndex all` to delete all deadlines/events in specific category
+*Note*: Use `delete todo/deadline/event categoryIndex all` to delete all todos/deadlines/events in specific category
 
 Examples:
 
@@ -151,20 +155,33 @@ Examples:
 
 ---
 
-### Mark/Unmark Command: `mark` `unmark`
-Mark an existing item on the list. 
+### Mark Command: `mark`
+Mark an existing task in the category.
 
-- `mark` can be used to mark the following: `category`, `todo`, `deadline`, `event`, `recurring`
+Format: `mark [TASKTYPE] [CATEGORYINDEX] [TASKINDEX]`
 
-Unmark an existing item on the list. 
+- TASKTYPE : `todo`, `deadline`, `event`, `recurring`
+- CATEGORYINDEX: Integer value up to number of categories added
+- TASKINDEX: Integer value up to number of tasks in the category
 
-- `unmark` can be used to unmark the following: `category`, `todo`, `deadline`, `event`, `recurring`
+Example: `mark todo 1 1`
+
+### Unmark Command: `unmark`
+Unmark an existing task in the category. 
+
+Format: `unmark [TASKTYPE] [CATEGORYINDEX] [TASKINDEX]`
+
+- TASKTYPE : `todo`, `deadline`, `event`, `recurring`
+- CATEGORYINDEX: Integer value up to number of categories added
+- TASKINDEX: Integer value up to number of tasks in the category
+
+Example: `unmark deadline 1 1`
 
 ---
 
 ### List Command: `list`
+Displays a list of tasks. 
 
-Creates a list of task. 
 - `list` can be used to crate a list on the following: `category`, `todo`, `deadline`, `event`, `recurring`, `range`
 
 List out all tasks based on key word
@@ -288,17 +305,17 @@ is located in the other computer.
 
 ## Command Summary
 
-| Action      | Format, Examples                                                                               | 
-|-------------|------------------------------------------------------------------------------------------------|
-| help        | `help`                                                                                         |
-| add         | `add category [DESC]`, `add todo [CATEGORYINDEX] [DESC]`,                                      |
-| delete      | `delete [KEYWORD] [CATEGORYINDEX] [TASKINDEX]`, `delete [KEYWORD] [CATEGORYINDEX] all`         |
-| list        | `add [keyword]`                                                                                |
-| mark/unmark | `add [keyword]`                                                                                |
-| reorder     | `reorder category [FROMINDEX] [TOINDEX]`, `reorder todo [CATEGORYINDEX] [FROMINDEX] [TOINDEX]` |
-| priority    | `priority todo [CATEGORYINDEX] [TODOINDEX] [PRIORITYVALUE]`                                    |
-| sort        | `sort todo [CATEGORYINDEX]`                                                                    |
-| find        | `find [SUBSTRING]`                                                                             |
-| limit       | `limit [keyword]`                                                                              |
-| course      | `add [keyword]`                                                                                |
+| Action      | Format, Examples                                                                                                              | 
+|-------------|-------------------------------------------------------------------------------------------------------------------------------|
+| help        | `help`                                                                                                                        |
+| add         | `add category [DESC]`, `add todo [CATEGORYINDEX] [DESC]`, <br/> `add todo [categoryIndex] [description] /p [priorityValue]`,  |
+| delete      | `delete [KEYWORD] [CATEGORYINDEX] [TASKINDEX]`, `delete [KEYWORD] [CATEGORYINDEX] all`                                        |
+| list        | `add [keyword]`                                                                                                               |
+| mark/unmark | `mark [TASKTYPE] [CATEGORYINDEX] [TASKINDEX]`, `unmark [TASKTYPE] [CATEGORYINDEX] [TASKINDEX]`                                |
+| reorder     | `reorder category [FROMINDEX] [TOINDEX]`, `reorder todo [CATEGORYINDEX] [FROMINDEX] [TOINDEX]`                                |
+| priority    | `priority todo [CATEGORYINDEX] [TODOINDEX] [PRIORITYVALUE]`                                                                   |
+| sort        | `sort todo [CATEGORYINDEX]`                                                                                                   |
+| find        | `find [SUBSTRING]`                                                                                                            |
+| limit       | `limit [keyword]`                                                                                                             |
+| course      | `add [keyword]`                                                                                                               |
 

@@ -277,6 +277,70 @@ Before any task (Todo, Deadline, Event) is added to the system, the AddCommand i
 
 
 
+### Feature: Course Tracker
+
+The Course Tracker feature allows students to manage their courses and track their assessment scores and weightages.
+
+**Course Class Diagram**
+
+The figure below illustrates the relationship between CourseManager, CourseList, Course, and Assessment classes.
+
+![Course Class Diagram](pictures/CourseClassDiagram.png)
+
+**Key Design Considerations**
+
+- `CourseManager` acts as the main controller for all course-related operations
+- `CourseList` maintains a list of all courses and provides methods to add, remove, and retrieve courses
+- `Course` stores course-specific information including courseCode and a list of assessments
+- `Assessment` represents individual assessment components with weightage and score tracking
+- The structure follows separation of concerns: each class has distinct responsibilities
+- CourseStorage handles persistence of course data to disk
+
+**Course Management Operations**
+
+#### Add Course
+- User enters: `course add <courseCode>`
+- `CourseParser` creates a CourseCommand with the add operation
+- `CourseManager.addCourse()` creates a new Course object and adds it to CourseList
+- Result is stored via `CourseStorage` and displayed to the user via `CourseUi`
+
+#### Delete Course
+- User enters: `course delete <courseCode>`
+- `CourseManager.deleteCourse()` removes the course from CourseList
+- Associated assessments are also removed
+- Changes are persisted to storage
+
+#### List Courses
+- User enters: `course list`
+- `CourseManager.listCourses()` retrieves all courses from CourseList
+- `CourseUi` displays each course with its assessments and current weighted score
+
+#### View Course Details
+- User enters: `course view <courseCode>`
+- `CourseManager.viewCourse()` retrieves the specific course
+- Displays course code and all assessments with their weightages and scores
+
+#### Assessment Management
+- **Add Assessment**: `course assessment add <courseCode> <name> <weightage> <maxScore>`
+  - Creates an Assessment object and adds it to the target Course
+  - Validates that total weightage does not exceed 100%
+  
+- **Record Score**: `course assessment record <courseCode> <name> <score>`
+  - Updates the scoreObtained field for the specified assessment
+  - Calculates weighted score based on weightage and max score
+  
+- **Delete Assessment**: `course assessment delete <courseCode> <name>`
+  - Removes the assessment from the Course
+  - Recalculates total weightage and weighted score
+
+**Assessment Score Calculation**
+
+The weighted score for each assessment is calculated as:
+- `weightedScore = (scoreObtained / maxScore) * weightage`
+
+The total weighted score for a course is:
+- `totalWeightedScore = sum of all assessment weightedScores`
+
 ## Product scope
 
 ### Target user profile
