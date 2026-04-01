@@ -5,9 +5,6 @@ import java.util.ArrayList;
 /**
  * Represents one university course, e.g. CS2113.
  * Each course contains a list of assessments.
- * MICHAEL:
- * - Your commands will usually first locate a Course,
- *   then perform actions on it (add assessment, list assessments, score, grade).
  */
 
 public class Course {
@@ -28,23 +25,15 @@ public class Course {
         return assessments;
     }
 
-
     public void addAssessment(Assessment assessment) {
         assessments.add(assessment);
     }
     //Adds an assessment into this course.
 
-    /**
-     * MICHAEL:
-     * - Your add-assessment command should call this.
-     */
-
-
     public boolean hasAssessment(String name) {
         return getAssessment(name) != null;
     }
     //Returns true if an assessment with this name exists.
-
 
     public Assessment getAssessment(String name) {
         for (Assessment assessment : assessments) {
@@ -56,12 +45,6 @@ public class Course {
     }
     //Finds an assessment by name, case-insensitive.
 
-    /**
-     * MICHAEL:
-     * - Your score/delete-assessment command can use this.
-     */
-
-
     public boolean removeAssessment(String name) {
         Assessment assessment = getAssessment(name);
         if (assessment == null) {
@@ -72,15 +55,9 @@ public class Course {
     }
     //Removes an assessment by name, case-insensitive.
 
-    /**
-     * MICHAEL:
-     * - Your delete-assessment command can call this.
-     */
-
     public int getAssessmentCount() {
         return assessments.size();
     }
-
 
     public double getTotalWeightedScore() {
         double total = 0;
@@ -90,7 +67,6 @@ public class Course {
         return total;
     }
     //Returns the total weighted score earned so far.
-
 
     public double getTotalWeightage() {
         double total = 0;
@@ -111,12 +87,6 @@ public class Course {
         return total;
     }
     //Returns the sum of weightages for only graded assessments.
-
-    /**
-     * Useful if Michael wants to show:
-     * "You have completed 60% of the course grading components."
-     */
-
 
     public String encode() {
         StringBuilder sb = new StringBuilder();
