@@ -95,6 +95,8 @@ public class AddCommand implements Command {
             TaskValidator.validateUniqueCategory(container.categories(), name);
             container.categories().addCategory(name);
             CategoryUi.printCategoryAdded(name);
+        } catch (DuplicateCategoryException e) {
+            ErrorUi.printCommandFailed("add category", e.getMessage(), null);
         } catch (Exception e) {
             ErrorUi.printCommandFailed("add category", e.getMessage(),
                     "add category [description]");
@@ -172,6 +174,8 @@ public class AddCommand implements Command {
             }
 
             TaskUi.printTaskAction("Added", "todo", description);
+        } catch (DuplicateTaskException e) {
+            ErrorUi.printCommandFailed("add todo", e.getMessage(), null);
         } catch (Exception e) {
             ErrorUi.printCommandFailed("add todo", e.getMessage(),
                     "add todo [categoryIndex] [description] /p [priority]");
