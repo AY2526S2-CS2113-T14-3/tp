@@ -164,7 +164,7 @@ public class Storage {
                 String[] parts = line.split(" \\| ");
 
                 if (parts.length < 5) {
-                    logger.log(Level.WARNING, "Skipping malformed line " + lineCount + " in deadlines.txt");
+                    logger.log(Level.SEVERE, "Skipping malformed line " + lineCount + " in deadlines.txt");
                     continue;
                 }
 
@@ -178,7 +178,7 @@ public class Storage {
                 try {
                     by = DateUtils.parseDateTimeFromFile(dateString);
                 } catch (IllegalDateException e) {
-                    logger.warning("Skipping line " + lineCount + " - Reason:" + e.getMessage());
+                    logger.severe("Skipping line " + lineCount + " - Reason:" + e.getMessage());
                     continue;
                 }
 
@@ -209,7 +209,7 @@ public class Storage {
                 String[] parts = s.nextLine().split(" \\| ");
 
                 if (parts.length < 6) {
-                    logger.log(Level.WARNING, "Skipping malformed line " + lineNumber + " in events.txt");
+                    logger.log(Level.SEVERE, "Skipping malformed line " + lineNumber + " in events.txt");
                     continue;
                 }
 
@@ -227,7 +227,7 @@ public class Storage {
                     from = LocalDateTime.parse(stringFrom, storageFormatter);
                     to = LocalDateTime.parse(stringTo, storageFormatter);
                 } catch (DateTimeParseException e) {
-                    logger.warning("Could not parse date time in events.txt from line: "
+                    logger.severe("Could not parse date time in events.txt from line: "
                             + lineNumber + " " + e.getMessage());
                     continue;
                 }
@@ -239,7 +239,7 @@ public class Storage {
                         int recurringGroupId = Integer.parseInt(recurringId);
                         categoryList.addRecurringWeeklyEventFile(catIdx, desc, from, to, recurringGroupId);
                     } catch (NumberFormatException e) {
-                        logger.warning("Could not parse recurring group ID from line: "
+                        logger.severe("Could not parse recurring group ID from line: "
                                 + lineNumber + " " + e.getMessage());
                         continue;
                     }
@@ -283,7 +283,7 @@ public class Storage {
                         setDailyTaskLimit(Integer.parseInt(parts[1]));
                         break;
                     default:
-                        logger.warning("Unknown setting key: " + parts[0]);
+                        logger.severe("Unknown setting key: " + parts[0]);
                     }
                 }
             }

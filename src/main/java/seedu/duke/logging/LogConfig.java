@@ -38,7 +38,7 @@ public class LogConfig {
 
             // Console handler: surfaces warnings and above during runtime
             ConsoleHandler consoleHandler = new ConsoleHandler();
-            consoleHandler.setLevel(Level.WARNING);
+            consoleHandler.setLevel(Level.SEVERE);
             rootLogger.addHandler(consoleHandler);
 
         } catch (IOException e) {
