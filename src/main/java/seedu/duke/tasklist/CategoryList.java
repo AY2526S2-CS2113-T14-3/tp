@@ -365,7 +365,8 @@ public class CategoryList {
         StringBuilder sb = new StringBuilder();
         sb.append("OCCURRENCES FOR: ").append(template.getDescription()).append("\n");
         sb.append(DOTTED_LINE).append(System.lineSeparator());
-        sb.append("[" + (categoryIndex + 1) + "]").append(categories.get(categoryIndex).getName()).append(":").append(System.lineSeparator());
+        sb.append("[" + (categoryIndex + 1) + "]").append(categories.get(categoryIndex).getName())
+                .append(":").append(System.lineSeparator());
         List<EventReference> newCategoryMap = new ArrayList<>();
         EventList eventList = categories.get(categoryIndex).getEventList();
 

@@ -142,7 +142,8 @@ public class MarkCommand implements Command {
                 Event event = container.categories().getEvent(ref.categoryIndex, ref.eventIndex);
                 if (event.getIsRecurring() &&
                     (!container.categories().getCurrentView().equals("EVENT_EXPANDED"))) {
-                GeneralUi.printMessage((uiIndex + 1) + " is a recurring group. To mark/unmark the specific occurrence, please " +
+                    GeneralUi.printMessage((uiIndex + 1) + " is a recurring group. " +
+                            "To mark/unmark the specific occurrence, please " +
                         "use 'list event /all' or 'list occurrence " +
                         (categoryIndex + 1) + " " + (uiIndex + 1) + "' first");
                 } else {
