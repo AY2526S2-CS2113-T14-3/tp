@@ -11,6 +11,9 @@ public class CourseParser {
         this.courseManager = courseManager;
     }
 
+    public CourseManager getCourseManager() {
+        return courseManager;
+    }
 
     //Parses the user input after the keyword "course".
     public String parse(String input) throws CourseException {
