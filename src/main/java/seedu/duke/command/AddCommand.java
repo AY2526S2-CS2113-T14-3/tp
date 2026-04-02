@@ -280,7 +280,8 @@ public class AddCommand implements Command {
         try {
             int eventCategoryIndex = CommandSupport.getCategoryIndex(container, sentence);
             boolean isMissingInvalidInfo = sentence.length < ADD_RECURRING_EVENT_MIN_LENGTH
-                    || !sentence[INDEX_OF_WORD_WEEKLY].equals("weekly") || !sentence[INDEX_OF_WORD_EVENT].equals("event");
+                    || !sentence[INDEX_OF_WORD_WEEKLY].equals("weekly")
+                    || !sentence[INDEX_OF_WORD_EVENT].equals("event");
             if (isMissingInvalidInfo) {
                 throw new UniTaskerException("Missing or invalid info. "
                         + "Expected format: add recurring <categoryIndex> weekly event <description> "
