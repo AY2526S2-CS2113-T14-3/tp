@@ -238,6 +238,11 @@ public class AddCommand implements Command {
                 throw new UniTaskerException("Empty description! Include the event description");
             }
 
+            String[] preValidationSplit = raw.split("/from");
+            if (preValidationSplit.length > 0 && preValidationSplit[0].trim().isEmpty()) {
+                throw new UniTaskerException("Event description should not be empty");
+            }
+
             if (!raw.matches("(?s).*\\S+.*\\s+/from\\s+\\S+.*\\s+/to\\s+\\S+.*")) {
                 throw new UniTaskerException("Missing or invalid format. "
                         + "Expected: add event [index] [desc] /from dd-MM-yyyy HHmm /to dd-MM-yyyy HHmm");
@@ -289,6 +294,11 @@ public class AddCommand implements Command {
             }
 
             String raw = String.join(" ", Arrays.copyOfRange(sentence, INDEX_OF_RECURRING_EVENT_INFO, sentence.length));
+
+            String[] preValidationSplit = raw.split("/from");
+            if (preValidationSplit.length > 0 && preValidationSplit[0].trim().isEmpty()) {
+                throw new UniTaskerException("Event description should not be empty");
+            }
 
             if (raw.stripLeading().startsWith("/from")) {
                 throw new UniTaskerException("Empty description! Include the event description");

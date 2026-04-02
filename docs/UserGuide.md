@@ -145,16 +145,35 @@ Format: `add event [CATEGORYINDEX] [DESCRIPTION] /from [START] /to [END]`
 
 Adds a weekly recurring event.
 
-Format: `add recurring [CATEGORYINDEX] weekly event [DESCRIPTION] /from [DAY TIME /to [DAY TIME]`
+Format: `add recurring [CATEGORYINDEX] weekly event [DESCRIPTION] /from [DAY TIME] /to [DAY TIME] (/date or /month) [END DURATION]`
 
 - `categoryIndex`: Integer value corresponding to the category
 - `description`: Description of the event
 - `/from`: Start day and time (e.g. Friday 1600)
 - `/to`: End day and time
+- `day time`: Format `EEEE HHmm` where EEE is Monday, Tuesday, Wednesday, Thursday, Friday
+- `/date` or `/month` : (optional) end duration for the recurring group
+- `end duration` : (optional) number of months or end date , Format for end date: `dd-MM-yyyy`
+
+````
+______________________________________________________________________
+add recurring 1 weekly event lecture /from Friday 1030 /to Friday 1130 /month 2
+______________________________________________________________________
+This recurring event has been added:
+[RE][ ] lecture (from: Friday 1030 to: Friday 1130)
+______________________________________________________________________
+add recurring 1 weekly event CS2113 lecture /from Friday 1600 /to Friday 1800 /date 24-04-2026
+______________________________________________________________________
+This recurring event has been added:
+[RE][ ] CS2113 lecture (from: Friday 1600 to: Friday 1800)
+______________________________________________________________________
+````
 
 **Examples:**
 
 `add recurring 1 weekly event CS2113 lecture /from Friday 1600 /to Friday 1800`
+
+*Note*: *Use `/date or /month` but not both to set the end duration*
 
 ---
 
@@ -196,6 +215,79 @@ Format: `delete [EVENTTYPE] [CATEGORYINDEX] [UIINDEX]`
   - do `list recurring` → then `delete recurring [CATEGORYINDEX] [UIINDEX]` 
   - do `list event` or `list event /all` or `list event /normal` → then `delete event [CATEGORYINDEX] [UIINDEX]`
 
+````
+______________________________________________________________________
+list event
+______________________________________________________________________
+ALL EVENTS
+______________________________________________________________________
+[1]school:
+1. [E][ ] meeting (from: 04-04-2026 1000 to: 04-04-2026 1100)
+2. [E][ ] consultation (from: 10-04-2026 1800 to: 10-04-2026 1900)
+3. [E][ ] session (from: 11-04-2026 1800 to: 11-04-2026 1900)
+4. [RE]lecture (from: Friday 1030 to: Friday 1130)
+5. [RE]CS2113 lecture (from: Friday 1600 to: Friday 1800)
+6. [RE]CS2113 seminar (from: Friday 2000 to: Friday 2100)
+
+______________________________________________________________________
+delete event 1 1
+______________________________________________________________________
+This event has been deleted:
+[E][ ] meeting (from: 04-04-2026 1000 to: 04-04-2026 1100)
+______________________________________________________________________
+````
+
+````
+______________________________________________________________________
+list recurring
+______________________________________________________________________
+ALL RECURRING EVENTS
+______________________________________________________________________
+[1]school:
+1. [RE]lecture (from: Friday 1030 to: Friday 1130)
+2. [RE]CS2113 lecture (from: Friday 1600 to: Friday 1800)
+3. [RE]CS2113 seminar (from: Friday 2000 to: Friday 2100)
+
+______________________________________________________________________
+delete recurring 1 1
+______________________________________________________________________
+This recurring event has been deleted:
+[RE]lecture (from: Friday 1030 to: Friday 1130)
+______________________________________________________________________
+````
+
+````
+______________________________________________________________________
+list event
+______________________________________________________________________
+ALL EVENTS
+______________________________________________________________________
+[1]school:
+1. [E][ ] consultation (from: 10-04-2026 1800 to: 10-04-2026 1900)
+2. [E][ ] session (from: 11-04-2026 1800 to: 11-04-2026 1900)
+3. [RE]CS2113 lecture (from: Friday 1600 to: Friday 1800)
+4. [RE]CS2113 seminar (from: Friday 2000 to: Friday 2100)
+
+______________________________________________________________________
+list occurrence 1 3
+______________________________________________________________________
+OCCURRENCES FOR: CS2113 lecture
+______________________________________________________________________
+[1]school:
+1. [RE][ ] CS2113 lecture (from: 10-04-2026 1600 to: 10-04-2026 1800)
+2. [RE][ ] CS2113 lecture (from: 17-04-2026 1600 to: 17-04-2026 1800)
+3. [RE][ ] CS2113 lecture (from: 24-04-2026 1600 to: 24-04-2026 1800)
+
+______________________________________________________________________
+delete occurrence 1 1
+______________________________________________________________________
+This recurring event has been deleted:
+[RE][ ] CS2113 lecture (from: 10-04-2026 1600 to: 10-04-2026 1800)
+______________________________________________________________________
+````
+
+
+
 Examples:
 
 `delete occurrence 1 1`
@@ -234,7 +326,59 @@ Format: `mark [EVENTTYPE] [CATEGORYINDEX] [UIINDEX]...`
   - do `list occurrence [CATEGORYINDEX] [UIINDEX]` → then `mark occurrence [CATEGORYINDEX] [UIINDEX]`
   - do `list event` or `list event /all` or `list event /normal`
     → then `mark event [CATEGORYINDEX] [UIINDEX]` 
-Example: 
+
+````
+______________________________________________________________________
+list event
+______________________________________________________________________
+ALL EVENTS
+______________________________________________________________________
+[1]school:
+1. [E][ ] consultation (from: 10-04-2026 1800 to: 10-04-2026 1900)
+2. [E][ ] session (from: 11-04-2026 1800 to: 11-04-2026 1900)
+3. [RE]CS2113 lecture (from: Friday 1600 to: Friday 1800)
+4. [RE]CS2113 seminar (from: Friday 2000 to: Friday 2100)
+
+______________________________________________________________________
+mark event 1 1
+______________________________________________________________________
+This task is marked as done:
+[E][X] consultation (from: 10-04-2026 1800 to: 10-04-2026 1900)
+______________________________________________________________________
+Marked 1 event(s) successfully.
+````
+
+````
+list event
+______________________________________________________________________
+ALL EVENTS
+______________________________________________________________________
+[1]school:
+1. [E][X] consultation (from: 10-04-2026 1800 to: 10-04-2026 1900)
+2. [E][ ] session (from: 11-04-2026 1800 to: 11-04-2026 1900)
+3. [RE]CS2113 lecture (from: Friday 1600 to: Friday 1800)
+4. [RE]CS2113 seminar (from: Friday 2000 to: Friday 2100)
+
+______________________________________________________________________
+list occurrence 1 3
+______________________________________________________________________
+OCCURRENCES FOR: CS2113 lecture
+______________________________________________________________________
+[1]school:
+1. [RE][ ] CS2113 lecture (from: 10-04-2026 1600 to: 10-04-2026 1800)
+2. [RE][ ] CS2113 lecture (from: 17-04-2026 1600 to: 17-04-2026 1800)
+3. [RE][ ] CS2113 lecture (from: 24-04-2026 1600 to: 24-04-2026 1800)
+
+______________________________________________________________________
+mark occurrence 1 2
+______________________________________________________________________
+This task is marked as done:
+[RE][X] CS2113 lecture (from: 17-04-2026 1600 to: 17-04-2026 1800)
+______________________________________________________________________
+Marked 1 event(s) successfully.
+````
+
+**Examples**: 
 
 `mark event 1 1` `mark occurrence 1 1`
 `mark event 1 1 3` `mark occurrence 1 1 2`
@@ -269,6 +413,56 @@ Format: `unmark [EVENTTYPE] [CATEGORYINDEX] [UIINDEX]...`
   - Sequence:
   - do `list occurrence [CATEGORYINDEX] [UIINDEX]` -> then `unmark occurrence [CATEGORYINDEX] [UIINDEX]` 
   - do `list event` or `list event /all` or `list event /normal` -> then `unmark event [CATEGORYINDEX] [UIINDEX]`
+
+````
+list event
+______________________________________________________________________
+ALL EVENTS
+______________________________________________________________________
+[1]school:
+1. [E][X] consultation (from: 10-04-2026 1800 to: 10-04-2026 1900)
+2. [E][ ] session (from: 11-04-2026 1800 to: 11-04-2026 1900)
+3. [RE]CS2113 lecture (from: Friday 1600 to: Friday 1800)
+4. [RE]CS2113 seminar (from: Friday 2000 to: Friday 2100)
+
+______________________________________________________________________
+unmark event 1 1
+______________________________________________________________________
+This task is marked as not done:
+[E][ ] consultation (from: 10-04-2026 1800 to: 10-04-2026 1900)
+______________________________________________________________________
+Unmarked 1 event(s) successfully.
+````
+
+````
+list event
+______________________________________________________________________
+ALL EVENTS
+______________________________________________________________________
+[1]school:
+1. [E][ ] consultation (from: 10-04-2026 1800 to: 10-04-2026 1900)
+2. [E][ ] session (from: 11-04-2026 1800 to: 11-04-2026 1900)
+3. [RE]CS2113 lecture (from: Friday 1600 to: Friday 1800)
+4. [RE]CS2113 seminar (from: Friday 2000 to: Friday 2100)
+
+______________________________________________________________________
+list occurrence 1 3
+______________________________________________________________________
+OCCURRENCES FOR: CS2113 lecture
+______________________________________________________________________
+[1]school:
+1. [RE][ ] CS2113 lecture (from: 10-04-2026 1600 to: 10-04-2026 1800)
+2. [RE][X] CS2113 lecture (from: 17-04-2026 1600 to: 17-04-2026 1800)
+3. [RE][ ] CS2113 lecture (from: 24-04-2026 1600 to: 24-04-2026 1800)
+
+______________________________________________________________________
+unmark occurrence 1 2
+______________________________________________________________________
+This task is marked as not done:
+[RE][ ] CS2113 lecture (from: 17-04-2026 1600 to: 17-04-2026 1800)
+______________________________________________________________________
+Unmarked 1 event(s) successfully.
+````
 
 Example: 
 `unmark event 1 1` `unmark occurrence 1 1`
@@ -377,6 +571,29 @@ Format: `list occurence [CATEGORYINDEX] [UIINDEX]`
 
 - CATEGORYINDEX: Integer value up to number of categories added
 - UIINDEX: Positive integer displayed in `list event` or `list event /all`
+
+````
+list event
+______________________________________________________________________
+ALL EVENTS
+______________________________________________________________________
+[1]school:
+1. [E][ ] meeting (from: 04-04-2026 1000 to: 04-04-2026 1100)
+2. [RE]CS2113 seminar (from: Friday 2000 to: Friday 2100)
+
+______________________________________________________________________
+list occurrence 1 2
+______________________________________________________________________
+OCCURRENCES FOR: CS2113 seminar
+______________________________________________________________________
+[1]school:
+1. [RE][ ] CS2113 seminar (from: 03-04-2026 2000 to: 03-04-2026 2100)
+2. [RE][ ] CS2113 seminar (from: 10-04-2026 2000 to: 10-04-2026 2100)
+3. [RE][ ] CS2113 seminar (from: 17-04-2026 2000 to: 17-04-2026 2100)
+4. [RE][ ] CS2113 seminar (from: 24-04-2026 2000 to: 24-04-2026 2100)
+
+______________________________________________________________________
+````
 
 Examples:
 

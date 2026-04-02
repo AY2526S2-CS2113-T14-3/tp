@@ -200,11 +200,12 @@ The `Deadline` class,
 - Implements the `Timed` interface so that `Calendar` can register and sort `Deadline` objects polymorphically without depending on the concrete type 
 - Delegates all date parsing to `DateUtils`, ensuring consistent validation and formatting rules are applied uniformly across task types
 
-### Event commands
-Event commands include adding non-recurring events,
-deleting events based on the index seen in the user interface of the list and
-adding recurring events for a user-specified interval (number of months or stop date).
-####  Add Event Command
+### Event management
+The event commands manages one-time occurrences and automated recurring schedules, utilising a mapping layer to ensure UI actions correctly modify the underlying data.
+
+#### Add Event Command
+
+**Workflow for Add Event command**
 1. User enters either:
    - `add event <categoryIndex> <description> /from <startDateTime> /to <endDateTime>`
    - `add recurring <categoryIndex> weekly event <description> /from <day> <time> /to <day> <time> /(date or month) <dateOrMonth>`
@@ -214,23 +215,66 @@ adding recurring events for a user-specified interval (number of months or stop 
    - `EventList` `add(Event)` is called
 5. If recurring:
    - `EventList` `addRecurringWeeklyEvent(addRecurringWeeklyEvent(event, calendar, date, months)` is called to generate and group weekly events.
-6. Event(s) are stored in EventList, persisted by Storage, and reflected in the Calendar
+6. Event(s) are stored in `EventList`, persisted by `Storage`, and reflected in the `Calendar`
 
-**Sequence Diagram for Add Event**
+**Sequence Diagram for `add event` command**
 ![AddEvent Sequence Diagram](pictures/AddRecurringNonRecurringEvent.png)
 
+#### List Event Command
+
+**Workflow for List Event command**
+
+The list command is a prerequisite for deletion and modification as it synchronises the user's view with the underlying data coordinates.
+
+1. User enters a command such as `list event`, `list recurring`, or `list event /all`.
+
+2. Input is parsed by the `CommandParser`, which creates a `ListCommand` object.
+
+3. ListCommand calls `CategoryList.getAllEvents()` with flags determining the view (e.g., collapsed vs. expanded).
+
+4. Mapping Generation: As the `CategoryList` iterates through categories and events to build the display string, it simultaneously populates the `ActiveDisplayMap`.
+
+5. Each displayed line is assigned a UI Index, which is mapped to an `EventReference` containing the (categoryIndex, eventIndex).
+
+6. The formatted string is sent to `GeneralUi` for display, and the `currentView` is updated to allow subsequent delete or edit commands to reference the correct map.
+
+**Sequence Diagram for `list event` command**
+
+![ListEvent Sequence Diagram](pictures/ListEvent.png)
+
+
 ####  Delete Event Command
-**Problem**
-- Index shown in UI is not the same as index of event to delete since the main list shows
-  the collapsed view of the recurring events (gap between UI and data)
-- Each category has its own set of indexes
-- Deleting a specific recurring event from a group requires viewing all recurring event from a group
 
-**Design**
-- `EventReference (int categoryIndex, int eventIndex)` class:  stores the category index and `eventList` ArrayList index
-- `Map<Integer,List<EventReference>>`: map where key is the categoryIndex and value is the `EventReference` objects
-  based on the current list view
+**Workflow for Delete Event command**
 
+1. User types `delete event <categoryIndex> <uiIndex>` which is parsed by `CommandParser` class to
+   create a `DeleteCommand` object
+2. In `DeleteCommand` under 'event' uiIndex is parsed and used as an index in the list of `EventReference` objects to
+   get the particular `EventReference` object
+3. Event is then deleted using `EventReference.categoryIndex` and `EventReference.eventIndex` if it is non-recurring. If it is recurring it will prompt user to use `list occurrence`
+4. Changes are updated in `Storage` class and `Calendar` object
+
+Note:
+- `list event` must be called before `delete event <categoryIndex> <uiIndex>` to populate the map correctly
+- `delete occurrence <categoryIndex> <uiIndex>` and `delete recurring <categoryIndex> <uiIndex>` works the same
+  except for deleting multiple events at once (all events in recurring group) for `delete recurring <categoryIndex> <uiIndex>`
+
+**Sequence Diagram for `delete event <categoryIndex> <uiIndex>` command**
+
+![DeleteEvent Sequence Diagram](pictures/Delete_Event_Update.png)
+
+
+**Key Design Considerations**
+
+The following architectural choices ensure that UniTasker remains efficient, extensible, and user-friendly despite the complexity of time-based data.
+
+**1. UI-to-Data Mapping**
+
+To maintain a clean user interface, UniTasker utilises a translation layer that bridges the gap between the "collapsed" UI view and the detailed data model:
+
+- **`EventReference` Tracking**: Each UI entry is backed by an `EventReference` storing the (categoryIndex, eventIndex). This acts as a direct pointer to the actual data object in the `EventList`
+- **`ActiveDisplayMap`**: This `Map<Integer,List<EventReference>>` map (where the key is the category index and the value is a list of `EventReference` objects) is populated during list commands. It ensures that when a user inputs a UI index (e.g., delete event 1 5), the command resolves to the exact physical index in the backend.
+-  **Data Integrity**: This mapping allows the system to support complex views such as grouping weekly lectures while ensuring that deletions and modifications target the correct individual data objects.
 
 Example:
 
@@ -269,39 +313,18 @@ Example:
 
 
 
-**Workflow for Delete Event command**
+**2. Polymorphism and Time-Based Tasks**
 
-1. User types `delete event <categoryIndex> <uiIndex>` which is parsed by `CommandParser` class to
-   create a `DeleteCommand` object
-2. In `DeleteCommand` under 'event' uiIndex is parsed and used as an index in the list of `EventReference` objects to
-   get the particular `EventReference` object
-3. Event is then deleted using `EventReference.categoryIndex` and `EventReference.eventIndex` if it is non-recurring. If it is recurring it will prompt user to use `list occurrence`
-4. Changes are updated in `Storage` class and `Calendar` object
+UniTasker treats deadlines and events differently from todos to enable advanced scheduling features:
+- **Inheritance**: A shared interface allows the `Calendar` class to store and query deadlines and events polymorphically. This enables range queries (e.g., "show all tasks this week") without the `Calendar` needing to know the specific task type.
+- **Efficient Lookups**: The `Calendar` uses a `TreeMap<LocalDate, List<Task>>`. This structure provides $O(\log n)$ lookup times for specific dates and efficient range-based sub-maps, avoiding the need to iterate through the entire global task list.
+- **Formatting Flexibility**: `DateUtils` encapsulates three `DateTimeFormatter` constants, to store deadlines and events in different formats.
 
+**3. System Integrity and Hierarchy**
 
-**Sequence Diagram for `list event` command**
-
-![ListEvent Sequence Diagram](pictures/ListEvent.png)
-
-**Sequence Diagram for `delete event <categoryIndex> <uiIndex>` command**
-
-Note:
-- `list event` must be called before `delete event <categoryIndex> <uiIndex>` to populate the map correctly
-- `delete occurrence <categoryIndex> <uiIndex>` and `delete recurring <categoryIndex> <uiIndex>` works the same
-  except for deleting multiple events at once (all events in recurring group) for `delete recurring <categoryIndex> <uiIndex>`
-
-![DeleteEvent Sequence Diagram](pictures/Delete_Event_Update.png)
-
-
-**Key Design Considerations**
-
-- Deadline and Events are time based tasks which differentiate them from todo tasks.
-- To be able to show Deadlines and Events within a certain range of dates, a Timed interface is used to distinguish them so that the Calendar class can store and query them polymorphically.
-- DateUtils hold 3 DateTimeFormatter constants which gives users the ability to store deadlines and events in different formats.
-- DeadlineList extends the generic TaskList<T>, inheriting add/delete/mark/contains operations.
-- Calendar uses a TreeMap<LocalDate, List<Task>> to enable efficient range queries without iterating the entire task list.
-- Java assertions are used throughout the codebase to validate preconditions and invariants, such as ensuring task descriptions and category names are non-empty.
-- The CategoryList acts as a central task management hub, interfacing with multiple specialized task lists (TodoList, DeadlineList, EventList) to maintain separation of concerns.
+- **Centralised Hub**: The `CategoryList` acts as a central task management hub, interfacing with multiple specialized task lists (`TodoList`, `DeadlineList`, `EventList`) to maintain separation of concerns
+- **Defensive Programming**: Java assertions are used throughout the codebase to validate preconditions and invariants, such as ensuring task descriptions and category names are non-empty
+- **Inheritance**: `DeadlineList` and `EventList` extends the generic `TaskList`, inheriting add/delete/mark/contains operations.
 
 ### Helper functions: Task Validation ###
 

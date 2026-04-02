@@ -131,7 +131,6 @@ public class DeleteCommand implements Command {
                     break;
                 }
                 Map<Integer, List<EventReference>> mapOccurrence = container.categories().getActiveDisplayMap();
-                System.out.println(categoryIndex);
                 List<EventReference> categoryMapOccurrence = mapOccurrence.get(categoryIndex);
                 if (categoryMapOccurrence == null){
                     throw new UniTaskerException("There has been a mismatch between the categoryIndex used for " +

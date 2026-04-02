@@ -6,7 +6,7 @@ public class CommandParser {
 
     //@@author marken9
     public Command parse(String line) {
-        String[] sentence = line.trim().split("\\s+");;
+        String[] sentence = line.trim().split("\\s+");
         String commandWord = sentence[INDEX_OF_COMMANDTYPE];
 
         switch (commandWord) {
