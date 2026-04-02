@@ -178,9 +178,10 @@ Format: `delete [EVENTTYPE] [CATEGORYINDEX] [UIINDEX]`
 - EVENTTYPE : `event`, `recurring`,`occurrence`
 - CATEGORYINDEX: Integer value up to number of categories added
 - UIINDEX: follow the UI index for its respective list type:
-  - `delete occurrence [CATEGORYINDEX] [UIINDEX]` → `list occurrence [CATEGORYINDEX] [UIINDEX]`
-  - `delete recurring [CATEGORYINDEX] [UIINDEX]` → `list recurring`
-  - `delete event [CATEGORYINDEX] [UIINDEX]` → `list event` or `list event /all` or `list event /normal`
+- Sequence:
+  - do `list occurrence [CATEGORYINDEX] [UIINDEX]` → then `delete occurrence [CATEGORYINDEX] [UIINDEX]`
+  - do `list recurring` → then `delete recurring [CATEGORYINDEX] [UIINDEX]` 
+  - do `list event` or `list event /all` or `list event /normal` → then `delete event [CATEGORYINDEX] [UIINDEX]`
 
 Examples:
 
@@ -216,9 +217,10 @@ Format: `mark [EVENTTYPE] [CATEGORYINDEX] [UIINDEX]...`
 - EVENTTYPE : `event`, `occurrence`
 - CATEGORYINDEX: Integer value up to number of categories added
 - UIINDEX: follow the one or more UI index(es) for its respective list type:
-  - `mark occurrence [CATEGORYINDEX] [UIINDEX]` → `list occurrence [CATEGORYINDEX] [UIINDEX]`
-  - `mark event [CATEGORYINDEX] [UIINDEX]` → `list event` or `list event /all` or `list event /normal`
-
+  - Sequence:
+  - do `list occurrence [CATEGORYINDEX] [UIINDEX]` → then `mark occurrence [CATEGORYINDEX] [UIINDEX]`
+  - do `list event` or `list event /all` or `list event /normal`
+    → then `mark event [CATEGORYINDEX] [UIINDEX]` 
 Example: 
 
 `mark event 1 1` `mark occurrence 1 1`
@@ -251,8 +253,9 @@ Format: `unmark [EVENTTYPE] [CATEGORYINDEX] [UIINDEX]...`
 - EVENTTYPE : `event`, `occurrence`
 - CATEGORYINDEX: Integer value up to number of categories added
 - UIINDEX: follow the one or more UI index(es) for its respective list type:
-  - `unmark occurrence [CATEGORYINDEX] [UIINDEX]` → `list occurrence [CATEGORYINDEX] [UIINDEX]`
-  - `unmark event [CATEGORYINDEX] [UIINDEX]` → `list event` or `list event /all` or `list event /normal`
+  - Sequence:
+  - do `list occurrence [CATEGORYINDEX] [UIINDEX]` -> then `unmark occurrence [CATEGORYINDEX] [UIINDEX]` 
+  - do `list event` or `list event /all` or `list event /normal` -> then `unmark event [CATEGORYINDEX] [UIINDEX]`
 
 Example: 
 `unmark event 1 1` `unmark occurrence 1 1`
