@@ -63,6 +63,7 @@ end
 DU -> DU : validateYearRange(parsedDate, trimmedInput)
 activate DU #lightyellow
 note over DU : startYear = LocalDate.now().getYear()\nendYear = UniTasker.getEndYear()
+deactivate DU
 
 DU --> AC : parsedDate (LocalDateTime)
 deactivate DU
