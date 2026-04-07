@@ -5,7 +5,7 @@ actor User
 
 participant ":UniTasker" as UniTasker
 
-box command
+
 participant ":CommandParser" as CommandParser
 
 User -> UniTasker : "reorder todo 1 1 2"
@@ -15,12 +15,11 @@ UniTasker -> CommandParser : parse(line)
 activate CommandParser
 
 create "command:ReorderCommand" as command
-CommandParser -> command : create
+CommandParser -> command : new
 activate command
 command --> CommandParser
 deactivate command
 
-end box
 
 CommandParser --> UniTasker :
 deactivate CommandParser
@@ -28,10 +27,22 @@ deactivate CommandParser
 UniTasker -> command : execute(container)
 activate command
 
-command -> AppContainer : reorderTodo(...)
+participant ":AppContainer" as AppContainer
+
+command -> AppContainer : categories()
 activate AppContainer
-AppContainer --> command :
+AppContainer --> command
 deactivate AppContainer
+
+participant "categories:CategoryList" as categories
+
+command -> categories : reorderTodo(...)
+activate categories
+
+categories --> command :
+deactivate categories
+
+participant ":Storage" as Storage
 
 command -> command : saveData()
 activate command
@@ -40,6 +51,8 @@ activate Storage
 Storage --> command :
 deactivate Storage
 deactivate command
+
+participant ":UI" as UI
 
 command -> UI : printReordered(...)
 activate UI
@@ -52,8 +65,6 @@ destroy command
 
 UniTasker --> User :
 deactivate UniTasker
-
-participant ":UI" as UI
 
 note over UI
 UI represents any class within the UI package

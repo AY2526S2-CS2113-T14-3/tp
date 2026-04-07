@@ -1,61 +1,100 @@
 @startuml
 
-participant ":DeleteCommand" as DeleteCommand
+actor User
+
+participant ":UniTasker" as UniTasker
+participant ":CommandParser" as CommandParser
+
+User -> UniTasker : "delete marked"
+activate UniTasker
+
+UniTasker -> CommandParser : parse(line)
+activate CommandParser
+
+create "command:DeleteCommand" as command
+CommandParser -> command : new
+activate command
+command --> CommandParser
+deactivate command
+
+CommandParser --> UniTasker :
+deactivate CommandParser
+
+UniTasker -> command : execute(container)
+activate command
+
 participant ":AppContainer" as AppContainer
-participant ":CategoryList" as CategoryList
-participant ":Category" as Category
-participant ":UI" as UI
-participant ":Storage" as Storage
-participant ":Calendar" as Calendar
 
- -> DeleteCommand : delete marked
-activate DeleteCommand
-
-DeleteCommand -> AppContainer : categories()
+command -> AppContainer : categories()
 activate AppContainer
-AppContainer --> DeleteCommand : CategoryList
+AppContainer --> command
 deactivate AppContainer
 
-DeleteCommand -> CategoryList : deleteMarkedTasks()
-activate CategoryList
+participant "categories:CategoryList" as categories
+
+command -> categories : deleteMarkedTasks()
+activate categories
 
 loop for each Category
-    CategoryList -> Category : deleteMarkedTasks()
+    participant ":Category" as Category
+    categories -> Category : deleteMarkedTasks()
     activate Category
 
-    Category -> Category : todoList.deleteMarked()
-    Category -> Category : deadlineList.deleteMarked()
-    Category -> Category : eventList.deleteMarked()
 
-    Category --> CategoryList
+    Category -> Category : todoList.deleteMarked()
+    activate Category
+    Category --> Category
+    deactivate Category
+    Category -> Category : deadlineList.deleteMarked()
+    activate Category
+    Category --> Category
+    deactivate Category
+    Category -> Category : eventList.deleteMarked()
+    activate Category
+    Category --> Category
+    deactivate Category
+
+    Category --> categories :
     deactivate Category
 end
 
-CategoryList --> DeleteCommand
-deactivate CategoryList
+categories --> command :
+deactivate categories
 
-DeleteCommand -> UI : printAllMarkedDeleted()
+participant ":UI" as UI
+
+command -> UI : printAllMarkedDeleted()
 activate UI
-UI --> DeleteCommand
+UI --> command
 deactivate UI
 
-DeleteCommand -> DeleteCommand : saveData(container)
-DeleteCommand -> Storage : save(categories)
-activate Storage
-Storage --> DeleteCommand
-deactivate Storage
+participant ":Storage" as Storage
 
-DeleteCommand -> AppContainer : calendar()
+command -> command : saveData()
+activate command
+command -> Storage : save(categories)
+activate Storage
+Storage --> command :
+deactivate Storage
+deactivate command
+
+command -> AppContainer : calendar()
 activate AppContainer
-AppContainer --> DeleteCommand : Calendar
+AppContainer --> command
 deactivate AppContainer
 
-DeleteCommand -> Calendar : refreshCalendar(categories, calendar)
+participant ":Calendar" as Calendar
+
+command -> Calendar : refreshCalendar(categories, calendar)
 activate Calendar
-Calendar --> DeleteCommand
+Calendar --> command :
 deactivate Calendar
 
-<-- DeleteCommand : success
-deactivate DeleteCommand
+command --> UniTasker :
+deactivate command
+destroy command
+
+UniTasker --> User :
+deactivate UniTasker
 
 @enduml

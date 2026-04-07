@@ -495,6 +495,7 @@ can accomplish most of the tasks faster using commands than using the mouse.
 ## Glossary
 
 * *Mainstream OS* - Windows, Linux, Unix, macOS
+* Task - refers to todos, deadlines, events
 
 ## Instructions for Manual Testing
 
