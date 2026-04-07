@@ -1,28 +1,35 @@
 @startuml
+skinparam classAttributeIconSize 0
+skinparam CircledCharacterFontSize 0
+skinparam CircledCharacterRadius 0
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
 
-class CourseManager {
+class "CourseManager" as CourseManager {
     - courseList : CourseList
     - courseStorage : CourseStorage
     + addCourse(courseCode : String) : String
     + deleteCourse(courseCode : String) : String
     + listCourses() : String
     + viewCourse(courseCode : String) : String
-    + addAssessment(courseCode : String, name : String, weightage : double, maxScore : double) : String
-    + recordScore(courseCode : String, name : String, score : double) : String
-    + deleteAssessment(courseCode : String, name : String) : String
+    + addAssessment(...) : String
+    + recordScore(...) : String
+    + deleteAssessment(...) : String
 }
 
-class CourseList {
+class "CourseList" as CourseList {
     - courses : ArrayList<Course>
     + add(course : Course) : void
     + remove(courseCode : String) : boolean
     + get(courseCode : String) : Course
     + contains(courseCode : String) : boolean
-    + getAll() : ArrayList<Course>
     + size() : int
 }
 
-class Course {
+class "Course" as Course {
     - courseCode : String
     - assessments : ArrayList<Assessment>
     + addAssessment(assessment : Assessment) : void
@@ -32,7 +39,7 @@ class Course {
     + getTotalWeightedScore() : double
 }
 
-class Assessment {
+class "Assessment" as Assessment {
     - name : String
     - weightage : double
     - scoreObtained : double
