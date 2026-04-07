@@ -10,7 +10,6 @@ title TaskValidator Sequence Diagram
 
 participant ":CommandParser" as CP
 
-note over CP,EL : This sequence diagram covers the happy path only.
 -> CP : add sentence \n(description, dateTime, catIdx)
 activate CP
 
@@ -22,6 +21,7 @@ participant ":TaskValidator" as TV
 participant ":CategoryList" as CL
 participant ":Category" as CAT
 participant ":EventList" as EL
+note over CP,EL : This sequence diagram covers the happy path only.
 
 '─── Step 1: Unique Task ───────────────────────────────────
 AC -> TV : validateUniqueTask(categories, catIdx, description)

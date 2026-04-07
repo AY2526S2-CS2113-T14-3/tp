@@ -11,9 +11,6 @@ title DateUtils: parse() Sequence Diagram
 
 participant ":CommandParser" as CP
 
-
-note over CP, LDT : This sequence diagram covers the happy path only.
-
 -> CP : add VarDate \n(e.g. "... 31-12-2025 1800")
 activate CP
 
@@ -28,6 +25,7 @@ note over command : generalised — represents both in code
 
 participant ":DateUtils" as DU
 participant ":LocalDateTime" as LDT
+note over CP, LDT : This sequence diagram covers the happy path only.
 
 command -> DU : parseDateTime(input)
 activate DU #white
