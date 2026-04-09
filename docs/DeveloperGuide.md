@@ -404,7 +404,7 @@ The following sequence diagram shows how a `course add` command is executed:
 
 - `CourseParser` is kept separate from `CommandParser` to isolate course-specific parsing logic
 - `CourseManager` acts as the single point of access for all course operations
-- `CourseStorage` handles persistence independently from the main `Storage` class
+- `CourseStorage` is a separate class from the main `Storage` class, handling course data persistence in its own file (`courses.txt`) using a different block-based format
 - Weighted score is calculated as: `weightedScore = (scoreObtained / maxScore) * weightage`
 
 ---
@@ -506,3 +506,32 @@ can accomplish most of the tasks faster using commands than using the mouse.
 3. Add a todo to a category: `add todo 1 finish tutorial`
 4. Add a todo with priority: `add todo 1 reply email /p 5`
 5. Verify that the todo appears under the School category using: `list category`  
+
+### Testing Course Tracker
+
+1. Launch the application.
+2. Add a course: `course add CS2113`
+   - Expected: Added Course CS2113
+3. Add an assessment: `course add-assessment CS2113 /n Finals /w 40 /ms 100`
+   - Expected: Added assessment Finals to CS2113 (weight: 40.0%, max score: 100.0)
+4. Record a score: `course score CS2113 /n Finals /s 85`
+   - Expected: Recorded score for Finals in CS2113: 85.0/100.0
+5. View course: `course view CS2113`
+   - Expected:
+     Course: CS2113
+     Assessments:
+   1. Finals (weight: 40.0%, score: 85.0 / 100.0)
+   Current weighted score: 34.0%
+   Graded weightage: 40.0%
+   Total planned weightage: 40.0%
+6. Delete a course: `course delete CS2113`
+   - Expected: Deleted course: CS2113
+
+### Testing Undo
+
+1. `undo` with no prior course commands
+   - Expected: "Nothing to undo."
+2. `course add CS2113` then `undo`
+   - Expected: Undo: removed course CS2113
+3. `course add-assessment CS2113 /n Finals /w 40 /ms 100` then `undo`
+   - Expected: Undo: removed assessment Finals
