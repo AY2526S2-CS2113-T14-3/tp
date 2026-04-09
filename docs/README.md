@@ -1,4 +1,4 @@
-# Duke
+# UniTasker
 
 UniTasker manages tasks and courses for university students, 
 allowing them to organise todos, deadlines, and events 

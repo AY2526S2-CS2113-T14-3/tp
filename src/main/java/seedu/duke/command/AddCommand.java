@@ -164,18 +164,20 @@ public class AddCommand implements Command {
             TaskValidator.validateUniqueTask(container.categories(), todoCatIdx, description);
 
             container.categories().addTodo(todoCatIdx, description);
+
+            int newTodoIndex = container.categories()
+                    .getCategory(todoCatIdx)
+                    .getTodoList()
+                    .getSize() - 1;
+
             if (priorityFlagIndex != -1) {
-                int newTodoIndex = container.categories()
-                        .getCategory(todoCatIdx)
-                        .getTodoList()
-                        .getSize() - 1;
                 container.categories().setTodoPriority(todoCatIdx, newTodoIndex, priority);
-                TaskUi.printTaskAction("Added", "todo", description
-                        + " with priority " + priority);
-                return;
             }
 
-            TaskUi.printTaskAction("Added", "todo", description);
+            TaskUi.printTodoAdded(container.categories().getCategory(todoCatIdx).getName(),
+                    container.categories().getCategory(todoCatIdx).getTodo(newTodoIndex),
+                    newTodoIndex + 1);
+
         } catch (DuplicateTaskException e) {
             ErrorUi.printCommandFailed("add todo", e.getMessage(), null);
         } catch (Exception e) {
