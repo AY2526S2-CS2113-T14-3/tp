@@ -2,6 +2,7 @@ package seedu.duke.ui;
 
 import java.util.ArrayList;
 
+import seedu.duke.task.Todo;
 import seedu.duke.tasklist.CategoryList;
 
 public class TaskUi {
@@ -9,6 +10,14 @@ public class TaskUi {
 
     public static void printTaskAction(String action, String type, String description) {
         GeneralUi.printBordered(action + " " + type + ": " + description);
+    }
+
+    public static void printTodoAdded(String categoryName, Todo todo, int count) {
+        GeneralUi.printDottedLine();
+        System.out.println(" Got it. I've added this todo to category: " + categoryName);
+        System.out.println("   " + todo);
+        System.out.println(" Now you have " + count + " todos in this category.");
+        GeneralUi.printDottedLine();
     }
 
     public static void printMarkTodoResult(boolean isMark, String errorMessage) {
