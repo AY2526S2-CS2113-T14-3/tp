@@ -161,8 +161,12 @@ public class MarkCommand implements Command {
                         "use 'list event /all' or 'list occurrence " +
                         (categoryIndex + 1) + " " + (uiIndex + 1) + "' first");
                 } else {
-                    successCount++;
-                    setStatusAndPrintMessage(container, ref, event);
+                    if (checkMarkedEvent(container,ref,isMark)) {
+                        successCount++;
+                        setStatusAndPrintMessage(container, ref, event);
+                    } else {
+                        invalidIndexes.add(sentence[i]);
+                    }
                 }
             } catch (Exception e) {
                 invalidIndexes.add(sentence[i]);
@@ -171,7 +175,9 @@ public class MarkCommand implements Command {
         TaskUi.printBatchResult("event", successCount, invalidIndexes, isMark);
 
     }
-
+    private boolean checkMarkedEvent(AppContainer container,EventReference ref, boolean isMark) {
+        return (container.categories().getCategory(ref.categoryIndex).getEvent(ref.eventIndex).getIsDone() != isMark);
+    }
 
     private void handleOccurrence(AppContainer container) {
         int categoryIndex;
@@ -193,8 +199,12 @@ public class MarkCommand implements Command {
                 int uiIndex = Integer.parseInt(sentence[i]) - 1;
                 EventReference ref = getEventReference(container, categoryIndex,uiIndex);
                 Event event = container.categories().getEvent(ref.categoryIndex, ref.eventIndex);
-                setStatusAndPrintMessage(container, ref, event);
-                successCount++;
+                if (checkMarkedEvent(container,ref,isMark)) {
+                    setStatusAndPrintMessage(container, ref, event);
+                    successCount++;
+                } else {
+                    invalidIndexes.add(sentence[i]);
+                }
             } catch (Exception e) {
                 invalidIndexes.add(sentence[i]);
             }

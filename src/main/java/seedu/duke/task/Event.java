@@ -4,6 +4,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Logger;
 
+/**
+ * Represents an event task.
+ * Event task includes a description and a start date and time and end date and time when the event occurs.
+ * It implements the {@link Timed} interface to
+ * allow for chronological sorting and calendar integration.
+ */
 public class Event extends Task implements Timed {
     private static final Logger logger = Logger.getLogger(Event.class.getName());
 

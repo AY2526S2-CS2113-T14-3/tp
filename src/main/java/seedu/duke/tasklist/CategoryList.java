@@ -187,6 +187,14 @@ public class CategoryList {
         categories.get(categoryIndex).setTodoPriority(todoIndex, priority);
     }
 
+    /**
+     * Adds non-recurring event based on its categoryIndex, description, start and end date and time
+     *
+     * @param categoryIndex The index of the category containing the event.
+     * @param description The description of the event.
+     * @param from The start date and time of the event.
+     * @param to The end date and time of the event.
+     */
     public void addEvent(int categoryIndex, String description, LocalDateTime from, LocalDateTime to) {
         categories.get(categoryIndex).addEvent(createEvent(description, from, to,
                 false, GROUP_ID_FOR_NON_RECURRING));
@@ -194,6 +202,17 @@ public class CategoryList {
 
     }
 
+    /**
+     * Adds recurring event based on its categoryIndex, description, start and end date and time
+     * and its recurring group index from the saved file
+     *
+     * @param categoryIndex The index of the category containing the event.
+     * @param description The description of the event.
+     * @param from The start date and time of the event.
+     * @param to The end date and time of the event.
+     * @param recurringGroupIndex The recurring group in which the event exists
+     *
+     */
     public void addRecurringWeeklyEventFile(int categoryIndex, String description,
             LocalDateTime from, LocalDateTime to, int recurringGroupIndex) {
         assert (recurringGroupIndex > 0) : "Recurring Group Id must be greater than 0";
@@ -202,6 +221,19 @@ public class CategoryList {
 
     }
 
+    /**
+     * Adds recurring event based on its categoryIndex, description, start and end date and time
+     * and its recurring group index
+     *
+     * @param categoryIndex The index of the category containing the event.
+     * @param description The description of the event.
+     * @param from The start date and time of the event.
+     * @param to The end date and time of the event.
+     * @param calendar The Calendar object in which the event is to be saved.
+     * @param date The end date to stop adding recurring events within that group.
+     * @param months The number of months to add weekly recurring events.
+     *
+     */
     public void addRecurringWeeklyEvent(int categoryIndex, String description, LocalDateTime from,
             LocalDateTime to, Calendar calendar, LocalDateTime date, int months) {
         assert (calendar != null) : "Calendar should exist";
@@ -239,11 +271,24 @@ public class CategoryList {
         return new Event(description, from, to, isRecurring, groupId);
     }
 
+    /**
+     * Deletes event based on the categoryIndex and the eventIndex.
+     *
+     * @param categoryIndex The index of the category containing the event.
+     * @param eventIndex The index of the event within the EventList.
+     *
+     */
     public void deleteEvent(int categoryIndex, int eventIndex) {
         categories.get(categoryIndex).deleteEvent(eventIndex);
         logger.info("Delete event at : " + categoryIndex + " " + eventIndex);
     }
 
+    /**
+     * Deletes all event in a category.
+     *
+     * @param categoryIndex The index of the category containing the event.
+     *
+     */
     public void deleteAllEvents(int categoryIndex) {
         categories.get(categoryIndex).deleteAllEvents();
         logger.info("Delete all event at : " + categoryIndex);
@@ -254,6 +299,15 @@ public class CategoryList {
         categories.get(categoryIndex).setEventStatus(eventIndex, isDone);
     }
 
+    /**
+     * Returns a list of all events expanded or collapsed view or all non-recurring events
+     * and updates base map with the current view.
+     *
+     * @param isExpanded Check for the type of view.
+     * @param isNormalEventOnly Checks if it only non-recurring events.
+     * @return  The string of the list of events based on the user-defined view.
+     *
+     */
     public String getAllEvents(boolean isExpanded, boolean isNormalEventOnly) {
         StringBuilder sb = new StringBuilder();
         sb.append(isExpanded ? "ALL OCCURRENCES" : isNormalEventOnly ? "ALL NON-RECURRING EVENTS" : "ALL EVENTS")
@@ -300,6 +354,12 @@ public class CategoryList {
         }
     }
 
+    /**
+     * Returns a list of all recurring event groups and updates base map with the current view.
+     *
+     * @return  The string of the list of all recurring event groups.
+     *
+     */
     public String getAllRecurringEvents() {
         StringBuilder sb = new StringBuilder();
         Map<Integer, List<EventReference>> newMap = new HashMap<>();
@@ -349,7 +409,13 @@ public class CategoryList {
     }
 
 
-
+    /**
+     * Returns a list of all events within a recurring group and updates base map with the current view.
+     *
+     * @return  The string of the list of all events within a recurring group.
+     * @throws UniTaskerException If index is invalid event chosen to display occurrence is not a recurring event.
+     *
+     */
     public String getOccurrencesOfRecurringEvent(int categoryIndex, int groupUiIndex) throws UniTaskerException {
 
         List<EventReference> categoryMap = activeDisplayMap.get(categoryIndex);
@@ -480,6 +546,13 @@ public class CategoryList {
         return categories.get(eventCategoryIndex).getLatestEvent();
     }
 
+    /**
+     * Deletes all events within a recurring group.
+     *
+     * @param categoryIndex The index of the category containing the event.
+     * @param groupIndex The index of the group containing the recurring event.
+     *
+     */
     public void deleteRecurringEvent(int categoryIndex, int groupIndex) {
         EventList eventList = categories.get(categoryIndex).getEventList();
         for (int i = eventList.getSize() - 1; i >= 0; i--) {
@@ -523,6 +596,13 @@ public class CategoryList {
         return foundTasks;
     }
 
+    /**
+     * Returns a map of all events and deadlines for the day
+     *
+     * @param today The current date.
+     * @return  The map with the key as the category and the value as the list of {@code Task} objects within that day
+     *
+     */
     public Map<String, List<Task>> findTasksForTheDay(LocalDate today) {
         Map<String, List<Task>> reminders = new HashMap<>();
         for (Category category : categories) {

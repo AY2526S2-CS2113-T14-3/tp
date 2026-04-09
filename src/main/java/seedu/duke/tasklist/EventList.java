@@ -9,6 +9,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Manages a list of {@link Event} tasks.
+ * Provides specialised functionality for sorting events by their start date and time or day depending on the list type,
+ * adding recurring weekly events based on the boundary provided and getting the last added event
+ */
 public class EventList extends TaskList<Event> {
 
     public EventList() {
@@ -32,6 +37,10 @@ public class EventList extends TaskList<Event> {
         return result;
     }
 
+    /**
+     * Sorts events based on type and start time. If it is recurring it sorts by the day and then the start time.
+     * If it is non-recurring it sorts by start time.
+     */
     public void sortByDate() {
         List<Event> normal = tasks.stream()
                 .filter(e -> !e.getIsRecurring())
@@ -57,6 +66,14 @@ public class EventList extends TaskList<Event> {
         return tasks.get(tasks.size() - 1);
     }
 
+    /**
+     * Adds recurring weekly events (batching adding of events) based on user specified end duration.
+     *
+     * @param event The Event object.
+     * @param calendar The Calendar object to save the event.
+     * @param date The end date to stop adding recurring events within that group.
+     * @param months The number of months to add weekly recurring events
+     */
     public void addRecurringWeeklyEvent(Event event, Calendar calendar, LocalDateTime date,int months) {
         assert (calendar != null): "There must be an instance of calendar";
         assert (event != null) : "Event must exist";
@@ -83,7 +100,9 @@ public class EventList extends TaskList<Event> {
 
         }
     }
-
+    /**
+     * Sorts recurring events based on the day of the week and then its start time.
+     */
     public void sortByDay() {
         Comparator<Event> dayOfWeek = Comparator
                 .comparingInt((Event e) -> e.getFrom().getDayOfWeek().getValue())
