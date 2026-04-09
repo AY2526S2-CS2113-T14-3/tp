@@ -71,15 +71,15 @@ class Calendar {
     + clear() : void
 }
 
-Task <|-- Deadline
-Timed <|.. Deadline
-TaskListT <.. TaskListDeadline
-TaskListDeadline <|-- DeadlineList
-DeadlineList *-- "0..*" Deadline :  ◀ added to
-Deadline ..> DateUtils : uses ▶
-Calendar "1" o-- "0..*" Deadline : ◀ registered to
+Task <|-down- Deadline
+Timed <|.down. Deadline
+TaskListT <.right. TaskListDeadline
+TaskListDeadline <|-right- DeadlineList
+DeadlineList *-up- "0..*" Deadline
+Deadline .left.> DateUtils
+Calendar "1" o-up- "0..*" Deadline
 
-note right of Deadline
+note bottom of Deadline
   getDate() delegates to getBy()
   so Calendar can store Deadline
   without knowing its concrete type.

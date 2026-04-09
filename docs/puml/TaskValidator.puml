@@ -16,7 +16,14 @@ activate CP
 create "AC:AddCommand" as AC
 CP -> AC : new AddCommand(sentence)
 activate AC
+AC --> CP
+deactivate AC
+<-- CP
+deactivate CP
 
+
+-> AC : execute(container)
+activate AC
 participant ":TaskValidator" as TV
 participant ":CategoryList" as CL
 participant ":Category" as CAT
@@ -35,11 +42,15 @@ deactivate CL
 TV -> CAT : getTodoList().contains(description)
 activate CAT
 CAT --> TV : existsAsTodo
+deactivate CAT
 
 TV -> CAT : getDeadlineList().contains(description)
+activate CAT
 CAT --> TV : existsAsDeadline
+deactivate CAT
 
 TV -> CAT : getEventList().contains(description)
+activate CAT
 CAT --> TV : existsAsEvent
 deactivate CAT
 
@@ -57,12 +68,15 @@ loop for each Category in CategoryList
     activate CAT
     loop for each Deadline
         CAT --> TV : deadline.getBy().toLocalDate()
+        deactivate CAT
         TV -> TV : if equals targetDate, totalTimedTasks++
     end
 
     TV -> CAT : getEventList()
+    activate CAT
     loop for each Event
         CAT --> TV : event.getFrom().toLocalDate()
+        deactivate CAT
         TV -> TV : if equals targetDate, totalTimedTasks++
     end
     deactivate CAT
@@ -80,17 +94,12 @@ loop for each Event in existingEvents
     activate EL
     EL --> TV : existing.getFrom(), existing.getTo()
     deactivate EL
-
-    TV -> TV : isOverlapping =\nstart.isBefore(existing.getTo())\nAND end.isAfter(existing.getFrom())
 end
 
 TV --> AC : all validations passed
 deactivate TV
 
-AC --> CP : task added successfully
+ <-- AC : task added successfully
 deactivate AC
-
-<-- CP
-deactivate CP
 
 @enduml
