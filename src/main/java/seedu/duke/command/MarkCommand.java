@@ -77,18 +77,26 @@ public class MarkCommand implements Command {
             try {
                 int taskIndex = Integer.parseInt(sentence[i]) - 1;
 
-                if (isMark) {
-                    container.categories().markTodo(categoryIndex, taskIndex);
+                if (checkMarkedTodo(container, categoryIndex, taskIndex, isMark)) {
+                    if (isMark) {
+                        container.categories().markTodo(categoryIndex, taskIndex);
+                    } else {
+                        container.categories().unmarkTodo(categoryIndex, taskIndex);
+                    }
+                    successCount++;
                 } else {
-                    container.categories().unmarkTodo(categoryIndex, taskIndex);
+                    invalidIndexes.add(sentence[i]);
                 }
-                successCount++;
             } catch (Exception e) {
                 invalidIndexes.add(sentence[i]);
             }
         }
 
         TaskUi.printBatchResult("todo", successCount, invalidIndexes, isMark);
+    }
+
+    private boolean checkMarkedTodo(AppContainer container,int categoryIndex, int todoIndex, boolean isMark) {
+        return (container.categories().getCategory(categoryIndex).getTodo(todoIndex).getIsDone() != isMark);
     }
 
     //@@author WenJunYu5984
@@ -107,16 +115,22 @@ public class MarkCommand implements Command {
         for (int i = INDEX_OF_FIRST_TASK_TO_MARK; i < sentence.length; i++) {
             try {
                 int taskIndex = Integer.parseInt(sentence[i]) - 1;
-                container.categories().setDeadlineStatus(categoryIndex, taskIndex, isMark);
-                successCount++;
+                if (checkMarkedDeadline(container, categoryIndex, taskIndex, isMark)) {
+                    container.categories().setDeadlineStatus(categoryIndex, taskIndex, isMark);
+                    successCount++;
+                } else {
+                    invalidIndexes.add(sentence[i]);
+                }
             } catch (Exception e) {
                 invalidIndexes.add(sentence[i]);
             }
         }
 
         TaskUi.printBatchResult("deadline", successCount, invalidIndexes, isMark);
+    }
 
-
+    private boolean checkMarkedDeadline(AppContainer container,int categoryIndex, int taskIndex, boolean isMark) {
+        return (container.categories().getCategory(categoryIndex).getDeadline(taskIndex).getIsDone() != isMark);
     }
 
     //@@author sushmiithaa

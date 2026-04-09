@@ -15,7 +15,7 @@ public class CommandHelp {
                 "UniTasker - Complete Task & Course Management System\n" +
                 "\n" +
                 "4 FEATURE MODES:\n" +
-                "  1. Task Management    - Manage todos with priority & organization\n" +
+                "  1. Todo Management    - Manage todos with priority & organization\n" +
                 "  2. Deadline Manager   - Track assignments with auto-sorted dates\n" +
                 "  3. Event Manager      - Schedule events and recurring meetings\n" +
                 "  4. Course Tracker     - Manage courses and assessment grades\n" +
