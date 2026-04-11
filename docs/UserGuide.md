@@ -107,18 +107,19 @@ Format: `add todo [CATEGORYINDEX] [DESCRIPTION] /p [PRIORITYVALUE]`
 
 #### Add Deadline: `add deadline`
 
-Adds a deadline with a specified due date and time.
+Adds a deadline with a specified due date and time (optional). If no time is given, time is defaulted to 2359.
 
 Format: `add deadline [CATEGORYINDEX] [DESCRIPTION] /by [DATE TIME]`
 
 - `categoryIndex`: Integer value corresponding to the category
 - `description`: Description of the task
 - `/by`: Keyword indicating deadline
-- `date time`: Format `dd-MM-yyyy HHmm`
+- `date time`: Format `dd-MM-yyyy HHmm` , `dd-MM-yyyy`
 
 **Example:**
 
 `add deadline 1 Homework /by 25-05-2026 1800`
+`add deadline 1 Homework /by 25-05-2026`
 
 ---
 
@@ -190,7 +191,7 @@ Example: `delete category 1`
 
 Format: `delete [TASKTYPE] [CATEGORYINDEX] [TASKINDEX]`
 
-- TASKTYPE : `todo`, `deadline`, `
+- TASKTYPE : `todo`, `deadline`
 - CATEGORYINDEX: Integer value up to number of categories added
 - TASKINDEX: Integer value up to number of tasks in the category
 
@@ -305,7 +306,7 @@ Mark existing task(s) (todos and deadlines) in a category.
 
 Format: `mark [TASKTYPE] [CATEGORYINDEX] [TASKINDEX]...`
 
-- TASKTYPE : `todo`, `deadline`, 
+- TASKTYPE : `todo`, `deadline` 
 - CATEGORYINDEX: Integer value up to number of categories added
 - TASKINDEX: One or more integer values corresponding to tasks in the category
 
@@ -666,7 +667,8 @@ Example: `find assignment`
 ---
 
 ### Limit Command: `limit`
-Sets a limit on the following: task,year,...
+Sets a limit on the following: task, year
+
 Allow user to set the limit for the following: `Task`, `Year`
 
 Format: `limit [KEYWORD] [INT]`
@@ -680,7 +682,9 @@ Examples:
 
 `limit year 2035`
 
-*Note*: Year refers to the furthest year that can be accessed/added to from the list
+*Note 1: Year refers to the furthest year that can be accessed/added to from the list*
+
+*Note 2: Task refers to timed task: `deadline`, `event`*
 
 ---
 
