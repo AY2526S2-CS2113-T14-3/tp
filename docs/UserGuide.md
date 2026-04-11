@@ -16,6 +16,7 @@ Command Line Interface (CLI).
     - [Adding a recurring event: `recurring`](#add-recurring-event-add-recurring)
   - [Deleting tasks: `delete`](#delete-command-delete)
     - [Deleting a category: `category`](#delete-category-delete-category)
+    - [Deleting marked tasks: `marked`](#delete-marked-delete-marked)
     - [Deleting a todo/deadline: `todo` `deadline`](#delete-task-todos-and-deadlines-delete-tasktype)
     - [Deleting an event (recurring, non-recurring, occurrence): `event` `recurring` `occurrence`](#delete-events-delete-eventtype)
   - [Marking a task: `mark`](#mark-command-mark)
@@ -51,6 +52,8 @@ Command Line Interface (CLI).
     - [Delete assessment: `course delete-assessment`](#delete-assessment-course-delete-assessment)
   - [Undo: `undo`](#undo-command-undo)
   - [Exiting the program: `exit`](#exit-program-exit)
+  - [Saving and loading the data](#saving-and-loading-the-data)
+  - [Editing the data file](#editing-the-data-file)
 
 - [FAQ](#faq)
 - [Command Summary](#command-summary)
@@ -185,6 +188,13 @@ Delete an existing item on the list. `delete` can be used to delete the followin
 Format: `delete category [CATEGORYINDEX]`
 
 Example: `delete category 1`
+
+#### Delete Marked: `delete marked`
+Deletes all marked tasks.
+
+Format: `delete marked`
+
+Example: `delete marked`
 
 #### Delete Task (Todos and Deadlines): `delete [TASKTYPE]`
 
@@ -811,6 +821,21 @@ Format:
 
 ---
 
+### Saving and loading the data
+UniTasker data is saved automatically to the same folder after any change to the data.
+If the save data file exists, data will also be loaded automatically into the program.
+
+---
+
+### Editing the data file
+UniTasker data is saved as text files in the same directory as the JAR file.  
+Advanced users may edit these files directly, but should copy existing entries to maintain the correct format.
+
+*Note*: If changes to the data file makes its format invalid, data loading can behave unexpectedly.
+For example, invalid lines may result in wrong information loaded or the entire line being skipped completely.
+
+---
+
 ## FAQ
 
 **Q**: How do I transfer my data to another computer? 
@@ -824,7 +849,7 @@ is located in the other computer.
 |-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | help        | `help`                                                                                                                                                                                                                                                                                                                           |
 | add         | `add category [DESC]`, `add todo [CATEGORYINDEX] [DESCRIPTION] /p [PRIORITYVALUE]`, <br/> `add deadline [CATEGORYINDEX] [DESCRIPTION] /by [DATE TIME]`, <br/> `add event [CATEGORYINDEX] [DESCRIPTION] /from [START] /to [END]`, <br/> `add recurring [CATEGORYINDEX] weekly event [DESCRIPTION] /from [DAY TIME /to [DAY TIME]` |
-| delete      | `delete [KEYWORD] [CATEGORYINDEX] [TASKINDEX]`, `delete [KEYWORD] [CATEGORYINDEX] all`                                                                                                                                                                                                                                           |
+| delete      | `delete [KEYWORD] [CATEGORYINDEX] [TASKINDEX]`, `delete [KEYWORD] [CATEGORYINDEX] all`, `delete marked`                                                                                                                                                                                                                          |
 | list        | `list category [CATEGORYINDEX]`, `list todo`, `list deadline`, `list limit`, `list range [START] [END] [FLAG]`, <br/> `list event [TYPE]`, `list recurring`, `list occurence [CATEGORYINDEX] [UIINDEX]`                                                                                                                          |
 | mark/unmark | `mark [TASKTYPE] [CATEGORYINDEX] [TASKINDEX]`, `unmark [TASKTYPE] [CATEGORYINDEX] [TASKINDEX]`                                                                                                                                                                                                                                   |
 | reorder     | `reorder category [FROMINDEX] [TOINDEX]`, `reorder todo [CATEGORYINDEX] [FROMINDEX] [TOINDEX]`                                                                                                                                                                                                                                   |

@@ -71,6 +71,7 @@ public class MarkCommand implements Command {
         }
 
         ArrayList<String> invalidIndexes = new ArrayList<>();
+        ArrayList<String> validDuplicateIndexes = new ArrayList<>();
         int successCount = 0;
 
         for (int i = INDEX_OF_FIRST_TASK_TO_MARK; i < sentence.length; i++) {
@@ -85,14 +86,14 @@ public class MarkCommand implements Command {
                     }
                     successCount++;
                 } else {
-                    invalidIndexes.add(sentence[i]);
+                    validDuplicateIndexes.add(sentence[i]);
                 }
             } catch (Exception e) {
                 invalidIndexes.add(sentence[i]);
             }
         }
 
-        TaskUi.printBatchResult("todo", successCount, invalidIndexes, isMark);
+        TaskUi.printBatchResult("todo", successCount, invalidIndexes, validDuplicateIndexes, isMark);
     }
 
     private boolean checkMarkedTodo(AppContainer container,int categoryIndex, int todoIndex, boolean isMark) {
@@ -110,6 +111,7 @@ public class MarkCommand implements Command {
         }
 
         ArrayList<String> invalidIndexes = new ArrayList<>();
+        ArrayList<String> validDuplicateIndexes = new ArrayList<>();
         int successCount = 0;
 
         for (int i = INDEX_OF_FIRST_TASK_TO_MARK; i < sentence.length; i++) {
@@ -119,14 +121,14 @@ public class MarkCommand implements Command {
                     container.categories().setDeadlineStatus(categoryIndex, taskIndex, isMark);
                     successCount++;
                 } else {
-                    invalidIndexes.add(sentence[i]);
+                    validDuplicateIndexes.add(sentence[i]);
                 }
             } catch (Exception e) {
                 invalidIndexes.add(sentence[i]);
             }
         }
 
-        TaskUi.printBatchResult("deadline", successCount, invalidIndexes, isMark);
+        TaskUi.printBatchResult("deadline", successCount, invalidIndexes, validDuplicateIndexes, isMark);
     }
 
     private boolean checkMarkedDeadline(AppContainer container,int categoryIndex, int taskIndex, boolean isMark) {
@@ -148,6 +150,7 @@ public class MarkCommand implements Command {
         }
 
         ArrayList<String> invalidIndexes = new ArrayList<>();
+        ArrayList<String> validDuplicateIndexes = new ArrayList<>();
         int successCount = 0;
         for (int i = INDEX_OF_FIRST_TASK_TO_MARK; i < sentence.length; i++) {
             try {
@@ -165,16 +168,16 @@ public class MarkCommand implements Command {
                         successCount++;
                         setStatusAndPrintMessage(container, ref, event);
                     } else {
-                        invalidIndexes.add(sentence[i]);
+                        validDuplicateIndexes.add(sentence[i]);
                     }
                 }
             } catch (Exception e) {
                 invalidIndexes.add(sentence[i]);
             }
         }
-        TaskUi.printBatchResult("event", successCount, invalidIndexes, isMark);
-
+        TaskUi.printBatchResult("event", successCount, invalidIndexes, validDuplicateIndexes, isMark);
     }
+
     private boolean checkMarkedEvent(AppContainer container,EventReference ref, boolean isMark) {
         return (container.categories().getCategory(ref.categoryIndex).getEvent(ref.eventIndex).getIsDone() != isMark);
     }
@@ -192,6 +195,7 @@ public class MarkCommand implements Command {
             return;
         }
         ArrayList<String> invalidIndexes = new ArrayList<>();
+        ArrayList<String> validDuplicateIndexes = new ArrayList<>();
         int successCount = 0;
 
         for (int i = INDEX_OF_FIRST_TASK_TO_MARK; i < sentence.length; i++) {
@@ -203,14 +207,14 @@ public class MarkCommand implements Command {
                     setStatusAndPrintMessage(container, ref, event);
                     successCount++;
                 } else {
-                    invalidIndexes.add(sentence[i]);
+                    validDuplicateIndexes.add(sentence[i]);
                 }
             } catch (Exception e) {
                 invalidIndexes.add(sentence[i]);
             }
         }
 
-        TaskUi.printBatchResult("event", successCount, invalidIndexes, isMark);
+        TaskUi.printBatchResult("event", successCount, invalidIndexes, validDuplicateIndexes, isMark);
     }
 
     private void setStatusAndPrintMessage(AppContainer container, EventReference ref, Event event) {

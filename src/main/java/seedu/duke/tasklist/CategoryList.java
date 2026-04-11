@@ -576,16 +576,16 @@ public class CategoryList {
         }
     }
     /**
-     * Returns a new {@code CategoryList} containing tasks that match the given input substring.
+     * Returns a new String containing tasks that match the given input substring.
      *
      * <p>This method searches through all categories and retrieves tasks whose descriptions
      * contain the specified input substring. Matching tasks are grouped under their respective
      * categories. Categories with no matching tasks are excluded from the result.</p>
      *
      * @param input The substring to search for within task descriptions.
-     * @return A {@code CategoryList} containing only categories with matching tasks.
+     * @return A String containing only categories with matching tasks.
      */
-    public CategoryList returnFoundTasks(String input) {
+    public String returnFoundTasks(String input) {
         CategoryList foundTasks = new CategoryList();
         for (int i = 0; i < this.getAmount(); i += 1) {
             Category foundCategory = this.getCategory(i).findMatches(input);
@@ -593,7 +593,15 @@ public class CategoryList {
                 foundTasks.categories.add(foundCategory);
             }
         }
-        return foundTasks;
+        return foundTaskToString(foundTasks);
+    }
+
+    private String foundTaskToString(CategoryList input) {
+        String result = "";
+        for (int i = 0; i < input.getAmount(); i += 1) {
+            result += "[" + (i + 1) + "]" + input.getCategory(i).toString() + System.lineSeparator();
+        }
+        return result;
     }
 
     /**
