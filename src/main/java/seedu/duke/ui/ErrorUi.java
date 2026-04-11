@@ -41,7 +41,7 @@ public class ErrorUi {
 
 
     public static void printMissingByKeyword() {
-        printError("Missing '/by' keyword. Example: add deadline 1 Homework /by 2026-01-01");
+        printError("Missing '/by' keyword. Example: add deadline 1 Homework /by 01-01-2026");
     }
 
     public static void printAddEventFormatError() {
