@@ -26,6 +26,7 @@ abstract class "{abstract}\nTask" as Task{
 
 class Deadline {
     - logger : Logger {static}
+    - DATE_FORMATTER : DateTimeFormatter {static}
     # by : LocalDateTime
     + Deadline(description : String, by : LocalDateTime)
     + parseDateTime(input : String) : LocalDateTime {static}
