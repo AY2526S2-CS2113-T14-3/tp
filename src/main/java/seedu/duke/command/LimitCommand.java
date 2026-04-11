@@ -2,6 +2,7 @@ package seedu.duke.command;
 
 import seedu.duke.appcontainer.AppContainer;
 import seedu.duke.ui.ErrorUi;
+import seedu.duke.ui.GeneralUi;
 import seedu.duke.ui.LimitUi;
 
 /**
@@ -45,6 +46,10 @@ public class LimitCommand implements Command {
                     ErrorUi.printLimitMinError();
                     return;
                 }
+                if (newValue == container.getDailyTaskLimit()) {
+                    GeneralUi.printMessage("Daily task limit is already set to " + newValue + ".");
+                    return;
+                }
                 if (newValue > MAX_DAILY_TASK_LIMIT) {
                     ErrorUi.printError("Daily timed task limit cannot exceed " + MAX_DAILY_TASK_LIMIT + ".");
                     return;
@@ -60,6 +65,11 @@ public class LimitCommand implements Command {
                     ErrorUi.printError("End year cannot exceed " + MAX_END_YEAR + ".");
                     return;
                 }
+                if (newValue == container.getEndYear()) {
+                    GeneralUi.printMessage("End year is already set to " + newValue + ".");
+                    return;
+                }
+
                 if (container.setEndYear(newValue)) {
                     LimitUi.printEndYearUpdated(newValue);
                 }
