@@ -7,10 +7,6 @@ import seedu.duke.task.Todo;
 public class TaskUi {
     public static final int INDEX_LOWER_LIMIT = 0;
 
-    public static void printTaskAction(String action, String type, String description) {
-        GeneralUi.printBordered(action + " " + type + ": " + description);
-    }
-
     public static void printTodoAdded(String categoryName, Todo todo, int count) {
         GeneralUi.printDottedLine();
         System.out.println(" Got it. I've added this todo to category: " + categoryName);
@@ -62,6 +58,7 @@ public class TaskUi {
         }
     }
 
+    //@@author marken9
     public static void printBatchResult(String taskType,
                                         int successCount,
                                         ArrayList<String> invalidIndexes,
@@ -81,7 +78,8 @@ public class TaskUi {
         }
 
         if (!validDuplicateIndexes.isEmpty()) {
-            System.out.println("Skipped valid duplicate indexes: " + String.join(", ", validDuplicateIndexes));
+            System.out.println("Skipped valid " + actionLower + " indexes: "
+                    + String.join(", ", validDuplicateIndexes));
         }
 
         if (successCount == 0 && invalidIndexes.isEmpty() && validDuplicateIndexes.isEmpty()) {

@@ -47,7 +47,7 @@ public class LimitCommand implements Command {
                     return;
                 }
                 if (newValue == container.getDailyTaskLimit()) {
-                    GeneralUi.printMessage("Daily task limit is already set to " + newValue + ".");
+                    GeneralUi.printMessage("Daily timed task limit is already set to " + newValue + ".");
                     return;
                 }
                 if (newValue > MAX_DAILY_TASK_LIMIT) {

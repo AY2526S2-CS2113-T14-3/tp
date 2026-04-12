@@ -33,6 +33,7 @@ General contributions:
 - Added Limit command for year and task
 - Added Task Validation for all tasks
 - Added Date Validation for all timed task
+- Added update for number of active timed task on each day
 
 **Testing**
 
@@ -45,12 +46,15 @@ Added JUnit tests for the following classes:
 - Added implementation details for deadline using a class diagram
 - Added implementation details for storage using a class diagram
 - Added implementation details for UI using a class diagram
-- Added implementation details for TaskValidation and DateUtils using sequence diagrams
+- Added implementation details for TaskValidation using sequence diagram
+- Added implementation details for DateUtils using sequence diagram
+- Added manual testing for deadline commands and limit commands
 
 **User Guide Contributions**
 
 - Added documentation for the following features:
   - `delete`, `list`, `limit`, `deadline`
+- Added documentation what command changes the total complete and incomplete task
 
 **Review/Mentoring Contributions**
 - Reviewed PRs and provided feedback
