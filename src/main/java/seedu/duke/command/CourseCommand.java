@@ -11,6 +11,7 @@ public class CourseCommand implements Command {
     private String undoAction;
     private String undoArgument;
     private Course savedCourse;
+    private boolean executedSuccessfully = false;
 
     public CourseCommand(String line) {
         this.line = line;
@@ -35,27 +36,23 @@ public class CourseCommand implements Command {
             }
 
             String result = container.courseParser().parse(courseCommand);
+            executedSuccessfully = true;
             LimitUi.printCourseResult(result);
         } catch (CourseException e) {
             ErrorUi.printError(e.getMessage());
         } catch (Exception e) {
-            ErrorUi.printError("Could not process course command.");
+            ErrorUi.printError("Invalid course command: " + e.getMessage());
         }
     }
 
     @Override
     public boolean isUndoable() {
-        if (undoAction == null) {
-            return false;
-        }
-        switch (undoAction) {
-        case "add":
-        case "delete":
-        case "add-assessment":
-            return true;
-        default:
-            return false;
-        }
+        return executedSuccessfully && (
+                "add".equals(undoAction) ||
+                        "delete".equals(undoAction) ||
+                        "add-assessment".equals(undoAction) ||
+                        "undo".equals(undoAction)
+        );
     }
 
     @Override
