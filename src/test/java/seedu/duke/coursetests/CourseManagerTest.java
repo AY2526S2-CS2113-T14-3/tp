@@ -8,9 +8,12 @@ import seedu.duke.course.CourseManager;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import seedu.duke.exception.CourseException;
 
 public class CourseManagerTest {
 
@@ -55,5 +58,16 @@ public class CourseManagerTest {
         Assessment assessment = course.getAssessment("Finals");
 
         assertEquals(80, assessment.getScoreObtained());
+    }
+
+    @Test
+    public void addAssessment_maxScoreAboveLimit_throwsCourseException() throws Exception {
+        CourseManager manager = new CourseManager(createTempFilePath());
+        manager.addCourse("CS2113");
+
+        CourseException exception = assertThrows(CourseException.class,
+                () -> manager.addAssessment("CS2113", "Finals", 40, 10001));
+
+        assertEquals("Maximum score cannot exceed 10000.0.", exception.getMessage());
     }
 }

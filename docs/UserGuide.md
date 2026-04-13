@@ -799,7 +799,7 @@ Format: `course add-assessment [COURSE_CODE] /n [NAME] /w [WEIGHTAGE] /ms [MAX_S
 - `COURSE_CODE`: The course code
 - `/n`: Assessment name
 - `/w`: Weightage as a percentage (e.g. 40 for 40%). Total weightage across all assessments cannot exceed 100%.
-- `/ms`: Maximum score for the assessment
+- `/ms`: Maximum score for the assessment. Must be positive and at most 10000.
 
 **Example:**
 

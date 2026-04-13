@@ -50,7 +50,7 @@ class "Assessment" as Assessment {
 }
 
 CourseManager --> CourseList
-CourseList --> "0..*" Course
-Course --> "0..*" Assessment
+CourseList --> "*" Course
+Course --> "*" Assessment
 
 @enduml

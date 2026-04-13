@@ -2,9 +2,11 @@ package seedu.duke.storage;
 
 
 import static seedu.duke.UniTasker.getDailyTaskLimit;
-import static seedu.duke.UniTasker.setDailyTaskLimit;
 import static seedu.duke.UniTasker.getEndYear;
+import static seedu.duke.UniTasker.setDailyTaskLimit;
+import static seedu.duke.UniTasker.setDailyTaskLimitSilently;
 import static seedu.duke.UniTasker.setEndYear;
+import static seedu.duke.UniTasker.setEndYearSilently;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -369,14 +371,14 @@ public class Storage {
                 switch (key) {
                 case "endYear":
                     try {
-                        setEndYear(Integer.parseInt(value));
+                        setEndYearSilently(Integer.parseInt(value));
                     } catch (NumberFormatException e) {
                         logger.severe("Invalid value for endYear: '" + value + "', keeping default.");
                     }
                     break;
                 case "dailyTaskLimit":
                     try {
-                        setDailyTaskLimit(Integer.parseInt(value));
+                        setDailyTaskLimitSilently(Integer.parseInt(value));
                     } catch (NumberFormatException e) {
                         logger.severe("Invalid value for dailyTaskLimit: '" + value + "', keeping default.");
                     }

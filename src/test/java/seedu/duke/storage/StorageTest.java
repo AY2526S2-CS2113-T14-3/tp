@@ -6,15 +6,25 @@ import org.junit.jupiter.api.Test;
 
 import seedu.duke.tasklist.CategoryList;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StorageTest {
+    private static final String SETTINGS_FILE = "settings.txt";
+
+    private final PrintStream originalOut = System.out;
+    private String settingsBackup;
+    private boolean hadSettingsFile;
 
     @Test
     public void saveAndLoad_deadlines_success() throws Exception {
@@ -250,18 +260,48 @@ public class StorageTest {
         new File(todoPath).delete();
     }
 
+    @Test
+    public void loadSettings_existingValues_doesNotPrintInteractiveLimitMessage() throws IOException {
+        Files.writeString(Path.of(SETTINGS_FILE), "endYear=2030" + System.lineSeparator() + "dailyTaskLimit=8");
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(output));
+
+        Storage.loadSettings();
+
+        System.setOut(originalOut);
+        assertFalse(output.toString().contains("Daily timed task limit updated to: 8"));
+    }
+
     @AfterEach
-    void tearDown() {
+    void tearDown() throws IOException {
+        System.setOut(originalOut);
         new File("test_todos.txt").delete();
         new File("test_deadlines.txt").delete();
         new File("test_events.txt").delete();
+        restoreSettingsFile();
     }
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws IOException {
+        backupSettingsFile();
         // This gives the "0 to 0" error a real range to work with
         seedu.duke.UniTasker.setStartYear(2024);
         seedu.duke.UniTasker.setEndYear(2030);
         seedu.duke.UniTasker.setDailyTaskLimit(8);
+    }
+
+    private void backupSettingsFile() throws IOException {
+        Path settingsPath = Path.of(SETTINGS_FILE);
+        hadSettingsFile = Files.exists(settingsPath);
+        settingsBackup = hadSettingsFile ? Files.readString(settingsPath) : null;
+    }
+
+    private void restoreSettingsFile() throws IOException {
+        Path settingsPath = Path.of(SETTINGS_FILE);
+        if (hadSettingsFile) {
+            Files.writeString(settingsPath, settingsBackup);
+        } else {
+            Files.deleteIfExists(settingsPath);
+        }
     }
 }

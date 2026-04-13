@@ -26,7 +26,6 @@ import seedu.duke.command.CommandParser;
 import seedu.duke.command.ExitCommand;
 
 import seedu.duke.appcontainer.AppContainer;
-import seedu.duke.util.DateUtils;
 
 public class UniTasker {
 
@@ -43,10 +42,6 @@ public class UniTasker {
 
     private static final int DEFAULT_END_YEAR = 2030;
     private static final int DEFAULT_DAILY_TASK_LIMIT = 8;
-    private static final int DEFAULT_MAX_TASK_LIMIT = 24;
-    private static final int DEFAULT_MIN_TASK_LIMIT = 1;
-
-
     //keeps track of commands that can be undone
     private static final Stack<Command> commandHistory = new Stack<>();
 
@@ -119,35 +114,19 @@ public class UniTasker {
         startYear = year;
     }
 
-    public static boolean setEndYear(int year) {
-        if (year < java.time.Year.now().getValue()) {
-            ErrorUi.printError("endYear must be " + java.time.Year.now().getValue() + " or later.");
-            return false;
-        }
-        try {
-            DateUtils.validateEndYearReduction(categories, year);
-        } catch (IllegalArgumentException e) {
-            ErrorUi.printError(e.getMessage());
-            return false;
-        }
+    public static void setEndYear(int year) {
         endYear = year;
         saveSettings();
-        return true;
     }
 
     public static int getStartYear() {
         return startYear;
     }
 
-    public static boolean setDailyTaskLimit(int newLimit) {
-        if (newLimit < DEFAULT_MIN_TASK_LIMIT || newLimit > DEFAULT_MAX_TASK_LIMIT) {
-            ErrorUi.printError("Daily task limit must be between 1 and 24.");
-            return false;
-        }
+    public static void setDailyTaskLimit(int newLimit) {
         dailyTaskLimit = newLimit;
         LimitUi.printDailyTaskLimitUpdated(dailyTaskLimit);
         saveSettings();
-        return true;
     }
 
     public static Stack<Command> getCommandHistory() {
