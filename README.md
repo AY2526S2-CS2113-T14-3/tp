@@ -1,66 +1,151 @@
-# UniTasker project template
+# UniTasker - All-in-One Task & Course Management
 
-This is a project template for a greenfield Java project. It's named after the Java mascot _Duke_. Given below are instructions on how to use it.
+A comprehensive desktop application for students to manage tasks, deadlines, events, and academic courses. Built with Java and optimized for Command Line Interface (CLI) usage.
 
-## Setting up in Intellij
+## Features
 
-Prerequisites: JDK 17 (use the exact version), update Intellij to the most recent version.
+### 4 Management Modes
 
-1. **Ensure Intellij JDK 17 is defined as an SDK**, as described [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk) -- this step is not needed if you have used JDK 17 in a previous Intellij project.
-1. **Import the project _as a Gradle project_**, as described [here](https://se-education.org/guides/tutorials/intellijImportGradleProject.html).
-1. **Verify the setup**: After the importing is complete, locate the `src/main/java/seedu/duke/Duke.java` file, right-click it, and choose `Run Duke.main()`. If the setup is correct, you should see something like the below:
+- **Task Management** - Organize todos across multiple categories with priority levels (0-5)
+- **Deadline Manager** - Track assignments with automatic sorting by due date
+- **Event Manager** - Schedule events and create recurring weekly meetings
+- **Course Tracker** - Manage course assessments with weighted grading and GPA calculation
+
+### Key Capabilities
+
+- **8 Command Aliases** - Fast shortcuts for common operations: `a` (add), `d` (delete), `l` (list), `m` (mark), `u` (unmark), `p` (priority), `s` (sort), `f` (find)
+- **Intelligent Defaults** - Deadlines without time automatically default to 23:59
+- **Smart Validation** - Course assessment weightage validation (max 100%, min 0%)
+- **Data Persistence** - Automatic saving and loading of all tasks and courses
+- **Interactive Help** - Run `help commands` to see full command reference with 50+ examples
+- **Daily Workload Tracking** - Monitor incomplete and completed tasks per date
+- **Recurring Events** - Create weekly recurring meetings with flexible end dates
+
+## Quick Start
+
+### Prerequisites
+- Java 17 or above
+- Gradle (included with project)
+
+### Running the Application
+
+1. Build the project:
+   ```bash
+   ./gradlew build
    ```
-   > Task :compileJava
-   > Task :processResources NO-SOURCE
-   > Task :classes
-   
-   > Task :Duke.main()
-   Hello from
-    ____        _        
-   |  _ \ _   _| | _____ 
-   | | | | | | | |/ / _ \
-   | |_| | |_| |   <  __/
-   |____/ \__,_|_|\_\___|
-   
-   What is your name?
+
+2. Run the application:
+   ```bash
+   java -jar build/libs/tp.jar
    ```
-   Type some word and press enter to let the execution proceed to the end.
 
-**Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
+3. (Recommended) Start by creating a category:
+   ```
+   add category School
+   ```
 
-## Build automation using Gradle
+### Quick Command Examples
 
-* This project uses Gradle for build automation and dependency management. It includes a basic build script as well (i.e. the `build.gradle` file).
-* If you are new to Gradle, refer to the [Gradle Tutorial at se-education.org/guides](https://se-education.org/guides/tutorials/gradle.html).
+```
+# Add tasks
+a todo 1 Review notes /p 3
+a deadline 1 Project due /by 20-05-2026
+a event 1 Meeting /from 22-05-2026 1400 /to 22-05-2026 1530
 
-## Testing
+# List and manage
+l todo
+m todo 1 1
+d todo 1 1
 
-### I/O redirection tests
+# Course management
+course add CS2113
+course add-assessment CS2113 /n Midterm /w 60 /ms 100
+course score CS2113 /n Midterm /s 95
 
-* To run _I/O redirection_ tests (aka _Text UI tests_), navigate to the `text-ui-test` and run the `runtest(.bat/.sh)` script.
-
-### JUnit tests
-
-* A skeleton JUnit test (`src/test/java/seedu/duke/DukeTest.java`) is provided with this project template. 
-* If you are new to JUnit, refer to the [JUnit Tutorial at se-education.org/guides](https://se-education.org/guides/tutorials/junit.html).
-
-## Checkstyle
-
-* A sample CheckStyle rule configuration is provided in this project.
-* If you are new to Checkstyle, refer to the [Checkstyle Tutorial at se-education.org/guides](https://se-education.org/guides/tutorials/checkstyle.html).
-
-## CI using GitHub Actions
-
-The project uses [GitHub actions](https://github.com/features/actions) for CI. When you push a commit to this repo or PR against it, GitHub actions will run automatically to build and verify the code as updated by the commit/PR.
+# Find and search
+f exam
+help commands
+```
 
 ## Documentation
 
-`/docs` folder contains a skeleton version of the project documentation.
+For comprehensive usage instructions, see [User Guide](docs/UserGuide.md).
 
-Steps for publishing documentation to the public: 
-1. If you are using this project template for an individual project, go your fork on GitHub.<br>
-   If you are using this project template for a team project, go to the team fork on GitHub.
-1. Click on the `settings` tab.
-1. Scroll down to the `GitHub Pages` section.
-1. Set the `source` as `master branch /docs folder`.
-1. Optionally, use the `choose a theme` button to choose a theme for your documentation.
+For technical architecture and design, see [Developer Guide](docs/DeveloperGuide.md).
+
+## Setting Up for Development
+
+### IntelliJ Setup
+
+Prerequisites: JDK 17 (exact version), latest IntelliJ IDEA
+
+1. **Set up JDK 17** - Follow [this guide](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk)
+2. **Import as Gradle Project** - Follow [this guide](https://se-education.org/guides/tutorials/intellijImportGradleProject.html)
+3. **Verify setup** - Locate `src/main/java/seedu/duke/UniTasker.java`, right-click and choose `Run UniTasker.main()`
+
+**File Structure Note:** Keep `src/main/java/` as the root for Java files - this is where Gradle expects to find them.
+
+## Build & Testing
+
+### Build the Project
+```bash
+./gradlew build
+```
+
+### Run Tests
+```bash
+# Run all JUnit tests
+./gradlew test
+
+# Run text-based UI tests
+cd text-ui-test
+./runtest.sh        # macOS/Linux
+runtest.bat         # Windows
+```
+
+### Code Quality
+- **Checkstyle** - Enforced via Gradle build
+- **JUnit** - 90+ unit tests across 10+ test classes
+- **Coverage** - Tests for all major components: tasks, deadlines, events, courses, storage, UI
+
+## Project Structure
+
+```
+src/main/java/seedu/duke/
+├── UniTasker.java              # Main entry point
+├── appcontainer/               # Core application state
+├── command/                    # Command parsing and execution (includes aliases)
+├── task/                       # Task types (Todo, Deadline, Event)
+├── tasklist/                   # Task collections and category management
+├── course/                     # Course and assessment management
+├── storage/                    # Data persistence
+├── ui/                         # Command output formatting
+├── util/                       # DateUtils, validators, constants
+├── calender/                   # Calendar and date tracking
+├── exception/                  # Custom exceptions
+└── logging/                    # Log configuration
+```
+
+## Team
+
+| Member | GitHub |
+|--------|--------|
+| Rajaram Sushmiithaa | [sushmiithaa](https://github.com/sushmiithaa) |
+| Vansh Puri | [benguy6](https://github.com/benguy6) |
+| Michael Shyam Wilfred David Samuvel | [michaelshyam1](https://github.com/michaelshyam1) |
+| Mark Ng Jian Xiong | [marken9](https://github.com/marken9) |
+| Wen Jun Yu | [WenJunYu5984](https://github.com/WenJunYu5984) |
+
+## Continuous Integration
+
+This project uses [GitHub Actions](https://github.com/features/actions) for CI. All commits and PRs trigger automated builds and test runs to verify code quality.
+
+## Architecture
+
+The application follows a Command pattern architecture with:
+- **CommandParser** - Routes user input to appropriate command handlers with alias support
+- **AppContainer** - Centralized state management for categories, tasks, and courses
+- **Storage** - Persistent data layer with file-based storage
+- **UI** - Formatted output for all commands and responses
+
+See [Developer Guide](docs/DeveloperGuide.md) for detailed architecture diagrams and design patterns.
